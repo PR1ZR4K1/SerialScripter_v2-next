@@ -267,7 +267,61 @@ const users = [
   {id: 8, hostname: "Jon Snow", ip: "192.168.1.9", os: "MacOS", incidents: 7, status: "connected"},
   {id: 9, hostname: "Theon Greyjoy", ip: "192.168.1.8", os: "Windows", incidents: 3, status: "disconnected"},
   {id: 10, hostname: "Jon Snow", ip: "192.168.1.6", os: "FreeBSD", incidents: 7, status: "disconnected"},
-
 ]
 
-export {columns, users, statusOptions};
+const RlogColumns = [
+  {
+    name: 'ID',
+    uid: 'id',
+    sortable: true,
+  },
+  {
+    name: 'TIMESTAMP',
+    uid: 'timestamp',
+    sortable: true,
+  },
+  {
+    name: 'FACILITYSEVERITY',
+    uid: 'facilityseverity',
+    sortable: true,
+  },
+  {
+    name: 'HOSTNAME',
+    uid: 'hostname',
+    sortable: true,
+  },
+  {
+    name: 'IP',
+    uid: 'ip',
+    sortable: true,
+  },
+  {
+    name: 'SYSLOGTAG',
+    uid: 'syslogtag',
+    sortable: true,
+  },
+  {
+    name: 'LOGMESSAGE',
+    uid: 'logmessage',
+    sortable: true,
+  },
+  {
+    name: 'ACTIONS',
+    uid: 'actions',
+  },
+]
+
+const rlogs = [
+  {id: 1, timestamp: 1698694522, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 2, timestamp: 1698694462, facilityseverity: "user.info", hostname: "Theon Greyjoy", ip: "192.168.1.2", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 3, timestamp: 1698693982, facilityseverity: "user.info", hostname: "Jon Snow", ip: "192.168.1.10", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 4, timestamp: 1698694102, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 5, timestamp: 1698694402, facilityseverity: "user.info", hostname: "Theon Greyjoy", ip: "192.168.1.2", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 6, timestamp: 1698694042, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 7, timestamp: 1698694162, facilityseverity: "user.info", hostname: "Jon Snow", ip: "192.168.1.10", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 8, timestamp: 1698694222, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 9, timestamp: 1698694342, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+  {id: 10, timestamp: 1698694342, facilityseverity: "user.info", hostname: "Jon Snow", ip: "192.168.1.10", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
+]
+
+export {columns, users, RlogColumns, statusOptions, rlogs};

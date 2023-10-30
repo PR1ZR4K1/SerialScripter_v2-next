@@ -120,8 +120,8 @@ export function SidebarWithLogo() {
               <ListItem className='dark:text-gray-200 hover:dark:bg-gray-600'>
                 <ListItemPrefix>
                   <ChevronRightIcon strokeWidth={3} className="h-3 w-5 dark:text-gray-200" />
-                </ListItemPrefix>
-                Orders
+                </ListItemPrefix>1
+                Rsyslog
               </ListItem>
               <ListItem className='dark:text-gray-200 hover:dark:bg-gray-600'>
                 <ListItemPrefix>
