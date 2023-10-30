@@ -20,21 +20,24 @@ import {
   ChipProps,
   SortDescriptor
 } from "@nextui-org/react";
+import {Avatar} from "@nextui-org/react";
+
+
 import {PlusIcon} from "@/icons/PlusIcon";
 import {VerticalDotsIcon} from "@/icons/VerticalDotsIcon";
 import {ChevronDownIcon} from "@/icons/ChevronDownIcon";
 import {SearchIcon} from "@/icons/SearchIcon";
 import {columns, users, statusOptions} from "@/data/data";
 import {capitalize} from "@/utils/utils";
-import Image from "next/image";
+import linux from '@/../public/assets/linux.png';
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  connected: "success",
-  disconnected: "danger",
+  active: "success",
+  paused: "danger",
+  vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "incidents", "status", "actions"];
-
+const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "incidents", "connected"];
 
 type User = typeof users[0];
 
@@ -71,11 +74,6 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
         user.hostname.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
 
     return filteredUsers;
   }, [users, filterValue, statusFilter]);
@@ -87,7 +85,6 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
     const end = start + rowsPerPage;
 
     return filteredItems.slice(start, end);
-
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
@@ -100,60 +97,209 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const filteredUsers = React.useMemo(() => {
+    let filteredUsers = [...users];
 
-    switch (columnKey) {
-        case "os":
-          return (
-            <div className="flex flex-col ">
-              <Image alt='OS Img' width={40} height={40} src={cellValue.toString().toLowerCase() === 'windows' ? '/assets/windows.png' : '/assets/linux.png'} />
-            </div>
-          );
-        case "hostname":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "ip":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "incidents":
-          return (
-            <div className="flex pl-6">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "status":
-          return (
-            <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-              {cellValue}
-            </Chip>
-          );
-        case "actions":
-          return (
-            <div className="relative flex justify-center items-center gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button isIconOnly size="sm" variant="light">
-                    <VerticalDotsIcon className="text-default-300" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem onClick={handleDialogOpen}>View</DropdownItem>
-                  <DropdownItem>Edit</DropdownItem>
-                  <DropdownItem>Delete</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
+    if (hasSearchFilter) {
+      filteredUsers = filteredUsers.filter((user: User) =>
+        typeof user.hostname === 'string' && user.hostname.toLowerCase().includes(filterValue.toLowerCase()),
+      );
+    }
+
+    return filteredUsers;
+  }, [users, filterValue, statusFilter, hasSearchFilter]);
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <Button size="sm" auto>
+            <PlusIcon />
+            <span>New</span>
+          </Button>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button size="sm" variant="light">
+                <ChevronDownIcon />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem onClick={() => setVisibleColumns("all")}>Select all</DropdownItem>
+              <DropdownItem onClick={() => setVisibleColumns(new Set(INITIAL_VISIBLE_COLUMNS))}>
+                Reset
+              </DropdownItem>
+              {columns.map((column) => (
+                <DropdownItem key={column.uid}>
+                  <Checkbox
+                    checked={visibleColumns === "all" || visibleColumns.has(column.uid)}
+                    onChange={() => {
+                      if (visibleColumns === "all") {
+                        setVisibleColumns(new Set([...INITIAL_VISIBLE_COLUMNS, column.uid]));
+                      } else {
+                        const newVisibleColumns = new Set(visibleColumns);
+                        if (newVisibleColumns.has(column.uid)) {
+                          newVisibleColumns.delete(column.uid);
+                        } else {
+                          newVisibleColumns.add(column.uid);
+                        }
+                        setVisibleColumns(newVisibleColumns);
+                      }
+                    }}
+                  >
+                    {capitalize(column.name)}
+                  </Checkbox>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Input
+              placeholder="Search"
+              value={filterValue}
+              onChange={(e) => setFilterValue(e.target.value)}
+              icon={<SearchIcon />}
+            />
+            {hasSearchFilter && (
+              <Button
+                size="sm"
+                variant="light"
+                className="absolute top-1 right-1"
+                onClick={() => setFilterValue("")}
+              >
+                <CloseIcon />
+              </Button>
+            )}
+          </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button size="sm" variant="light">
+                {statusFilter === "all" ? "All" : capitalize(statusFilter)}
+                <ChevronDownIcon />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem onClick={() => setStatusFilter("all")}>All</DropdownItem>
+              {statusOptions.map((status) => (
+                <DropdownItem key={status} onClick={() => setStatusFilter(status)}>
+                  {capitalize(status)}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr>
+              {headerColumns.map((column) => (
+                <th key={column.uid} className="text-small text-default-500 font-normal">
+                  {capitalize(column.name)}
+                </th>
+              ))}
+              <th className="text-small text-default-500 font-normal">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((user) => (
+              <tr key={user.uid}>
+                {headerColumns.map((column) => (
+                  <td key={column.uid}>
+                    {column.renderCell ? column.renderCell(user) : user[column.uid]}
+                  </td>
+                ))}
+                <td>
+                  <div className="relative flex justify-end items-center gap-2">
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button isIconOnly size="sm" variant="light">
+                          <VerticalDotsIcon className="text-default-300" />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu>
+                        <DropdownItem onClick={() => handleDialogOpen()}>Edit</DropdownItem>
+                        <DropdownItem>Delete</DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex justify-between items-center mt-4">
+        <div className="flex items-center gap-2">
+          <p className="text-small text-default-500">
+            Showing {items.length} of {filteredUsers.length} entries
+          </p>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button size="small" variant="light">
+                {rowsPerPage}
+                <ChevronDownIcon />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              {[5, 10, 15].map((value) => (
+                <DropdownItem key={value} onClick={() => setRowsPerPage(value)}>
+                  {value}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+        <Pagination
+          pages={pages}
+          active={page}
+          onChange={(page) => setPage(page)}
+          maxShow={5}
+          size="small"
+        />
+      </div>
+    </>
+  );
+  switch (columnKey) {
+      case "hostname"
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
+      case "ip":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
+      case "connected":
+        return (
+          <Chip className="capitalize" color={statusColorMap[user.connected]} size="sm" variant="flat">
+            {cellValue}
+          </Chip>
+        );
+      case "actions":
+        return (
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <VerticalDotsIcon className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem onClick={handleDialogOpen}>View</DropdownItem>
+                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem>Delete</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        );
+      default:
+        return cellValue;
+    }
   }, []);
 
   const onNextPage = React.useCallback(() => {
@@ -243,11 +389,14 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button color="primary" endContent={<PlusIcon />}>
+              Add New
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} hosts</span>
-          <label className="flex color-black items-center text-default-400 text-small">
+          <span className="text-default-400 text-small">Total: {users.length} hosts</span>
+          <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
               className="bg-transparent outline-none text-default-400 text-small"
@@ -256,6 +405,7 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
             </select>
           </label>
         </div>
@@ -302,7 +452,7 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
 
   return (
     <Table
-      aria-label="Example table with custom cells, pagination and sorting"
+      aria-label="Table containing enumerated host's information"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
@@ -321,15 +471,14 @@ export default function Datagrid({handleDialogOpen}: DatagridProps) {
         {(column) => (
           <TableColumn
             key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            className={`${column.uid === "actions" ? "text-center " : ''} ${column.uid === "os" ? "pl-6" : ''}`}
+            className={`${column.uid === 'os' ? ' pl-6 ' : 'text-left'}`}
             allowsSorting={column.sortable}
           >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No hosts found"} items={sortedItems}>
+      <TableBody emptyContent={"No users found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

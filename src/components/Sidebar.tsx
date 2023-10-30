@@ -50,7 +50,7 @@ export function SidebarWithLogo() {
       <div className="mb-2 flex items-center gap-4 p-4">
         <img src="/assets/logo.png" alt="brand" className="h-14 w-14" /> 
         <Typography variant="h5" color="blue-gray" className="dark:text-gray-200">
-          Cyber Warden
+          Serial Scripter
         </Typography>
       </div>
       <List>

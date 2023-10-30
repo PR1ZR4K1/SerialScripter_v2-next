@@ -14,7 +14,8 @@ import { FooterWithLogo } from '@/components/Footer';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Cyber Warden',
+  title: 'Serial Scripter',
+  description: 'Custom XDR written using Next.js',
 }
 
 
@@ -27,7 +28,7 @@ export default function RootLayout({
   }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex flex-col bg-gradient-to-t from-blue-200 via-blue-100 to-gray-100 dark:bg-gradient-to-b dark:from-blue-gray-600 dark:via-gray-800 dark:to-blue-gray-800`}>
+      <body className={`${inter.className} flex flex-col bg-gradient-to-t from-blue-200 via-blue-100 to-gray-100 dark:bg-gradient-to-b dark:from-blue-gray-600 dark:via-gray-800 dark:to-blue-gray-800 relative`}>
         <Providers>
           <div className="flex h-full w-full">
             <SidebarWithLogo />
@@ -40,4 +41,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+} 
