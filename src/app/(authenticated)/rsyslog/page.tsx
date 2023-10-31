@@ -10,16 +10,15 @@ export default function Rsyslog() {
   const handleDialogOpen = () => setDialogOpen(!open);
 
   return (
-    <main className='flex flex-col items-center h-3/4'>
-        <div>
-            <p>My filler description</p>
-        </div>
-        
-        <div className='w-3/4 h-3/4'>
-          <LogGrid handleDialogOpen={handleDialogOpen}/>
-          <DialogCustomAnimation open={open} handleOpen={handleDialogOpen} />
-        </div>
-    </main>
+    <div>
+      <h1>Yuh</h1>
+      <div className='flex flex-col items-center h-3/4'>
+          <div className='w-3/4 h-3/4'>
+            <LogGrid handleDialogOpen={handleDialogOpen}/>
+            <DialogCustomAnimation open={open} handleOpen={handleDialogOpen} />
+          </div>
+      </div>
+    </div>
   );  
 }
  

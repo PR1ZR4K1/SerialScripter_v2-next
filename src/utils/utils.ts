@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 
 export function capitalize(str: string) {
@@ -21,4 +22,16 @@ export function convertPOSIXTimestampToLocalTime(posixTimestamp: number): string
 
   // Format the date and time as a string.
   return `${localtime} ${hours}:${minutes}:${seconds}`;
+}
+
+export function truncateDescription(description: string, maxLength: number): string {
+  if (description.length <= maxLength) {
+      return description;
+  }
+  // Split the description into words
+  const words = description.split(" ");
+  let truncatedDescription = words.slice(0, maxLength).join(" ");
+  // Add trailing periods
+  truncatedDescription += "...";
+  return truncatedDescription;
 }

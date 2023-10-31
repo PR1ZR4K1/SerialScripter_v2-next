@@ -25,9 +25,14 @@ import {PlusIcon} from "@/icons/PlusIcon";
 import {VerticalDotsIcon} from "@/icons/VerticalDotsIcon";
 import {ChevronDownIcon} from "@/icons/ChevronDownIcon";
 import {SearchIcon} from "@/icons/SearchIcon";
-import {RlogColumns, rlogs, statusOptions} from "@/data/data";
-import {capitalize, convertPOSIXTimestampToLocalTime} from "@/utils/utils";
+import {RlogColumns, rlogs, RlogStatusOptions} from "@/data/data";
+import {capitalize, convertPOSIXTimestampToLocalTime, truncateDescription} from "@/utils/utils";
 import Image from "next/image";
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+    info: "success",
+    error: "danger",
+  };
 
 const INITIAL_VISIBLE_COLUMNS = ["timestamp", "facilityseverity", "hostname", "ip", "syslogtag", "logmessage", "actions"];
 
@@ -103,32 +108,33 @@ export function LogGrid({handleDialogOpen}: DatagridProps) {
           );
         case "facilityseverity":
           return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
+            <Chip className="" color={"success"} size="sm" variant="flat">
+              {cellValue}
+            </Chip>
           );
         case "hostname":
             return (
                 <div className="flex flex-col">
-                <p className="text-bold text-small capitalize">{cellValue}</p>
+                <p className="text-bold text-small">{cellValue}</p>
                 </div>
             );
         case "ip":
             return (
                 <div className="flex flex-col">
-                <p className="text-bold text-small capitalize">{cellValue}</p>
+                <p className="text-bold text-small">{cellValue}</p>
                 </div>
             );
         case "syslogtag":
           return (
             <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
+              <p className="text-bold text-small">{cellValue}</p>
             </div>
           );
           case "logmessage":
+            const truncatedLog = truncateDescription(user.logmessage, 35);
             return (
               <div className="flex flex-col">
-                <p className="text-bold text-small capitalize">{cellValue}</p>
+                <p className="text-bold text-small">{truncatedLog}</p>
               </div>
             );
         case "actions":
@@ -198,27 +204,6 @@ export function LogGrid({handleDialogOpen}: DatagridProps) {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
@@ -335,4 +320,7 @@ export function LogGrid({handleDialogOpen}: DatagridProps) {
       </TableBody>
     </Table>
   );
+}
+
+function severityColoring() {   
 }

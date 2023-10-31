@@ -311,6 +311,12 @@ const RlogColumns = [
   },
 ]
 
+
+const RlogStatusOptions = [
+  {name: "user.info", uid: "info"},
+  {name: "user.error", uid: "error"},
+];
+
 const rlogs = [
   {id: 1, timestamp: 1698694522, facilityseverity: "user.info", hostname: "Tyrion Lannister", ip: "192.168.1.9", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
   {id: 2, timestamp: 1698694462, facilityseverity: "user.info", hostname: "Theon Greyjoy", ip: "192.168.1.2", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
@@ -324,4 +330,4 @@ const rlogs = [
   {id: 10, timestamp: 1698694342, facilityseverity: "user.info", hostname: "Jon Snow", ip: "192.168.1.10", syslogtag: "/usr/libexec/gdm-x-session[2834]", logmessage: "Yuh my log message is super cool and very super duper long"},
 ]
 
-export {columns, users, RlogColumns, statusOptions, rlogs};
+export {columns, users, RlogColumns, statusOptions, RlogStatusOptions, rlogs};
