@@ -1,26 +1,12 @@
 import { BarChart } from "@mui/x-charts";
 
-export default function BarGraph(){
+export default function BasicBars(props){
     return (
-        // <div style = {{display: "flex"}}>
             <BarChart
-                xAxis={[
-                    {
-                        id: 'barCategories',
-                        data: ['bar A', 'bar B', 'bar C'],
-                        scaleType: 'band',
-                    },
-                ]}
-                
-                series={[
-                    {
-                        data: [2, 5, 3],
-                    },
-                ]}
-                
-                width={400}
-                height={300}
+                xAxis={props.xAxis}
+                series={props.series}
+                width={props.width}
+                height={props.height}
             />
-        // </div>
     )
 }

@@ -16,6 +16,10 @@
   }
 }
 
+.absolute.hover:hover.inset-shadow {
+  box-shadow: inset 50px 50px 100px rgba(0, 0, 0, 0.9);
+}
+
 
 /* body {
   color: rgb(var(--foreground-rgb));

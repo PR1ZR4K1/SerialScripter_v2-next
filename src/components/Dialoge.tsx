@@ -10,7 +10,7 @@ import {
  
 export function DialogCustomAnimation({ open, handleOpen }: { open: boolean, handleOpen: () => void }) {
   return (
-    
+
       <Dialog
         open={open}
         handler={handleOpen}
@@ -19,12 +19,14 @@ export function DialogCustomAnimation({ open, handleOpen }: { open: boolean, han
           unmount: { scale: 0.9, y: -100 },
         }}
       >
-        <DialogHeader>Its a simple dialog.</DialogHeader>
+        <DialogHeader>Hostname: Bobby Shmurda</DialogHeader>
         <DialogBody divider>
-          The key to more success is to have a lot of pillows. Put it this way,
-          it took me twenty five years to get these plants, twenty five years of
-          blood sweat and tears, and I&apos;m never giving up, I&apos;m just
-          getting started. I&apos;m up to something. Fan luv.
+          Ports open: 23
+          <br />
+          OS: Windows 11
+          <br />
+          IP: 192.168.13.37
+          <br />
         </DialogBody>
         <DialogFooter>
           <Button

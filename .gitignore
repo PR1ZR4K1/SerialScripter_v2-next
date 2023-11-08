@@ -4,7 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-package-lock.json
 
 # testing
 /coverage
@@ -35,5 +34,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+/prisma/migrations
+
 # whatever Jaylon told me to do (Bruce)
-package-lock.json
+.env

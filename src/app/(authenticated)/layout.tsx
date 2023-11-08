@@ -1,8 +1,8 @@
 import React from 'react';
 import './globals.css';
 import type { Metadata } from 'next'
-import Providers from './providers';
-
+import { Providers } from './providers';
+import { Toaster } from 'react-hot-toast';
 
 import { SidebarWithLogo } from '@/components/Sidebar';
 
@@ -14,8 +14,7 @@ import { FooterWithLogo } from '@/components/Footer';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Serial Scripter',
-  description: 'Custom XDR written using Next.js',
+    title: 'Cyber Warden',
 }
 
 
@@ -23,22 +22,21 @@ export const metadata: Metadata = {
 // type Theme = 'light' | 'dark';
 export default function RootLayout({
     children,
-  }: {
+}: {
     children: React.ReactNode
-  }) {
-  return (
+}) {
+    return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex flex-col bg-gradient-to-t from-blue-200 via-blue-100 to-gray-100 dark:bg-gradient-to-b dark:from-blue-gray-600 dark:via-gray-800 dark:to-blue-gray-800 relative`}>
+      <body className={`${inter.className} bg-gray-300 dark:bg-[#1E2A3F]`}>
         <Providers>
-          <div className="flex h-full w-full">
             <SidebarWithLogo />
-            <div className="h-screen w-full">
+            <div className="ml-[15rem]">
               {children}
+              <Toaster position='top-right'/>
             </div>
-          </div>
           {/* <FooterWithLogo /> */}
         </Providers>
       </body>
     </html>
-  );
-} 
+    );
+}

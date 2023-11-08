@@ -2,18 +2,25 @@
 
 import { NextUIProvider } from "@nextui-org/react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { SessionProvider } from 'next-auth/react';
 
-export default function Providers({ children }: { children: React.ReactNode})
-{
+type Props = {
+    children?: React.ReactNode
+}
+
+
+export const Providers = ({ children }: Props) => {
     return (
-        
-        <NextUIProvider>
-            <NextThemesProvider
-                attribute="class"
-                defaultTheme="light"
-            >
-                {children}
-            </NextThemesProvider>
-        </NextUIProvider>
+
+        <SessionProvider>
+            <NextUIProvider>
+                <NextThemesProvider
+                    attribute="class"
+                    defaultTheme="light"
+                >
+                    {children}
+                </NextThemesProvider>
+            </NextUIProvider>
+        </SessionProvider>
     )
 }

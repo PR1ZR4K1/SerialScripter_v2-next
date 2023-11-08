@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IncidentStatus {
+    OPEN
+    CLOSED
+}
+
+enum Status {
+    UP
+    DOWN
+}
+
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String?
+}
+
+model Host {
+    id          Int       @id @default(autoincrement())
+    hostname    String    @unique
+    ip          String    @unique
+    os          String
+    services   Service[]
+    cpu_cores   Int
+    memory      Int
+    disk        Int
+    incidents  Incident[]
+    status      String
+    createdAt   DateTime  @default(now())
+}
+
+model Service {
+    id          Int       @id @default(autoincrement())
+    name        String
+    port        Int
+    host        Host      @relation(fields: [hostId], references: [id])
+    hostId      Int
+    status      Status
+}
+
+model Incident {
+    id          Int       @id @default(autoincrement())
+    name        String
+    description String
+    host        Host      @relation(fields: [hostId], references: [id])
+    hostId      Int
+    status      IncidentStatus
+    createdAt   DateTime  @default(now())
+}
+
+
