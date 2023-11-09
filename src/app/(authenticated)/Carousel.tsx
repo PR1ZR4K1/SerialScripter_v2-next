@@ -1,8 +1,8 @@
 import { Carousel } from "@material-tailwind/react";
 // import { PieChart } from "@mui/icons-material";
-import  BasicPie  from "../../components/PieCharts";
-import BasicLineChart from "../../components/LineCharts";
-import BasicBars from "../../components/BarCharts";
+// import  BasicPie  from "../../components/PieCharts";
+// import BasicLineChart from "../../components/LineCharts";
+// import BasicBars from "../../components/BarCharts";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
  
 export function CarouselDefault() {

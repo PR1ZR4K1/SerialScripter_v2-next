@@ -53,8 +53,8 @@ export function SidebarWithLogo() {
 
   return (
     <Card variant="gradient" className="rounded-none h-screen max-w-[20rem] bg-gray-600/30 fixed top-0 left-0 shadow-2xl bg-gray-200 shadow-black dark:bg-[#141B29]">
-      <div className=" flex items-center gap-4 p-4">
-        <img src="/assets/logo.png" alt="brand" className="h-14 w-14" /> 
+      <div className=" flex items-center gap-4 p-4 pt-6">
+        <img src="/assets/logo.png" alt="brand" className="h-12 w-12" /> 
         <Typography variant="h5" color="blue-gray" className="text-black dark:text-gray-200">
           Serial Scripter
         </Typography>
@@ -65,8 +65,8 @@ export function SidebarWithLogo() {
       <List className="flex gap-y-3">
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
           <Link href='/' className="flex items-center">
-            <HomeModernIcon className="h-6 w-6 text-blue-600 dark:text-[#1D9FE4]" />
-            <span className="ml-2 font-normal text-black dark:text-gray-200">
+            <HomeModernIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
                 Dashboard
            </span>
           </Link>
@@ -75,8 +75,8 @@ export function SidebarWithLogo() {
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
           <Link href='/scriptingHub' className="flex items-center">
-            <GiScythe className="h-6 w-6 text-blue-600 dark:text-[#1D9FE4]" />
-            <span className="ml-2 font-normal text-black dark:text-gray-200">
+            <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
               Scripting Hub
             </span>
           </Link>
@@ -84,8 +84,8 @@ export function SidebarWithLogo() {
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
           <Link href='/serverLogs' className="flex items-center">
-            <PencilSquareIcon className="h-6 w-6 text-blue-600 dark:text-[#1D9FE4]" />
-            <span className="ml-2 font-normal text-black dark:text-gray-200">
+            <PencilSquareIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
               Server Logs
             </span>
           </Link>

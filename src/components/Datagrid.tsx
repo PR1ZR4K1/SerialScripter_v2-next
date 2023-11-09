@@ -147,25 +147,25 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
             case "hostname":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
+                        <p className="text-bold text-small capitalize">{cellValue.toLocaleString()}</p>
                     </div>
                 );
             case "ip":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
+                        <p className="text-bold text-small capitalize">{cellValue.toLocaleString()}</p>
                     </div>
                 );
             case "incidents":
                 return (
                     <div className="flex pl-6">
-                        <p className="text-bold text-small capitalize">{cellValue ? { cellValue } : 0}</p>
+                        <p className="text-bold text-small capitalize">  {cellValue ? cellValue.toLocaleString() : "0"}</p>
                     </div>
                 );
             case "status":
                 return (
                     <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
-                        {cellValue}
+                        {cellValue.toLocaleString()}
                     </Chip>
                 );
             case "actions":
@@ -374,7 +374,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
             <TableBody emptyContent={"No hosts found"} items={sortedItems} className="">
                 {(item) => (
                     <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        {(columnKey) => <TableCell>{renderCell(item, columnKey).toLocaleString()}</TableCell>}
                     </TableRow>
                 )}
             </TableBody>

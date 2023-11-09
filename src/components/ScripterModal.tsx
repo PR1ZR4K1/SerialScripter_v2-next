@@ -1,5 +1,5 @@
 import React from "react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Tooltip} from "@nextui-org/react";
 
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
@@ -18,7 +18,9 @@ export default function ScripterModal({scriptName, description}: ModalProps) {
     return (    
     <>
         <button className="flex flex-wrap gap-3 text-yellow-400">
-            <InformationCircleIcon onClick={handleOpen} width={25} height={25} />
+            <Tooltip content="Description">
+                <InformationCircleIcon onClick={handleOpen} width={25} height={25} />
+            </Tooltip>
         </button>
         <Modal backdrop={'blur'} isOpen={isOpen} onClose={onClose}>
             <ModalContent>

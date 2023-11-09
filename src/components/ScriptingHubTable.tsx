@@ -1,7 +1,7 @@
 'use client';
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Radio, RadioGroup, Chip} from "@nextui-org/react";
 import ScripterModal from '@/components/ScripterModal';
-import { Key } from "react";
+import { Key, useState } from "react";
 
 type Column = {
     key: string;
@@ -56,10 +56,14 @@ function renderColumn(item: Row, columnKey: Key) {
 
 
 export default function ScriptingHubTable({columns, rows}: ScriptingHubTableProps) {
+  const [selectedKeys, setSelectedKeys] = useState(new Set(['2']));
+  console.log('Selected Keys', selectedKeys)
 
   return (
     <div className="flex flex-col gap-3">
       <Table 
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys as any}
         aria-label="Selection behavior table example with dynamic content"
         selectionMode="multiple"
         selectionBehavior={'toggle'}
