@@ -392,7 +392,7 @@ export function HostsTable() {
                 )}
             </TableHeader>
 
-            <TableBody emptyContent={"No hosts found"} items={sortedItems} className="">
+            <TableBody emptyContent={"No hosts found"} loadingContent={'Loading...'} items={sortedItems} className="">
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

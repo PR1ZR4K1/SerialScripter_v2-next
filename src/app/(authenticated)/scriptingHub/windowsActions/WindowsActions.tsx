@@ -2,34 +2,23 @@
 
 import { useState } from 'react'
 import ScriptingHubTable from '@/components/AnsiblePlaybooksTable';
-import { columns, rows } from './scriptDataLinux';
+import { columns, rows } from './scriptDataWindows';
 import { Button } from '@nextui-org/react';
 import { ArrowSmallLeftIcon, ArrowSmallRightIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import AnsibleHostsTable from '@/components/AnsibleHostsTable';
-import { useScriptingHubStore } from '@/store/ScriptingHubStore';
 
-function deployAnsibleStuff() {
-  
-}
 
 
 export default function LinuxActions() {
   const [view, setView] = useState('scripts');
 
-  const [selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks] = useScriptingHubStore((store) => [
-    store.selectedKeysLinuxHosts,
-    store.selectedKeysLinuxPlaybooks,
-  ])
-
-  console.log(selectedKeysLinuxHosts)
-
   return (
     view === 'scripts' ? (
         <div className=''>    
           <div className='flex flex-col items-center justify-center gap-y-16'>
-            <h1 className='text-5xl'>Linux Playbooks</h1>
+            <h1 className='text-5xl'>Windows Playbooks</h1>
             <div className=''>
-                <ScriptingHubTable os='linux' columns={columns} rows={rows} />
+                <ScriptingHubTable os='windows' columns={columns} rows={rows} />
             </div>
           </div>
 
@@ -44,8 +33,8 @@ export default function LinuxActions() {
         (
         <div className=' '>    
           <div className='flex flex-col items-center justify-center gap-y-16'>
-            <h1 className='text-5xl'>Linux Hosts</h1>
-            <AnsibleHostsTable os='linux' />
+            <h1 className='text-5xl'>Windows Hosts</h1>
+            <AnsibleHostsTable os='windows' />
           </div>
 
           <div className='flex justify-between items-end pt-5'>

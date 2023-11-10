@@ -1,6 +1,8 @@
 'use client';
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Chip} from "@nextui-org/react";
+import Image from "next/image";
 import { Key, useEffect, useState } from "react";
+import { useScriptingHubStore } from '@/store/ScriptingHubStore';
 
 type Column = {
     key: string;
@@ -33,6 +35,10 @@ type AnsibleHostsTableProps = {
 
 const columns = [
   {
+    key: "os",
+    label: "Operating System",
+  },
+  {
     key: "hostname",
     label: "Hostname",
   },
@@ -40,40 +46,54 @@ const columns = [
     key: "ip",
     label: "IP Address",
   },
-  {
-    key: "os",
-    label: "Operating System",
-  },
+
 ];
 
+
+                        // <Image
+                        //     alt='OS Img'
+                        //     width={40}
+                        //     height={40}
+                        //     src={
+                        //         typeof cellValue === 'string' ?
+                        //             (cellValue.toLowerCase() === 'windows'
+                        //                 ? '/assets/windows.png'
+                        //                 : cellValue.toLowerCase() === 'linux'
+                        //                     ? '/assets/linux.png'
+                        //                     : '/assets/router.png') // Replace 'other' with the third option
+                        //         : '/assets/router.png' // Replace with appropriate source for non-string cellValue
+                        //     }
+                        // />
+
 export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
-  const [selectedKeys, setSelectedKeys] = useState(new Set(['']));
-  const [hosts, setHosts] = useState<Row[]>([]);
+  const [ linuxHosts,  getLinuxHosts, windowsHosts, getWindowsHosts, selectedKeysLinuxHosts, setSelectedKeysLinuxHosts, selectedKeysWindowsHosts, setSelectedKeysWindowsHosts] =   useScriptingHubStore((state) => [
+    state.linuxHosts,
+    state.getLinuxHosts,
+    state.windowsHosts,
+    state.getWindowsHosts,
+    state.selectedKeysLinuxHosts,
+    state.setSelectedKeysLinuxHosts,
+    state.selectedKeysWindowsHosts,
+    state.setSelectedKeysWindowsHosts,
+  ])
 
   // console.log('Selected Keys', selectedKeys)
   useEffect(() => {
-      async function fetchHosts() {
-      
-        try {
-              const url = os === 'windows' ? "/api/get/windowsHosts" : '/api/get/linuxHosts';
-              const response = await fetch(url); // Replace with your actual API endpoint
-              if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-              const data = await response.json();
-              setHosts(data);  
-          } catch (error) {
-              console.error("Error fetching host data:", error);
-          }
-      }  
-      fetchHosts();
-  }, [os]);
+
+      os.toLowerCase() === 'linux' ?  
+        getLinuxHosts()
+      :
+        getWindowsHosts()
+      }, 
+
+    [getLinuxHosts, getWindowsHosts, os]);
 
   return (
     <div className="flex flex-col gap-3">
       <Table 
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys as any}
+        disallowEmptySelection
+        selectedKeys={os.toLowerCase() === 'linux' ? selectedKeysLinuxHosts : selectedKeysWindowsHosts}
+        onSelectionChange={os.toLowerCase() === 'linux' ? setSelectedKeysLinuxHosts as any : setSelectedKeysWindowsHosts as any}
         aria-label="Selection behavior table example with dynamic content"
         selectionMode="multiple"
         selectionBehavior={'toggle'}
@@ -90,15 +110,36 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
         <TableHeader columns={columns}>
           {(column) => 
             <TableColumn key={column.key}>
-                {column.label}
+                { column.key === 'os' ? <div className="flex justify-center"> {column.label} </div> : <div>{column.label} </div>}
             </TableColumn>}
         </TableHeader>
-        <TableBody emptyContent={"No hosts found"} items={hosts}>
+        <TableBody emptyContent={"No hosts found"} loadingContent={'Loading...'} items={os === 'linux' ? linuxHosts : windowsHosts}>
           {(item) => (
             <TableRow key={item.key}>
               {(columnKey) => 
                 <TableCell>
-                    {getKeyValue(item, columnKey)}
+                    {
+                      columnKey === 'os' ? 
+                        (
+                          <div className="flex justify-center items-center">                        
+                            <Image
+                                  alt='OS Img'
+                                  width={40}
+                                  height={40}
+                                  src={
+                                        os.toLowerCase() === 'windows'
+                                          ? 
+                                            '/assets/windows.png'
+                                          : 
+                                            '/assets/linux.png'
+                                      }
+                            />
+                          </div>
+                        )
+                      :
+                        getKeyValue(item, columnKey)
+                      
+                    }
                 </TableCell>}
             </TableRow>
           )}

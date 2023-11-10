@@ -2,6 +2,7 @@
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Radio, RadioGroup, Chip} from "@nextui-org/react";
 import ScripterModal from '@/components/ScripterModal';
 import { Key, useState } from "react";
+import { useScriptingHubStore } from "@/store/ScriptingHubStore";
 
 type Column = {
     key: string;
@@ -19,6 +20,7 @@ type Row = {
 type ScriptingHubTableProps = {
     columns: Column[];
     rows: Row[];
+    os: string;
 };
 
 type riskMapType = {
@@ -55,15 +57,22 @@ function renderColumn(item: Row, columnKey: Key) {
 }
 
 
-export default function AnsiblePlaybooksTable({columns, rows}: ScriptingHubTableProps) {
-  const [selectedKeys, setSelectedKeys] = useState(new Set(['']));
-  // console.log('Selected Keys', selectedKeys)
+export default function AnsiblePlaybooksTable({columns, rows, os}: ScriptingHubTableProps) {
+
+  const [selectedKeysLinuxPlaybooks, setSelectedKeysLinuxPlaybooks, selectedKeysWindowsPlaybooks, setSelectedKeysWindowsPlaybooks] =   useScriptingHubStore((state) => [
+    state.selectedKeysLinuxPlaybooks,
+    state.setSelectedKeysLinuxPlaybooks,
+    state.selectedKeysWindowsPlaybooks,
+    state.setSelectedKeysWindowsPlaybooks,
+  ])
+
 
   return (
     <div className="flex flex-col gap-3">
       <Table 
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys as any}
+        disallowEmptySelection
+        selectedKeys={os.toLowerCase() === 'linux' ? selectedKeysLinuxPlaybooks : selectedKeysWindowsPlaybooks}
+        onSelectionChange={os.toLowerCase() === 'linux' ? setSelectedKeysLinuxPlaybooks as any : setSelectedKeysWindowsPlaybooks as any}
         aria-label="Selection behavior table example with dynamic content"
         selectionMode="multiple"
         selectionBehavior={'toggle'}
