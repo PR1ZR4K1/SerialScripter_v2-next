@@ -1,15 +1,12 @@
 'use client'
-import { useState, useEffect } from 'react';
 // import BarGraph from '@/components/BarCharts';
 // import PieGraph from '@/components/PieCharts';
-import { ComplexNavbar } from '@/components/Navbar';
-import { HostsTable } from '@/components/Datagrid';
 import { CarouselDefault } from '@/app/(authenticated)/Carousel';
-import { DialogCustomAnimation } from '@/components/Dialoge';
-import toast from 'react-hot-toast';
-import { getServerSession } from "next-auth";
+import { HostsTable } from '@/app/(authenticated)/HostsTable';
+import { DialogCustomAnimation } from '@/app/(authenticated)/Dialoge';
+import { useState } from 'react';
 
-export default function Home() {
+export default function App() {
    // const session = await getServerSession(authOptions);
 
 
@@ -30,8 +27,7 @@ export default function Home() {
             </div>
 
             <div className='w-3/4 h-3/4 mb-unit-x'>
-                {/* <HostsTable handleDialogOpen={handleDialogOpen} /> */}
-                {/* <DialogCustomAnimation open={open} handleOpen={handleDialogOpen} /> */}
+                <HostsTable />
             </div>
         </main>
     );

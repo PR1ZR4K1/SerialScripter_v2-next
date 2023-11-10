@@ -1,6 +1,5 @@
-'use client';
 
-import LinuxActions from "./LinuxActions";
+import LinuxActions from '@/app/(authenticated)/scriptingHub/linuxActions/LinuxActions';
 
 function Page() {
 

@@ -1,6 +1,4 @@
-import { hash } from 'bcrypt';
 import { prisma } from '@/lib/prisma';
-import { Host } from '@prisma/client';
 
 import { NextResponse } from 'next/server';
 

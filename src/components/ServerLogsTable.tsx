@@ -1,3 +1,4 @@
+'use client'
 import { serverLogs } from "@/data/data";
 import { Button, Chip, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from "@nextui-org/react";
 import { useAsyncList } from "@react-stately/data";

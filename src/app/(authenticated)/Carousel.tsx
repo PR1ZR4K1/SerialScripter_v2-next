@@ -1,3 +1,4 @@
+'use client'
 import { Carousel } from "@material-tailwind/react";
 // import { PieChart } from "@mui/icons-material";
 // import  BasicPie  from "../../components/PieCharts";

@@ -18,6 +18,7 @@ export default function Rsyslog() {
             <DialogCustomAnimation open={open} handleOpen={handleDialogOpen} />
           </div>
       </div> */}
+      sdfkugsyidf
     </div>
   );  
 }

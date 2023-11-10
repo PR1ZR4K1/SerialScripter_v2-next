@@ -1,8 +1,5 @@
 // Setup basic Nextauth authoptions and such
-import NextAuth, { type NextAuthOptions } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { compare } from 'bcrypt'
-import { prisma } from '@/lib/prisma'
+import NextAuth from 'next-auth'
 import { authOptions } from './AuthOptions'
 
 

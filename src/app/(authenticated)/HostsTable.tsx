@@ -20,7 +20,8 @@ import {
     ChipProps,
     SortDescriptor,
     Spinner,
-    getKeyValue
+    getKeyValue,
+    Tooltip
 } from "@nextui-org/react";
 import { PlusIcon } from "@/icons/PlusIcon";
 import { VerticalDotsIcon } from "@/icons/VerticalDotsIcon";
@@ -31,6 +32,9 @@ import { capitalize } from "@/utils/utils";
 import Image from "next/image";
 // import { getPageData } from "@/actions/serverActions";
 import { Host, Status } from "@prisma/client";
+import { DialogCustomAnimation } from "./Dialoge";
+import { EyeIcon, InformationCircleIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Edit } from "@mui/icons-material";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     UP: "success",
@@ -45,7 +49,8 @@ type DatagridProps = {
     handleDialogOpen: () => void;
 };
 
-export function HostsTable({ handleDialogOpen }: DatagridProps) {
+// export function HostsTable({ handleDialogOpen }: DatagridProps) {
+export function HostsTable() {
 
     const [filterValue, setFilterValue] = React.useState("");
     const [hosts, setHosts] = React.useState<Host[]>([]);
@@ -57,6 +62,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
         direction: "ascending",
     });
 
+    const [open, setDialogOpen] = useState(false);
 
     useEffect(() => {
         async function fetchHosts() {
@@ -66,8 +72,8 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
                 setHosts(data);
+
             } catch (error) {
                 console.error("Error fetching host data:", error);
             }
@@ -75,6 +81,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
 
         fetchHosts();
     }, []);
+
 
     const [page, setPage] = React.useState(1);
 
@@ -101,7 +108,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
         }
 
         return filteredHosts;
-    }, [hosts, filterValue, statusFilter]);
+    }, [hosts, filterValue, statusFilter, hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -125,7 +132,8 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
 
     const renderCell = React.useCallback((host: Host, columnKey: React.Key) => {
         const cellValue = host[columnKey as keyof Host];
-
+        
+        const handleDialogOpen = () => setDialogOpen(!open);
         switch (columnKey) {
             case "os":
                 return (
@@ -135,11 +143,13 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
                             width={40}
                             height={40}
                             src={
-                                cellValue.toString().toLowerCase() === 'windows'
-                                    ? '/assets/windows.png'
-                                    : cellValue.toString().toLowerCase() === 'linux'
-                                        ? '/assets/linux.png'
-                                        : '/assets/router.png' // Replace 'other' with the third option
+                                typeof cellValue === 'string' ?
+                                    (cellValue.toLowerCase() === 'windows'
+                                        ? '/assets/windows.png'
+                                        : cellValue.toLowerCase() === 'linux'
+                                            ? '/assets/linux.png'
+                                            : '/assets/router.png') // Replace 'other' with the third option
+                                : '/assets/router.png' // Replace with appropriate source for non-string cellValue
                             }
                         />
                     </div>
@@ -147,48 +157,59 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
             case "hostname":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue.toLocaleString()}</p>
+                        <p className="text-bold text-small capitalize">{typeof cellValue === 'string' ? cellValue : 'N/A' }</p>
                     </div>
                 );
             case "ip":
                 return (
                     <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue.toLocaleString()}</p>
+                        <p className="text-bold text-small capitalize">{cellValue as any}</p>
                     </div>
                 );
             case "incidents":
                 return (
                     <div className="flex pl-6">
-                        <p className="text-bold text-small capitalize">  {cellValue ? cellValue.toLocaleString() : "0"}</p>
+                        <p className="text-bold text-small capitalize">  
+                            {
+                                typeof cellValue === 'string' ?
+                                    cellValue ? cellValue.toString() : "0"
+                                : '0'
+                            }
+                        </p>
                     </div>
                 );
             case "status":
                 return (
-                    <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
-                        {cellValue.toLocaleString()}
-                    </Chip>
+                    <div className="flex items-center justify-center">
+                        <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
+                            {cellValue instanceof Date ? cellValue.toString() : cellValue}
+                        </Chip>
+                    </div>
                 );
             case "actions":
                 return (
-                    <div className="relative flex justify-center items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem onClick={handleDialogOpen}>View</DropdownItem>
-                                <DropdownItem>Edit</DropdownItem>
-                                <DropdownItem>Delete</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                    <div className="relative flex items-center justify-center gap-2 h-full ">
+                        <Tooltip color="primary" content="View Host">
+                            <span className="text-lg text-primary cursor-pointer active:opacity-50">
+                                <EyeIcon width={25} height={25}/>
+                            </span>
+                        </Tooltip>
+                        <Tooltip content="Brief Description">
+                            <span className="text-lg text-warning cursor-pointer active:opacity-50">
+                                <InformationCircleIcon width={25} height={25}/>
+                            </span>
+                        </Tooltip>
+                        <Tooltip color="danger" content="Delete Host">
+                            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                                <TrashIcon width={25} height={25}/>
+                            </span>
+                        </Tooltip>
+                    </div>  
                 );
             default:
-                return cellValue;
+                return cellValue !== undefined ? cellValue.toString() : '';
         }
-    }, []);
+    }, [open]);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
@@ -302,7 +323,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
         onSearchChange,
         onRowsPerPageChange,
         hosts.length,
-        hasSearchFilter,
+        onClear,
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -332,7 +353,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, page, pages, filteredItems.length, onNextPage, onPreviousPage]);
 
     return (
 
@@ -363,7 +384,7 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
                     <TableColumn
                         key={column.uid}
                         align={column.uid === "actions" ? "center" : "start"}
-                        className={`${column.uid === "actions" ? "text-center " : ''} ${column.uid === "os" ? "pl-6" : ''} `}
+                        className={`${column.uid === "actions" || column.uid === "status" ? "text-center " : ''} ${column.uid === "os" ? "pl-6" : ''} `}
                         allowsSorting={column.sortable}
                     >
                         {column.name}
@@ -374,7 +395,10 @@ export function HostsTable({ handleDialogOpen }: DatagridProps) {
             <TableBody emptyContent={"No hosts found"} items={sortedItems} className="">
                 {(item) => (
                     <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey).toLocaleString()}</TableCell>}
+                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        {/* {(columnKey) => <TableCell>{                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">LAME</p>
+                    </div>}</TableCell>} */}
                     </TableRow>
                 )}
             </TableBody>

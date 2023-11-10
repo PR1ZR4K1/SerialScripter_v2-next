@@ -1,4 +1,4 @@
-#!/bin/sh
+ #!/bin/sh
 
 sudo docker-compose up -d
 sleep 2

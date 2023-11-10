@@ -1,6 +1,6 @@
 import React from 'react'
-import ScriptingHubTable from '@/components/ScriptingHubTable';
-import { columns, rows } from './scriptData';
+import ScriptingHubTable from '@/components/AnsiblePlaybooksTable';
+import { columns, rows } from './scriptDataWindows';
 
 function Page() {
   return (

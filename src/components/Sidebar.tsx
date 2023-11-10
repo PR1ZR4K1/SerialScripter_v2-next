@@ -38,7 +38,7 @@ import {
 import Link from "next/link";
 import { ProfileMenu } from './ProfileMenu'; 
 import ThemeSwitcher from "./ThemeSwitcher";
-import { DialogCustomAnimation } from "./Dialoge";
+import { DialogCustomAnimation } from "../app/(authenticated)/Dialoge";
 
 export function SidebarWithLogo() {
   // const [open, setOpen] = React.useState(0);

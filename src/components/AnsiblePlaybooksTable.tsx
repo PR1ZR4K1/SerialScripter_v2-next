@@ -55,9 +55,9 @@ function renderColumn(item: Row, columnKey: Key) {
 }
 
 
-export default function ScriptingHubTable({columns, rows}: ScriptingHubTableProps) {
-  const [selectedKeys, setSelectedKeys] = useState(new Set(['2']));
-  console.log('Selected Keys', selectedKeys)
+export default function AnsiblePlaybooksTable({columns, rows}: ScriptingHubTableProps) {
+  const [selectedKeys, setSelectedKeys] = useState(new Set(['']));
+  // console.log('Selected Keys', selectedKeys)
 
   return (
     <div className="flex flex-col gap-3">
@@ -71,7 +71,7 @@ export default function ScriptingHubTable({columns, rows}: ScriptingHubTableProp
           // th: "dark:bg-[#24344E]",
           td: "dark:bg-[#141B29]",
           wrapper: "max-h-[382px] dark:bg-[#141B29]",
-          table: 'dark:bg-[#141B29] dark:border-[#141B29]',
+          table: 'w-unit-9xl h-unit-9xl dark:bg-[#141B29] dark:border-[#141B29]',
           emptyWrapper: 'dark:bg-[#141B29]',
           base: 'dark:bg-transparent',
         }}
