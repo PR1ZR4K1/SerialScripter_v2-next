@@ -10,7 +10,7 @@ type Column = {
 };
 
 type Row = {
-    key: string;
+    id: number;
     scriptName: string;
     category: string;
     risk: string;
@@ -94,7 +94,7 @@ export default function AnsiblePlaybooksTable({columns, rows, os}: ScriptingHubT
         </TableHeader>
         <TableBody items={rows}>
           {(item) => (
-            <TableRow key={item.key}>
+            <TableRow key={item.id}> 
               {(columnKey) => 
                 <TableCell>
                     {
