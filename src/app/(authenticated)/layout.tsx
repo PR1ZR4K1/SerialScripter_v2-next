@@ -32,7 +32,7 @@ export default function RootLayout({
             <SidebarWithLogo />
             <div className="ml-[15rem]">
               {children}
-              <Toaster position='top-right' reverseOrder />
+              <Toaster position='top-right'/>
             </div>
           {/* <FooterWithLogo /> */}
         </Providers>

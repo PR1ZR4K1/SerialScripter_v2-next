@@ -3,17 +3,17 @@ import { Host } from "@prisma/client";
 
 
 interface Row {
-    key: number;
+    key: string;
     hostname: string;
     ip: string;
     os: string;
 }
 
 interface HubState {
-    linuxHosts: Host [];
+    linuxHosts: Row[];
     getLinuxHosts: () => void;
 
-    windowsHosts: Host [];
+    windowsHosts: Row[];
     getWindowsHosts: () => void;
 
     // linuxPlaybooks: Playbooks[];
@@ -22,23 +22,23 @@ interface HubState {
     // windowsPlaybooks: Playbooks[];
     // getWindowsPlaybooks: () => void;
 
-    selectedKeysLinuxPlaybooks: Set<number>;
-    setSelectedKeysLinuxPlaybooks: (keys: Set<number>) => void;
+    selectedKeysLinuxPlaybooks: Set<string | number>;
+    setSelectedKeysLinuxPlaybooks: (keys: Set<string | number>) => void;
 
-    selectedKeysLinuxHosts: Set<number>;
-    setSelectedKeysLinuxHosts: (keys: Set<number>) => void;
+    selectedKeysLinuxHosts: Set<string | number>;
+    setSelectedKeysLinuxHosts: (keys: Set<string | number>) => void;
 
-    selectedKeysWindowsPlaybooks: Set<number>;
-    setSelectedKeysWindowsPlaybooks: (keys: Set<number>) => void;
+    selectedKeysWindowsPlaybooks: Set<string | number>;
+    setSelectedKeysWindowsPlaybooks: (keys: Set<string | number>) => void;
 
-    selectedKeysWindowsHosts: Set<number>;
-    setSelectedKeysWindowsHosts: (keys: Set<number>) => void;
+    selectedKeysWindowsHosts: Set<string | number>;
+    setSelectedKeysWindowsHosts: (keys: Set<string | number>) => void;
 }
 
 export const useScriptingHubStore = create<HubState>((set) => ({
     linuxHosts: [],
     getLinuxHosts: () => {
-        fetch('/api/v1/get/linuxHosts')
+        fetch('/api/get/linuxHosts')
             .then(res => res.json())
             .then(data => {
                 set({ linuxHosts: data })
@@ -47,7 +47,7 @@ export const useScriptingHubStore = create<HubState>((set) => ({
 
     windowsHosts: [],
     getWindowsHosts: () => {
-        fetch('/api/v1/get/windowsHosts')
+        fetch('/api/get/windowsHosts')
             .then(res => res.json())
             .then(data => {
                 set({ windowsHosts: data })
@@ -73,14 +73,14 @@ export const useScriptingHubStore = create<HubState>((set) => ({
     // },
 
     selectedKeysLinuxPlaybooks: new Set([]),
-    setSelectedKeysLinuxPlaybooks: (keys: Set<number>) => set({ selectedKeysLinuxPlaybooks: keys }),
+    setSelectedKeysLinuxPlaybooks: (keys: Set<string | number>) => set({ selectedKeysLinuxPlaybooks: keys }),
 
     selectedKeysLinuxHosts: new Set([]),
-    setSelectedKeysLinuxHosts: (keys: Set<number>) => set({ selectedKeysLinuxHosts: keys }),
+    setSelectedKeysLinuxHosts: (keys: Set<string | number>) => set({ selectedKeysLinuxHosts: keys }),
 
     selectedKeysWindowsPlaybooks: new Set([]),
-    setSelectedKeysWindowsPlaybooks: (keys: Set<number>) => set({ selectedKeysWindowsPlaybooks: keys }),
+    setSelectedKeysWindowsPlaybooks: (keys: Set<string | number>) => set({ selectedKeysWindowsPlaybooks: keys }),
 
     selectedKeysWindowsHosts: new Set([]),
-    setSelectedKeysWindowsHosts: (keys: Set<number>) => set({ selectedKeysWindowsHosts: keys }),
+    setSelectedKeysWindowsHosts: (keys: Set<string | number>) => set({ selectedKeysWindowsHosts: keys }),
 }))

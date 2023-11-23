@@ -93,9 +93,8 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
       <Table 
         disallowEmptySelection
         selectedKeys={os.toLowerCase() === 'linux' ? selectedKeysLinuxHosts : selectedKeysWindowsHosts}
-        // each time a row is selected or deselected update the set of selectedkeys
         onSelectionChange={os.toLowerCase() === 'linux' ? setSelectedKeysLinuxHosts as any : setSelectedKeysWindowsHosts as any}
-        aria-label="Selection behavior table with dynamic content"
+        aria-label="Selection behavior table example with dynamic content"
         selectionMode="multiple"
         selectionBehavior={'toggle'}
         classNames={{
@@ -116,7 +115,7 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
         </TableHeader>
         <TableBody emptyContent={"No hosts found"} loadingContent={'Loading...'} items={os === 'linux' ? linuxHosts : windowsHosts}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.key}>
               {(columnKey) => 
                 <TableCell>
                     {

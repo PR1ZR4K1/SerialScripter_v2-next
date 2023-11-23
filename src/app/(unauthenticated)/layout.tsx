@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className='bg-gradient-to-t from-blue-gray-600 via-blue-gray-200 to-blue-gray-600 flex flex-col min-h-screen items-center justify-center'>
         {children}
-        <Toaster position={"top-right"} />
+        <Toaster position={"top-right"}/>
       </body>
     </html>
   )
