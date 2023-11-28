@@ -7,21 +7,18 @@ import { Button } from '@nextui-org/react';
 import { ArrowSmallLeftIcon, ArrowSmallRightIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import AnsibleHostsTable from '@/components/AnsibleHostsTable';
 import { useScriptingHubStore } from '@/store/ScriptingHubStore';
+import { deployAnsiblePlaybooks } from '@/lib/AnsibleHelper';
 
-function deployAnsibleStuff() {
-  
-}
 
 
 export default function LinuxActions() {
   const [view, setView] = useState('scripts');
 
-  const [selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks] = useScriptingHubStore((store) => [
-    store.selectedKeysLinuxHosts,
-    store.selectedKeysLinuxPlaybooks,
+  const [selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks, linuxHosts] = useScriptingHubStore((state) => [
+    state.selectedKeysLinuxHosts,
+    state.selectedKeysLinuxPlaybooks,
+    state.linuxHosts,
   ])
-
-  console.log(selectedKeysLinuxHosts)
 
   return (
     view === 'scripts' ? (
@@ -52,7 +49,7 @@ export default function LinuxActions() {
             <Button onClick={() => setView('scripts')} className='hover:shadow-gray-800 hover:shadow-lg' color='primary' endContent={<ArrowSmallLeftIcon width={15} height={15} />}>
               Select Playbooks
             </Button>
-            <Button onClick={() => setView('scripts')} className='hover:shadow-black hover:shadow-lg' color='danger' endContent={<RocketLaunchIcon width={15} height={15} />}>
+            <Button onClick={() => deployAnsiblePlaybooks({ selectedHosts: selectedKeysLinuxHosts, selectedPlaybooks: selectedKeysLinuxPlaybooks, rows: rows, hosts: linuxHosts, os: 'linux' })} className='hover:shadow-black hover:shadow-lg' color='danger' endContent={<RocketLaunchIcon width={15} height={15} />} >
               Deploy Baby!
             </Button>
           </div>
