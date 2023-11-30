@@ -23,8 +23,6 @@ import {
     getKeyValue,
     Tooltip
 } from "@nextui-org/react";
-import { PlusIcon } from "@/icons/PlusIcon";
-import { VerticalDotsIcon } from "@/icons/VerticalDotsIcon";
 import { ChevronDownIcon } from "@/icons/ChevronDownIcon";
 import { SearchIcon } from "@/icons/SearchIcon";
 import { columns, statusOptions, serverLogs } from "@/data/data";
@@ -32,13 +30,13 @@ import { capitalize } from "@/utils/utils";
 import Image from "next/image";
 // import { getPageData } from "@/actions/serverActions";
 import { Host, Status } from "@prisma/client";
-import { DialogCustomAnimation } from "./Dialoge";
-import { EyeIcon, InformationCircleIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Edit } from "@mui/icons-material";
+import { EyeIcon, InformationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { fetchScanResults } from "@/lib/enumerateNetwork";
 import { addHostToDB } from '@/lib/addToDB'
-import { useHostsStore } from "@/store/HostsStore";
+// import revalidateHost from '@/lib/actions'
+import { revalidatePath } from 'next/cache'
+
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     UP: "success",
@@ -57,7 +55,7 @@ type DatagridProps = {
 export function HostsTable() {
 
     const [filterValue, setFilterValue] = React.useState("");
-    // const [hosts, setHosts] = React.useState<Host[]>([]);
+    const [hosts, setHosts] = React.useState<Host[]>([]);
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
@@ -66,20 +64,37 @@ export function HostsTable() {
         direction: "ascending",
     });
 
-    const [refetchCounter, setRefetchCounter, hosts, fetchHosts] = useHostsStore((state) => [
-        state.refetchCounter, 
-        state.setRefetchCounter,
-        state.hosts,
-        state.fetchHosts,
-    ])
+    const [refetchCounter, setRefetchCounter] = React.useState(0);
+
+    // const [hosts] = useHostsStore((state) => [
+        // state.refetchCounter, 
+        // state.incrementRefetchCounter,
+        // state.hosts,
+    // ])
 
     const [open, setDialogOpen] = useState(false);
 
     useEffect(() => {
+        async function fetchHosts() {
+        try {
+            const response = await fetch("/api/v1/get/hosts", { cache: 'no-store' }); // Replace with your actual API endpoint
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
+            const data = await response.json();
+            setHosts(data.data); // Update the hosts in the store
+        } catch (error) {
+            console.error("Error fetching host data:", error);
+        }
+    }
 
-        fetchHosts();
-    }, [refetchCounter, fetchHosts]);
+        fetchHosts()
+
+        console.log('fetching hosts')
+        console.log(refetchCounter)
+
+    }, [refetchCounter]);
 
 
     const [page, setPage] = React.useState(1);
@@ -240,15 +255,23 @@ export function HostsTable() {
         setFilterValue("")
         setPage(1)
     }, [])
+
+    // state handlers used to disable/enable the scan button
     const [scanning, setScanning] = React.useState(false);
     const [updatingDB, setUpdating] = React.useState(false);
 
     const topContent = React.useMemo(() => {
-        
+
+        // function to add all enumerated hosts to db
+        // created so I can determine when all hosts have been added to the db
+        // then I can render my toast for the user
+
         async function addHostsToDB (newHosts: Host[]) {
     
             for (const newHost of newHosts) {
                 
+                // create hostname if nmap scan didn't grab it
+                // should be host-(last octet of ip)
                 if (!newHost.hostname) {
                     const ipParts = newHost.ip.split('.');
                     const lastOctet = ipParts[ipParts.length - 1];
@@ -258,7 +281,6 @@ export function HostsTable() {
 
                 await addHostToDB(newHost);
             };
-
         }
 
         const handleScan = async () => {
@@ -268,15 +290,13 @@ export function HostsTable() {
 
                 // Wait for the scan results promise to resolve
                 const scanResults: any = await toast.promise(
-                    fetchScanResults('192.168.30.0/24'),
+                    fetchScanResults('192.168.60.0/24'),
                     {
                         loading: 'Scanning...',
                         success: 'Scan Complete!',
                         error: 'Scan Failed!',
                     }
                 );
-
-                setScanning(false);
 
                 if (scanResults.error) {
                     console.log('No you suck i am here')
@@ -298,9 +318,8 @@ export function HostsTable() {
                 );
 
                 // make component refetch table data once all actions are completed
-                fetchHosts();
-                console.log('tried to fetch')
-
+                // await fetchHosts();
+                // console.log('tried to fetch')
 
             } catch (error) {
                 toast.error(`Scan operation failed unexpectedly: ${error}`);
@@ -308,6 +327,9 @@ export function HostsTable() {
                 // Ensure that states are set correctly in case of success or failure
                 setScanning(false);
                 setUpdating(false);
+                // setRefetchCounter(prev => prev + 1)
+                // revalidatePath('/(authenticated)/')
+
             }
         };
 
@@ -398,8 +420,6 @@ export function HostsTable() {
         onClear,
         scanning,
         updatingDB,
-        setRefetchCounter,
-        refetchCounter
     ]);
 
     const bottomContent = React.useMemo(() => {

@@ -33,7 +33,7 @@ model Host {
     hostname    String    @unique
     ip          String    @unique
     os          String
-    services   Service[]
+    services    Service[]
     cpu_cores   Int
     memory      Int
     disk        Int

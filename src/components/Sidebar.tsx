@@ -9,36 +9,21 @@ import {
   ListItemPrefix,
   ListItemSuffix,
   Chip,
-  Accordion,
-  AccordionHeader,
-  AccordionBody,
-  Alert,
 } from "@material-tailwind/react";
 
 import { GiScythe } from 'react-icons/gi'
 
-import type { CardProps } from "@material-tailwind/react";
 
 import {
-  PresentationChartBarIcon,
-  NewspaperIcon,
   HomeModernIcon,
   PencilSquareIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 
-import {
-  ChevronRightIcon,
-  ChevronDownIcon,
-  CubeTransparentIcon,
-  PencilIcon,
-  ShieldExclamationIcon,
-  
-} from "@heroicons/react/24/outline";
+
 import Link from "next/link";
 import { ProfileMenu } from './ProfileMenu'; 
 import ThemeSwitcher from "./ThemeSwitcher";
-import { DialogCustomAnimation } from "../app/(authenticated)/Dialoge";
 
 export function SidebarWithLogo() {
   // const [open, setOpen] = React.useState(0);

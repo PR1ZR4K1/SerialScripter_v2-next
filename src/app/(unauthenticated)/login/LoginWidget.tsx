@@ -1,11 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { login } from '@/lib/userAuthentication';
+import isValidEmail from '@/lib/validateEmail';
+import toast from 'react-hot-toast';
+import { login } from '@/lib/userAuthentication'
+import { motion } from "framer-motion";
+import { fadeIn } from "@/components/variants";
+
+
 
 export default function LoginWidget() {
   return (
-    <div className=" w-full mx-auto mt-4 bg-white rounded-2xl p-8 borde border-gray-300">
+    <motion.div 
+      variants={fadeIn('up', 0.3)}
+      initial='hidden'
+      whileInView={'show'}
+      viewport={{ once: false, amount: 0.7}}
+      className=" w-full mx-auto mt-4 bg-white rounded-2xl p-8 borde border-gray-300">
       {/* Stylized text **/}
       <div className="text-center mb-4">
         <p className="text-3xl font-extrabold text-black">Login </p>
@@ -54,6 +65,6 @@ export default function LoginWidget() {
           </div>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }

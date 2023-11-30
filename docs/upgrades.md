@@ -33,3 +33,6 @@ Back-end functionality:
     - Reports
         - Data Export to pdf and excel where applicable
         - Inventory generation
+
+    - Ansible
+        - make hosts page have a settings pane where user can change host attributes

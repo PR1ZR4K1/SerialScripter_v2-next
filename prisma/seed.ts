@@ -6,8 +6,8 @@ const prisma = new PrismaClient()
 async function main() {
     const dummyHosts = [
         {
-            hostname: 'example1.com',
-            ip: '192.168.0.1',
+            hostname: 'bathtub',
+            ip: '192.168.60.167',
             os: 'Windows',
             cpu_cores: 4,
             memory: 16,

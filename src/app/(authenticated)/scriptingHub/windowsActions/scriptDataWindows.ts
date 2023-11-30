@@ -1,60 +1,28 @@
 const rows = [
   {
-    id: 1,
-    scriptName: "Win_Defender_Setup",
-    category: "Anti-Malware",
+    id: 0,
+    scriptName: "test",
+    category: "testing",
     risk: "High",
-    description: "Enhances Windows Defender settings for optimal protection and automated scans."
+    parameter: false,
+    description: "testing the operation of ansible tings"
   },
   {
-    id: 2,
-    scriptName: "RDP_Security_Enhancer",
+    id: 1,
+    scriptName: "user_list",
     category: "Network",
     risk: "Medium",
+    parameter: true,
     description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
   },
   {
-    id: 3,
-    scriptName: "User_Account_Reviewer",
-    category: "User Management",
+    id: 2,
+    scriptName: "file_stat",
+    category: "Network",
     risk: "Medium",
-    description: "Reviews user accounts for potential security risks such as shared or generic logins."
+    parameter: true,
+    description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
   },
-  {
-    id: 4,
-    scriptName: "UAC_Optimizer",
-    category: "System",
-    risk: "Low",
-    description: "Tweaks User Account Control settings for a balanced mix of usability and security."
-  },
-  {
-    id: 5,
-    scriptName: "Event_Log_Monitor",
-    category: "Logging & Monitoring",
-    risk: "Medium",
-    description: "Configures and optimizes Event Viewer settings to ensure important events are logged and retained."
-  },
-  {
-    id: 6,
-    scriptName: "PowerShell_Securer",
-    category: "Scripting",
-    risk: "Medium",
-    description: "Disables potentially harmful PowerShell features and limits script execution policies."
-  },
-  {
-    id: 7,
-    scriptName: "BitLocker_Setup",
-    category: "Encryption",
-    risk: "High",
-    description: "Configures BitLocker Drive Encryption for optimal security and protection against data theft."
-  },
-  {
-    id: 8,
-    scriptName: "Startup_Audit",
-    category: "Maintenance",
-    risk: "Low",
-    description: "Reviews and cleans up unnecessary startup programs, enhancing boot time and system performance."
-  }
 ];
 
 const columns = [

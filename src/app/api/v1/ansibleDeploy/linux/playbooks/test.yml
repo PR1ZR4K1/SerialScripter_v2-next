@@ -1,0 +1,15 @@
+- name: Test Ansible
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Check connectivity
+      ping:
+
+    - name: Print OS details
+      command: cat /etc/os-release
+      register: os_details
+
+    - name: Display OS details
+      debug:
+        msg: "{{ os_details.stdout_lines }}"

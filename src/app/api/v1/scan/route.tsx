@@ -78,7 +78,7 @@ async function parseNmapOutput(scanOutput: string) {
     return hosts;
 }
 
-export async function nmapScan(range: string) {
+async function nmapScan(range: string) {
     try {
         const { stdout } = await execPromise(`nmap -T4 -F ${range}`);
 
