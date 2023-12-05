@@ -61,10 +61,12 @@ interface HubState {
 
 }
 
+const { signal } = new AbortController();
+
 export const useScriptingHubStore = create<HubState>((set) => ({
     linuxHosts: [],
     getLinuxHosts: () => {
-        fetch('/api/v1/get/linuxHosts')
+        fetch('/api/v1/get/linuxHosts', { next: { revalidate: 10 }, cache: 'no-store', signal })
             .then(res => res.json())
             .then(data => {
                 set({ linuxHosts: data })
@@ -73,7 +75,7 @@ export const useScriptingHubStore = create<HubState>((set) => ({
 
     windowsHosts: [],
     getWindowsHosts: () => {
-        fetch('/api/v1/get/windowsHosts')
+        fetch('/api/v1/get/windowsHosts', { next: { revalidate: 10 }, cache: 'no-store', signal })
             .then(res => res.json())
             .then(data => {
                 set({ windowsHosts: data })

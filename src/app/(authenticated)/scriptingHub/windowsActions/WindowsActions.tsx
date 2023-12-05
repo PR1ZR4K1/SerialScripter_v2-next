@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScriptingHubTable from '@/components/AnsiblePlaybooksTable';
 import { columns, rows } from './scriptDataWindows';
 import { Button } from '@nextui-org/react';
@@ -8,21 +8,26 @@ import { ArrowSmallLeftIcon, ArrowSmallRightIcon, RocketLaunchIcon } from '@hero
 import AnsibleHostsTable from '@/components/AnsibleHostsTable';
 import { deployAnsiblePlaybooks } from '@/lib/AnsibleHelper';
 import { PlaybookParametersType, useScriptingHubStore } from '@/store/ScriptingHubStore';
+import { useHostsStore } from '@/store/HostsStore';
 
 
-
-export default function LinuxActions() {
+export default function WindowsActions() {
   const [view, setView] = useState('scripts');
 
-  const [selectedKeysWindowsHosts, selectedKeysWindowsPlaybooks, windowsHosts, addAnsibleOutput, openAnsibleModal, openParameterModal, addParameterizedPlaybooks] = useScriptingHubStore((state) => [
+  const [selectedKeysWindowsHosts, selectedKeysWindowsPlaybooks, addAnsibleOutput, openAnsibleModal, openParameterModal, addParameterizedPlaybooks, windowsHosts, getWindowsHosts] = useScriptingHubStore((state) => [
     state.selectedKeysWindowsHosts,
     state.selectedKeysWindowsPlaybooks,
-    state.windowsHosts,
     state.addAnsibleOutput,
     state.openAnsibleModal,
     state.openParameterModal,
     state.addParameterizedPlaybooks,
+    state.windowsHosts,
+    state.getWindowsHosts,
   ]);
+
+  useEffect(() => {
+    getWindowsHosts();
+  }, [getWindowsHosts])
 
   // get list of playbooks that need to take user input for parameters
   const getParameterizedPlaybooks = () => {
@@ -68,7 +73,7 @@ export default function LinuxActions() {
             return; // Exit the function if there's no output
         }
 
-        console.log('yoooooo\n', output[0].ip);
+        // console.log('yoooooo\n', output[0].ip);
 
 //         addAnsibleOutput([
 //     { ip: '192.168.0.1', playbookName: 'test.yml', output: 'Funny Output haha' },

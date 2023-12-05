@@ -1,27 +1,31 @@
-'use client'
 // import BarGraph from '@/components/BarCharts';
 // import PieGraph from '@/components/PieCharts';
 import { CarouselDefault } from '@/app/(authenticated)/Carousel';
 import { HostsTable } from '@/app/(authenticated)/HostsTable';
-import { DialogCustomAnimation } from '@/app/(authenticated)/Dialoge';
-import { useState } from 'react';
+import { use } from 'react';
+import { Host } from "@prisma/client";
+
 // import { enumerateNetwork } from '@/lib/enumerateNetwork'
-import { Button } from '@nextui-org/react';
-import { toast } from 'react-hot-toast';
+// import { fetchHosts } from '@/lib/actions';
 
 
-export default function App() {
-   // const session = await getServerSession(authOptions);
-  const [open, setDialogOpen] = useState(false);   
+export default function Home() {
+//     async function fetchHosts() {
+//    try {
+//        const response = await fetch("http://localhost:3000/api/v1/get/hosts", { next: { tags: ['fetchHosts'] } }); // Replace with your actual API endpoint
+//        if (!response.ok) {
+//            throw new Error(`HTTP error! Status: ${response.status}`);
+//        }
 
-//   const handleDialogOpen = () => setDialogOpen(!open);     
-//   const addHostsToDB = async () => {
-//       const res = await fetch('http://localhost:3000/api/hosts');
-//       const data = await res.json();
-//       console.log(data);
-//   }
+//        const data = await response.json();
+//        return data.data;
+//    } catch (error) {
+//        console.error("Error fetching host data:", error);
+//        return [];
+//    }
+// }
 
-
+//     const hosts: Host[] = use(fetchHosts());
 
 
     return (

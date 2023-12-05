@@ -76,8 +76,8 @@ export default function AnsibleFormModal() {
                     </div>
                     <Button type='submit' color="danger" variant="flat" onClick={(e) => {
                         e.preventDefault();
-                        closeParameterModal();
                         console.log(formData); // Here, you can process the formData
+                        onClose();
                     }}>
                         Submit
                     </Button>

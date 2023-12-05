@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from "react";
 
 import {
@@ -14,29 +15,27 @@ import {
     DropdownMenu,
     DropdownItem,
     Chip,
-    User,
     Pagination,
     Selection,
     ChipProps,
     SortDescriptor,
-    Spinner,
-    getKeyValue,
     Tooltip
 } from "@nextui-org/react";
 import { ChevronDownIcon } from "@/icons/ChevronDownIcon";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { columns, statusOptions, serverLogs } from "@/data/data";
+import { columns, statusOptions } from "@/data/data";
 import { capitalize } from "@/utils/utils";
 import Image from "next/image";
 // import { getPageData } from "@/actions/serverActions";
-import { Host, Status } from "@prisma/client";
+import { Host } from "@prisma/client";
 import { EyeIcon, InformationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { fetchScanResults } from "@/lib/enumerateNetwork";
 import { addHostToDB } from '@/lib/addToDB'
 // import revalidateHost from '@/lib/actions'
-import { revalidatePath } from 'next/cache'
-
+import revalidate from '@/lib/actions'
+import { revalidatePath } from "next/cache";
+import { useHostsStore } from '@/store/HostsStore';
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     UP: "success",
@@ -51,11 +50,15 @@ type DatagridProps = {
     handleDialogOpen: () => void;
 };
 
+interface HostsTableProps {
+  hosts: Host[];
+}
+
 // export function HostsTable({ handleDialogOpen }: DatagridProps) {
 export function HostsTable() {
 
     const [filterValue, setFilterValue] = React.useState("");
-    const [hosts, setHosts] = React.useState<Host[]>([]);
+    // const [hosts, setHosts] = React.useState<Host[]>([]);
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
@@ -64,37 +67,54 @@ export function HostsTable() {
         direction: "ascending",
     });
 
-    const [refetchCounter, setRefetchCounter] = React.useState(0);
+    // const [refetchCounter, setRefetchCounter] = React.useState(0);
 
-    // const [hosts] = useHostsStore((state) => [
-        // state.refetchCounter, 
-        // state.incrementRefetchCounter,
-        // state.hosts,
-    // ])
+    const [refetchCounter, setRefetchCounter, hosts, fetchHosts] = useHostsStore((state) => [
+        state.refetchCounter, 
+        state.setRefetchCounter,
+        state.hosts,
+        state.fetchHosts,
+    ]);
 
-    const [open, setDialogOpen] = useState(false);
+    const [timeRefetched, setTimeRefetched] = useState(Date.now());
+
+function getTimeDifference(timeRefetched: number) {
+    const currentTime = Date.now();
+    const timeDifference = currentTime - timeRefetched; // Difference in milliseconds
+
+    // Convert to seconds and format to two decimal places
+    const timeInSeconds = (timeDifference / 1000).toFixed(2);
+
+    return parseFloat(timeInSeconds);
+}
+
 
     useEffect(() => {
-        async function fetchHosts() {
-        try {
-            const response = await fetch("/api/v1/get/hosts", { cache: 'no-store' }); // Replace with your actual API endpoint
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+        // console.log('Refetch Counter updated to: ', refetchCounter);
+        const timeDifference = getTimeDifference(timeRefetched);
 
-            const data = await response.json();
-            setHosts(data.data); // Update the hosts in the store
-        } catch (error) {
-            console.error("Error fetching host data:", error);
+        // initial refetch condition
+        if (refetchCounter === 0) {
+            fetchHosts();
         }
-    }
 
-        fetchHosts()
+        // check if enough time has passed to revalidate data
+        if (timeDifference >= 10) {
+            fetchHosts();
+            setTimeRefetched(Date.now())
+            toast.success('Revalidated Host Data!');
+        }
+        // prevent toast from popping up if it has been less than half a second since last 
+        // validation
+        else if (timeDifference > 1 && timeDifference < 10) {
+            const timeLeft = (10 - timeDifference).toFixed(2);
 
-        console.log('fetching hosts')
-        console.log(refetchCounter)
+            toast.error(`You must wait ${timeLeft} more seconds before revalidating...` )
+        }
 
-    }, [refetchCounter]);
+    }, [fetchHosts, refetchCounter, timeRefetched])
+
+    const [open, setDialogOpen] = useState(false);
 
 
     const [page, setPage] = React.useState(1);
@@ -276,7 +296,7 @@ export function HostsTable() {
                     const ipParts = newHost.ip.split('.');
                     const lastOctet = ipParts[ipParts.length - 1];
                     newHost.hostname = `host-${lastOctet}`;
-                    console.log(newHost)
+                    // console.log(newHost)
                 }
 
                 await addHostToDB(newHost);
@@ -299,13 +319,13 @@ export function HostsTable() {
                 );
 
                 if (scanResults.error) {
-                    console.log('No you suck i am here')
+                    // console.log('No you suck i am here')
                     toast.error(`Scan operation failed unexpectedly: ${scanResults.error}`);
                     setUpdating(false);
                     return;
                 }
 
-                console.log('Scan bitch',scanResults)
+                // console.log('Scan...',scanResults)
 
                 // Now that scanResults is available, proceed to update the database
                 await toast.promise(
@@ -320,6 +340,12 @@ export function HostsTable() {
                 // make component refetch table data once all actions are completed
                 // await fetchHosts();
                 // console.log('tried to fetch')
+                // revalidateTag 
+                // console.log('revalidating tag');
+                // revalidate();
+                // console.log('refetching');
+                // setRefetchCounter();
+                // console.log('incremented refetch counter: ', refetchCounter);
 
             } catch (error) {
                 toast.error(`Scan operation failed unexpectedly: ${error}`);
@@ -327,11 +353,9 @@ export function HostsTable() {
                 // Ensure that states are set correctly in case of success or failure
                 setScanning(false);
                 setUpdating(false);
-                // setRefetchCounter(prev => prev + 1)
-                // revalidatePath('/(authenticated)/')
 
             }
-        };
+        }; 
 
 
         return (
@@ -389,6 +413,9 @@ export function HostsTable() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
+                        <Button className={`dark:bg-[#2B3242] hover:bg-[#27272A]`} onClick={() => {setRefetchCounter()}}>
+                            Revalidate
+                        </Button>
                         <Button className={`dark:bg-[#2B3242] ${scanning || updatingDB ? '' : 'dark:hover:bg-[#27272A]'}`} onClick={handleScan} disabled={scanning || updatingDB}>
                             Scan Hosts
                         </Button>
@@ -420,6 +447,8 @@ export function HostsTable() {
         onClear,
         scanning,
         updatingDB,
+        setRefetchCounter,
+        
     ]);
 
     const bottomContent = React.useMemo(() => {

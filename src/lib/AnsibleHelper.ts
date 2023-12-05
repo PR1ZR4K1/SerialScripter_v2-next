@@ -40,7 +40,7 @@ const postData = async (os: OS, ip: string, playbook: string) => {
         // If you still want to do something with the response, you can
         const data = await result.json();
         // For example, console.log it:
-        console.log(data.output);
+        // console.log(data.output);
 
         // return the stdout from the post request given that it is a success
         return data.output

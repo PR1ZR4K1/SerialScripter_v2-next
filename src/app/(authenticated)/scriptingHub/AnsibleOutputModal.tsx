@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button} from "@nextui-org/react";
 import { useScriptingHubStore } from '@/store/ScriptingHubStore';
 import { Pagination } from '@nextui-org/react';
-import JSONFormatter from 'json-formatter-js';
 import { useTheme } from "next-themes";
 
 
@@ -34,27 +33,37 @@ export default function AnsibleOutputModal() {
       exposePath: false
 }
 
-  const formatJSON = (jsonString: string) => {
-    try {
-      // Parse the JSON string into an object
-      const json = JSON.parse(jsonString);
-      const formatter = new JSONFormatter(json, Infinity, formattedJsonConfig);
-      return formatter.render();
-    } catch (error) {
-      console.error('Error parsing or formatting JSON', error);
-      return document.createElement('div'); // Return an empty div or some error message
-    }
-  }
+  // const formatJSON = (jsonString: string) => {
+
+  //   if (typeof window === "undefined") return document.createElement('div'); // Ensure this runs client-side
+
+
+  //   try {
+  //     // Parse the JSON string into an object
+  //     const json = JSON.parse(jsonString);
+  //     const formatter = new JSONFormatter(json, Infinity, formattedJsonConfig);
+  //     return formatter.render();
+  //   } catch (error) {
+  //     console.error('Error parsing or formatting JSON', error);
+  //     return document.createElement('div'); // Return an empty div or some error message
+  //   }
+  // }
 
 
   const jsonContainerRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
-    if (jsonContainerRef.current && ansibleOutput[page-1]) {
-      const formattedJSON = formatJSON(ansibleOutput[page-1].output);
-      jsonContainerRef.current.innerHTML = '';
-      jsonContainerRef.current.appendChild(formattedJSON);
+    if (typeof window !== "undefined" && jsonContainerRef.current && ansibleOutput[page - 1]) {
+      import('json-formatter-js').then(JSONFormatter => {
+        const json = JSON.parse(ansibleOutput[page - 1].output);
+        const formatter = new JSONFormatter.default(json, Infinity, formattedJsonConfig);
+        const formattedJSON = formatter.render();
+        if (jsonContainerRef.current) { // Additional check here
+          jsonContainerRef.current.innerHTML = '';
+          jsonContainerRef.current.appendChild(formattedJSON);
+        }
+      }).catch(error => console.error('Error loading JSONFormatter:', error));
     }
   }, [ansibleOutput, page]);
 

@@ -3,6 +3,7 @@ import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyV
 import Image from "next/image";
 import { Key, useEffect, useState } from "react";
 import { useScriptingHubStore } from '@/store/ScriptingHubStore';
+import { useHostsStore } from "@/store/HostsStore";
 
 type Column = {
     key: string;
@@ -66,27 +67,28 @@ const columns = [
                         // />
 
 export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
-  const [ linuxHosts,  getLinuxHosts, windowsHosts, getWindowsHosts, selectedKeysLinuxHosts, setSelectedKeysLinuxHosts, selectedKeysWindowsHosts, setSelectedKeysWindowsHosts] =   useScriptingHubStore((state) => [
-    state.linuxHosts,
-    state.getLinuxHosts,
-    state.windowsHosts,
-    state.getWindowsHosts,
+  const [selectedKeysLinuxHosts, setSelectedKeysLinuxHosts, selectedKeysWindowsHosts, setSelectedKeysWindowsHosts, linuxHosts, windowsHosts] =   useScriptingHubStore((state) => [
+
     state.selectedKeysLinuxHosts,
     state.setSelectedKeysLinuxHosts,
     state.selectedKeysWindowsHosts,
     state.setSelectedKeysWindowsHosts,
+    state.linuxHosts,
+    state.windowsHosts,
   ])
 
+  // console.log(windowsHosts);
+
   // console.log('Selected Keys', selectedKeys)
-  useEffect(() => {
+  // useEffect(() => {
 
-      os.toLowerCase() === 'linux' ?  
-        getLinuxHosts()
-      :
-        getWindowsHosts()
-      }, 
+  //     os.toLowerCase() === 'linux' ?  
+  //       setLinuxHosts()
+  //     :
+  //       setWindowsHosts()
+  //     }, 
 
-    [getLinuxHosts, getWindowsHosts, os]);
+  //   [setLinuxHosts, setWindowsHosts, os, linuxHosts, windowsHosts]);
 
   return (
     <div className="flex flex-col gap-3">

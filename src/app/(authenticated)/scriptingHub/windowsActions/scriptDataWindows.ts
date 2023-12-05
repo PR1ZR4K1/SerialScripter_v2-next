@@ -12,7 +12,7 @@ const rows = [
     scriptName: "user_list",
     category: "Network",
     risk: "Medium",
-    parameter: true,
+    parameter: false,
     description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
   },
   {

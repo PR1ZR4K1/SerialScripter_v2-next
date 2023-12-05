@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScriptingHubTable from '@/components/AnsiblePlaybooksTable';
 import { columns, rows } from './scriptDataLinux';
 import { Button } from '@nextui-org/react';
@@ -8,17 +8,23 @@ import { ArrowSmallLeftIcon, ArrowSmallRightIcon, RocketLaunchIcon } from '@hero
 import AnsibleHostsTable from '@/components/AnsibleHostsTable';
 import { useScriptingHubStore } from '@/store/ScriptingHubStore';
 import { deployAnsiblePlaybooks } from '@/lib/AnsibleHelper';
+import { useHostsStore } from '@/store/HostsStore';
 
 
 
 export default function LinuxActions() {
   const [view, setView] = useState('scripts');
 
-  const [selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks, linuxHosts] = useScriptingHubStore((state) => [
+  const [selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks, linuxHosts, getLinuxHosts] = useScriptingHubStore((state) => [
     state.selectedKeysLinuxHosts,
     state.selectedKeysLinuxPlaybooks,
     state.linuxHosts,
+    state.getLinuxHosts,
   ])
+
+  useEffect(() => {
+    getLinuxHosts();
+  }, [getLinuxHosts])
 
   return (
     view === 'scripts' ? (
