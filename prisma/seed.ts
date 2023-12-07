@@ -10,6 +10,7 @@ interface HostData {
     memory: number;
     disk: number;
     status: 'UP' | 'DOWN'; // Update with appropriate status values
+    macAddress: string;
     networkServices?: NetworkServiceTypes[];
     userAccounts?:   UserAccountTypes[];
 
@@ -173,6 +174,7 @@ async function main() {
         memory: 8192,
         disk: 256,
         status: 'UP',
+        macAddress: '00:1A:2B:3C:4D:5E',
         networkServices: host1Services,
         userAccounts: host1UserAccounts,
     });
@@ -186,6 +188,7 @@ async function main() {
         memory: 16384,
         disk: 512,
         status: 'UP',
+        macAddress: '56:78:9A:BC:DE:F0',
         networkServices: host2Services,
         userAccounts: host2UserAccounts,
     });

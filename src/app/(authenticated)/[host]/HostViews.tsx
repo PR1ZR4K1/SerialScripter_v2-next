@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { getHostInfo } from '@/lib/getHostInfo';
 import { Host as PrismaHost, OS, NetworkService, User } from "@prisma/client";
+import Home from './Home';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -41,7 +42,7 @@ export default function HostViews({hostname}: {hostname: string}) {
 
     // conditionally render content in my page
     if (view === 'home'){
-        content = <div>My Host: {host.hostname}</div>;
+        content = <Home />
     } else if (view === 'services'){
         content = <div>My Services: {host.ip}</div>;
     } else if (view === 'users'){
@@ -50,14 +51,13 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <div>My Dashboard: {hostname}</div>;
     }
 
-    console.log(lastUpdated)
 
     return (
         <>
-            <div className='absolute bottom-4 right-0 font-extralight'>
+            <div className='absolute bottom-2 right-0 font-extralight'>
                 Last Updated - {lastUpdated}
             </div>
-            <div className='mt-4'>
+            <div className='flex w-full mt-4 justify-center '>
                 {content}
             </div> 
         </>

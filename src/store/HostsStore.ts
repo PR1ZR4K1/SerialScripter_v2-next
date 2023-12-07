@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, User } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, User, SystemSpec } from "@prisma/client";
 
 type Host = PrismaHost & {
   os?: OS;
+  systemSpec?: SystemSpec;
   networkServices?: NetworkService[];
   users?: User[];
 };
@@ -42,6 +43,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
             }
 
             const data = await response.json();
+            console.log(data.data)
             set({ hosts: data.data }); // Update the hosts in the store
         } catch (error) {
             console.error("Error fetching host data:", error);

@@ -25,6 +25,7 @@ export async function POST(req: Request) {
       include: {
         os: true,
         networkServices: true,
+        systemSpec: true,
       }
   });
 

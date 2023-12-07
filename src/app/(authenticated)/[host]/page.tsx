@@ -8,7 +8,7 @@ function Page({ params }: { params: { host: string } }) {
 
     <section className='flex flex-col w-full h-screen items-center'>
       <Topbar hostname={params.host} />
-      <div className='w-[90%] flex justify-center h-full mt-5 relative'>
+      <div className='w-[90%] flex h-full mt-5 relative'>
         <HostViews hostname={params.host}/>
       </div>
     </section>
