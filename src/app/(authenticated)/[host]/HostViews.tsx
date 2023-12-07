@@ -3,13 +3,15 @@
 import React, { useEffect, useState } from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { getHostInfo } from '@/lib/getHostInfo';
-import { Host as PrismaHost, OS, NetworkService, User } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, UserAccount } from "@prisma/client";
 import Home from './Home';
+import Services from './Services';
+import Users from './Users';
 
 type Host = PrismaHost & {
   os?: OS;
   networkServices?: NetworkService[];
-  users?: User[];
+  users?: UserAccount[];
 };
 
 
@@ -40,13 +42,15 @@ export default function HostViews({hostname}: {hostname: string}) {
 
     let content;
 
+    console.log(host)
+
     // conditionally render content in my page
     if (view === 'home'){
         content = <Home />
     } else if (view === 'services'){
-        content = <div>My Services: {host.ip}</div>;
+        content = <Services />;
     } else if (view === 'users'){
-        content = <div>My Users: {hostname}</div>;
+        content = <Users />
     } else if (view === 'xterm') {
         content = <div>My Dashboard: {hostname}</div>;
     }

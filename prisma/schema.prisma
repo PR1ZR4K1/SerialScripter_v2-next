@@ -21,7 +21,7 @@ enum Status {
 }
 
 enum UserType {
-    PRIVELEGED
+    PRIVILEGED
     USER // Assuming there might be regular users as well.
 }
 
@@ -43,6 +43,8 @@ model Host {
   systemSpecId      Int?         @unique
   systemSpec        SystemSpec?  @relation(fields: [systemSpecId], references: [id])
   macAddress        String?      // New field
+  gateway           String?
+  dhcp              Boolean?
   createdAt         DateTime     @default(now())
   systemServices    SystemService[]
   networkServices   NetworkService[]

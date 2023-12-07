@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, User, SystemSpec } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemSpec } from "@prisma/client";
 
 type Host = PrismaHost & {
   os?: OS;
   systemSpec?: SystemSpec;
   networkServices?: NetworkService[];
-  users?: User[];
+  userAccounts?: UserAccount[];
 };
 
 interface HostsStoreTypes {
@@ -59,12 +59,14 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         ip: '0.0.0.0', // Default IP, indicating an invalid or non-existent IP
         osId: 0, // Default OS ID, assuming 0 is a placeholder value
         status: 'UP', // Default status
+        gateway: null,
+        dhcp: null,
         systemSpecId: null, // Assuming systemSpecId can be null
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder
         createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
+        networkServices: [],
         // Include any other missing fields with their default or placeholder values
     },
-
     setHost: (host: Host) => set({ host: host}),
 
 }));
