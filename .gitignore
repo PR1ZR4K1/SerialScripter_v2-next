@@ -38,3 +38,7 @@ next-env.d.ts
 
 # whatever Jaylon told me to do (Bruce)
 .env
+env
+.gitignore
+.gitignore
+env.local
