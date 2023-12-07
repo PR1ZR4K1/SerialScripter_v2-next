@@ -1,6 +1,12 @@
-import { Host } from '@prisma/client';
 import { create } from 'zustand'
 
+import { Host as PrismaHost, OS, NetworkService, User } from "@prisma/client";
+
+type Host = PrismaHost & {
+  os?: OS;
+  networkServices?: NetworkService[];
+  users?: User[];
+};
 
 interface HostsStoreTypes {
     refetchCounter: number;
@@ -8,6 +14,12 @@ interface HostsStoreTypes {
 
     hosts: Host[];
     fetchHosts: () => Promise<void>;
+
+    view: string;
+    setView: (view: string) => void;
+
+    host: Host;
+    setHost: (host: Host) => void;
 }
 
 const { signal } = new AbortController()
@@ -34,5 +46,23 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         } catch (error) {
             console.error("Error fetching host data:", error);
         }
-    }
-}))
+    },
+
+    view: 'home',
+    setView: (view: string) => set({view: view}),
+
+    host: {
+        id: 0, // Default ID, assuming 0 is an invalid or placeholder ID
+        hostname: 'N/A', // Placeholder value
+        ip: '0.0.0.0', // Default IP, indicating an invalid or non-existent IP
+        osId: 0, // Default OS ID, assuming 0 is a placeholder value
+        status: 'UP', // Default status
+        systemSpecId: null, // Assuming systemSpecId can be null
+        macAddress: null, // Assuming macAddress can be null or you might use a placeholder
+        createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
+        // Include any other missing fields with their default or placeholder values
+    },
+
+    setHost: (host: Host) => set({ host: host}),
+
+}));

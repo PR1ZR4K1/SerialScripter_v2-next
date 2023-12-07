@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -10,16 +10,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255; /* Text color in dark mode */
-    --background-start-rgb: 0, 0, 30; /* Dark blue gradient start color (adjust as needed) */
-    --background-end-rgb: 0, 0, 60; /* Dark blue gradient end color (adjust as needed) */
+    --foreground-rgb: 255, 255, 255; 
+    --background-start-rgb: 0, 0, 30; 
+    --background-end-rgb: 0, 0, 60; Dark blue gradient end color (adjust as needed)
   }
-}
-
-.absolute.hover:hover.inset-shadow {
-  box-shadow: inset 50px 50px 100px rgba(0, 0, 0, 0.9);
-}
-
+} */
 
 /* body {
   color: rgb(var(--foreground-rgb));

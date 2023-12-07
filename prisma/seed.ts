@@ -1,174 +1,204 @@
-import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const prisma = new PrismaClient()
+interface HostData {
+    hostname: string;
+    ip: string;
+    osName: string;
+    osVersion: string;
+    cpuCores: number;
+    memory: number;
+    disk: number;
+    status: 'UP' | 'DOWN'; // Update with appropriate status values
+    networkServices?: NetworkServiceTypes[];
+    userAccounts?:   UserAccountTypes[];
+
+}
+
+interface UserAccountTypes {
+    username: string;
+    password: string;
+    userType: 'PRIVILEGED' | 'USER';
+    // lastLogin: Date;
+    // loginAttempts: number;
+}
+
+interface NetworkServiceTypes {
+    name: string;
+    description?: string;
+    port: number;
+    status: 'UP' | 'DOWN'; // Update with appropriate status values
+}
+
+async function createNetworkServices(services: NetworkServiceTypes[], hostId: number) {
+    return Promise.all(services.map(service => 
+        prisma.networkService.create({
+            data: {
+                name: service.name,
+                description: service.description,
+                port: service.port,
+                status: service.status,
+                hostId: hostId, // Link each service to the created host
+            },
+        })
+    ));
+}
+
+async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, disk, status, networkServices }: HostData) {
+
+    // Create OS records
+    const os = {
+        name: osName,
+        version: osVersion,
+    };
+
+    const createdOS = await prisma.oS.create({ data: os });
+
+    // Create SystemSpec records
+    const specs = {
+        cpuCores,
+        memory,
+        disk,
+    };
+
+    const createdSpecs = await prisma.systemSpec.create({ data: specs });
+
+    // Create Host record
+    const host = {
+        hostname,
+        ip,
+        os: { connect: { id: createdOS.id } },
+        systemSpec: { connect: { id: createdSpecs.id } },
+        status,
+    };
+
+    const createdHost = await prisma.host.create({ data: host });
+
+    // Create related records for the host's services
+    if (networkServices && networkServices.length > 0) {
+        await createNetworkServices(networkServices, createdHost.id);
+    }
+
+    // Additional data creation (software, containers, volumes) can be added here if needed
+
+    return createdHost;
+}
 
 async function main() {
-    const dummyHosts = [
+    const host1Services: NetworkServiceTypes[] = [
         {
-            hostname: 'bathtub',
-            ip: '192.168.60.167',
-            os: 'Windows',
-            cpu_cores: 4,
-            memory: 16,
-            disk: 256,
+            name: 'SMB',
+            port: 445, // SMB typically uses port 445
+            description: 'Server Message Block for file sharing',
             status: 'UP',
         },
         {
-            hostname: 'example2.com',
-            ip: '192.168.0.2',
-            os: 'Linux',
-            cpu_cores: 2,
-            memory: 8,
-            disk: 128,
+            name: 'IIS',
+            port: 80,
+            description: 'Internet Information Services',
+            status: 'UP',
+        },
+        {
+            name: 'MSSQL',
+            port: 1433,
+            description: 'Microsoft SQL Server database service',
             status: 'DOWN',
+        }
+    ];
+
+    const host1UserAccounts: UserAccountTypes[] = [
+        {
+            username: 'root',
+            password: 'password123',
+            userType: 'PRIVILEGED',
         },
         {
-            hostname: 'example3.com',
-            ip: '192.168.0.3',
-            os: 'Router',
-            cpu_cores: 6,
-            memory: 32,
-            disk: 512,
-            status: 'UP',
+            username: 'kevin',
+            password: 'password123',
+            userType: 'USER',
         },
         {
-            hostname: 'example4.com',
-            ip: '192.168.0.4',
-            os: 'Windows',
-            cpu_cores: 8,
-            memory: 32,
-            disk: 512,
-            status: 'UP',
-        },
-        {
-            hostname: 'example5.com',
-            ip: '192.168.0.5',
-            os: 'Linux',
-            cpu_cores: 4,
-            memory: 16,
-            disk: 256,
-            status: 'DOWN',
-        },
-        {
-            hostname: 'example6.com',
-            ip: '192.168.0.6',
-            os: 'Router',
-            cpu_cores: 2,
-            memory: 8,
-            disk: 128,
-            status: 'UP',
-        },
-        {
-            hostname: 'example7.com',
-            ip: '192.168.0.7',
-            os: 'Windows',
-            cpu_cores: 6,
-            memory: 32,
-            disk: 512,
-            status: 'UP',
-        },
-        {
-            hostname: 'example8.com',
-            ip: '192.168.0.8',
-            os: 'Linux',
-            cpu_cores: 2,
-            memory: 8,
-            disk: 128,
-            status: 'DOWN',
-        },
-        {
-            hostname: 'example9.com',
-            ip: '192.168.0.9',
-            os: 'Router',
-            cpu_cores: 4,
-            memory: 16,
-            disk: 256,
-            status: 'UP',
-        },
-        {
-            hostname: 'example10.com',
-            ip: '192.168.0.10',
-            os: 'Windows',
-            cpu_cores: 4,
-            memory: 16,
-            disk: 256,
-            status: 'UP',
-        },
-        {
-            hostname: 'example11.com',
-            ip: '192.168.0.11',
-            os: 'Linux',
-            cpu_cores: 2,
-            memory: 8,
-            disk: 128,
-            status: 'DOWN',
-        },
-        {
-            hostname: 'example12.com',
-            ip: '192.168.0.12',
-            os: 'Router',
-            cpu_cores: 6,
-            memory: 32,
-            disk: 512,
-            status: 'UP',
-        },
-        {
-            hostname: 'example13.com',
-            ip: '192.168.0.13',
-            os: 'Windows',
-            cpu_cores: 8,
-            memory: 32,
-            disk: 512,
-            status: 'UP',
-        },
-        {
-            hostname: 'example14.com',
-            ip: '192.168.0.14',
-            os: 'Linux',
-            cpu_cores: 4,
-            memory: 16,
-            disk: 256,
-            status: 'DOWN',
-        },
-        {
-            hostname: 'example15.com',
-            ip: '192.168.0.15',
-            os: 'Router',
-            cpu_cores: 2,
-            memory: 8,
-            disk: 128,
-            status: 'UP',
+            username: 'bruce',
+            password: 'password123',
+            userType: 'USER',
         },
     ];
 
 
-    for (const hostData of dummyHosts) {
-        await prisma.host.create({
-            data: {
-                ...hostData,
-                createdAt: new Date(),
-            },
-        });
-    }
-
-    const password = await hash('test', 12)
-
-    const user = await prisma.user.upsert({
-        where: { email: 'test@test.com' },
-        update: {},
-        create: {
-            email: 'test@test.com',
-            name: 'Test User',
-            password: password,
+    const host2Services: NetworkServiceTypes[] = [
+        {
+            name: 'sshd',
+            port: 22,
+            description: 'SSH Daemon',
+            status: 'UP',
+        },
+        {
+            name: 'Apache',
+            port: 80,
+            description: 'Web Server',
+            status: 'UP',
+        },
+        {
+            name: 'MySQL',
+            port: 3306,
+            description: 'MySQL Database Service',
+            status: 'DOWN',
         }
-    })
-    console.log({ user })
+    ];
+
+    const host2UserAccounts: UserAccountTypes[] = [
+        {
+            username: 'administrator',
+            password: 'password123',
+            userType: 'PRIVILEGED',
+        },
+        {
+            username: 'lupe',
+            password: 'password123',
+            userType: 'USER',
+        },
+        {
+            username: 'hector',
+            password: 'password123',
+            userType: 'USER',
+        },
+    ];
+    
+    const host1 = await createHost({
+        hostname: 'bobby',
+        ip: '192.168.60.253',
+        osName: 'Linux',
+        osVersion: 'Ubuntu 20.04',
+        cpuCores: 4,
+        memory: 8192,
+        disk: 256,
+        status: 'UP',
+        networkServices: host1Services,
+        userAccounts: host1UserAccounts,
+    });
+
+    const host2 = await createHost({
+        hostname: 'shmurda',
+        ip: '192.168.60.254',
+        osName: 'Windows',
+        osVersion: 'Windows 10 Pro',
+        cpuCores: 8,
+        memory: 16384,
+        disk: 512,
+        status: 'UP',
+        networkServices: host2Services,
+        userAccounts: host2UserAccounts,
+    });
+
+    // Additional hosts can be created in a similar way
+
+    console.log('Hosts created:', host1, host2);
 }
+
 main()
-    .then(() => prisma.$disconnect())
-    .catch(async (e) => {
-        console.error(e)
-        await prisma.$disconnect()
-        process.exit(1)
+    .catch(e => {
+        console.error(e);
     })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

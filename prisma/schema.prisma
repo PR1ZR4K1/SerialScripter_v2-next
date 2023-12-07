@@ -20,6 +20,10 @@ enum Status {
     DOWN
 }
 
+enum UserType {
+    PRIVELEGED
+    USER // Assuming there might be regular users as well.
+}
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -28,37 +32,105 @@ model User {
   name     String?
 }
 
+
 model Host {
-    id          Int       @id @default(autoincrement())
-    hostname    String    @unique
-    ip          String    @unique
-    os          String
-    services    Service[]
-    cpu_cores   Int
-    memory      Int
-    disk        Int
-    incidents  Incident[]
-    status      String
-    createdAt   DateTime  @default(now())
+  id                Int          @id @default(autoincrement())
+  hostname          String       @unique
+  ip                String       @unique
+  osId              Int          @unique
+  status            Status       // Changed to enum type
+  os                OS           @relation(fields: [osId], references: [id])
+  systemSpecId      Int?         @unique
+  systemSpec        SystemSpec?  @relation(fields: [systemSpecId], references: [id])
+  macAddress        String?      // New field
+  createdAt         DateTime     @default(now())
+  systemServices    SystemService[]
+  networkServices   NetworkService[]
+  incidents         Incident[]
+  software          Software[]
+  containers        Container[]
+  userAccounts      UserAccount[]
 }
 
-model Service {
-    id          Int       @id @default(autoincrement())
-    name        String
-    port        Int
-    host        Host      @relation(fields: [hostId], references: [id])
-    hostId      Int
-    status      Status
+model OS {
+  id      Int    @id @default(autoincrement())
+  name    String // Linux, Windows, Router, Unknown
+  version String?
+  host    Host?
+}
+
+model SystemSpec {
+  id        Int    @id @default(autoincrement())
+  cpuCores  Int
+  memory    Int    // Assuming this is in MB or GB
+  disk      Int    // Assuming this is in GB
+  host      Host?
+}
+
+model SystemService {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String?
+  status      Status // Assuming Status is an enum with values like UP, DOWN
+  hostId      Int
+  host        Host   @relation(fields: [hostId], references: [id])
+}
+
+model NetworkService {
+  id          Int    @id @default(autoincrement())
+  name        String
+  port        Int
+  description String?
+  status      Status // Assuming Status is an enum with values like UP, DOWN
+  hostId      Int
+  host        Host   @relation(fields: [hostId], references: [id])
 }
 
 model Incident {
-    id          Int       @id @default(autoincrement())
-    name        String
-    description String
-    host        Host      @relation(fields: [hostId], references: [id])
-    hostId      Int
-    status      IncidentStatus
-    createdAt   DateTime  @default(now())
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  host        Host         @relation(fields: [hostId], references: [id])
+  hostId      Int
+  status      IncidentStatus
+  createdAt   DateTime     @default(now())
+}
+
+model Software {
+  id          Int      @id @default(autoincrement())
+  name        String
+  version     String?
+  path        String?
+  host        Host     @relation(fields: [hostId], references: [id])
+  hostId      Int
+}
+
+model Container {
+  id          Int      @id @default(autoincrement())
+  containerId String   @unique
+  name        String
+  type        String
+  host        Host     @relation(fields: [hostId], references: [id])
+  hostId      Int
+  volumes     Volume[] // One-to-many relationship with Volume
+}
+
+model Volume {
+  id           Int      @id @default(autoincrement())
+  path         String
+  name         String
+  size         Int      // Assuming this is in MB or GB
+  permissions  String   
+  containerId  Int
+  container    Container @relation(fields: [containerId], references: [id])
 }
 
 
+model UserAccount {
+  id        Int       @id @default(autoincrement())
+  username  String
+  password  String
+  userType  UserType  // Changed to enum type
+  host      Host?     @relation(fields: [hostId], references: [id])
+  hostId    Int?
+}

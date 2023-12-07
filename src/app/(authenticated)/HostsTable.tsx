@@ -27,7 +27,7 @@ import { columns, statusOptions } from "@/data/data";
 import { capitalize } from "@/utils/utils";
 import Image from "next/image";
 // import { getPageData } from "@/actions/serverActions";
-import { Host } from "@prisma/client";
+import { Host as PrismaHost, OS } from '@prisma/client';
 import { EyeIcon, InformationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { fetchScanResults } from "@/lib/enumerateNetwork";
@@ -36,6 +36,7 @@ import { addHostToDB } from '@/lib/addToDB'
 import revalidate from '@/lib/actions'
 import { revalidatePath } from "next/cache";
 import { useHostsStore } from '@/store/HostsStore';
+import Link from "next/link";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     UP: "success",
@@ -44,7 +45,9 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "incidents", "status", "actions"];
 
-
+type Host = PrismaHost & {
+  os?: OS;
+};
 
 type DatagridProps = {
     handleDialogOpen: () => void;
@@ -167,27 +170,30 @@ function getTimeDifference(timeRefetched: number) {
     const renderCell = React.useCallback((host: Host, columnKey: React.Key) => {
         const cellValue = host[columnKey as keyof Host];
         
-        const handleDialogOpen = () => setDialogOpen(!open);
+        // const handleDialogOpen = () => setDialogOpen(!open);
+        if (columnKey === "os") {
+            const osName = host.os?.name || 'unknown'; // Fallback to 'unknown' if os or os.name is undefined
+            let imgSrc = '/assets/router.png'; // Default image
+
+            if (osName.toLowerCase() === 'windows') {
+                imgSrc = '/assets/windows.png';
+            } else if (osName.toLowerCase() === 'linux') {
+                imgSrc = '/assets/linux.png';
+            }
+
+            return (
+                <div className="flex flex-col">
+                    <Image
+                        alt='OS Img'
+                        width={40}
+                        height={40}
+                        src={imgSrc}
+                    />
+                </div>
+            );
+        }
+        
         switch (columnKey) {
-            case "os":
-                return (
-                    <div className="flex flex-col">
-                        <Image
-                            alt='OS Img'
-                            width={40}
-                            height={40}
-                            src={
-                                typeof cellValue === 'string' ?
-                                    (cellValue.toLowerCase() === 'windows'
-                                        ? '/assets/windows.png'
-                                        : cellValue.toLowerCase() === 'linux'
-                                            ? '/assets/linux.png'
-                                            : '/assets/router.png') // Replace 'other' with the third option
-                                : '/assets/router.png' // Replace with appropriate source for non-string cellValue
-                            }
-                        />
-                    </div>
-                );
             case "hostname":
                 return (
                     <div className="flex flex-col">
@@ -216,18 +222,20 @@ function getTimeDifference(timeRefetched: number) {
                 return (
                     <div className="flex items-center justify-center">
                         <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
-                            {cellValue instanceof Date ? cellValue.toString() : cellValue}
+                    {typeof cellValue === 'string' ? cellValue : 'Unknown'}
                         </Chip>
                     </div>
                 );
             case "actions":
                 return (
                     <div className="relative flex items-center justify-center gap-2 h-full ">
-                        <Tooltip color="primary" content="View Host">
-                            <span className="text-lg text-primary cursor-pointer active:opacity-50">
-                                <EyeIcon width={25} height={25}/>
-                            </span>
-                        </Tooltip>
+                        <Link href={`/${host.hostname}`}>
+                            <Tooltip color="primary" content="View Host">
+                                <span className="text-lg text-primary cursor-pointer active:opacity-50">
+                                    <EyeIcon width={25} height={25}/>
+                                </span>
+                            </Tooltip>
+                        </Link>
                         <Tooltip content="Brief Description">
                             <span className="text-lg text-warning cursor-pointer active:opacity-50">
                                 <InformationCircleIcon width={25} height={25}/>
@@ -240,10 +248,10 @@ function getTimeDifference(timeRefetched: number) {
                         </Tooltip>
                     </div>  
                 );
-            default:
-                return cellValue !== undefined ? cellValue.toString() : '';
+            // default:
+            //     return cellValue !== undefined ? cellValue.toString() : '';
         }
-    }, [open]);
+    }, []);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
