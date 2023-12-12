@@ -1,62 +1,48 @@
 import { prisma } from '@/lib/prisma';
 
-// this is a helper function used to check if the host that I want to  
 export async function POST(req: Request) {
-    
     try {
         if (req.method !== 'POST') {
             return new Response(JSON.stringify({ error: 'Method not allowed!' }), {
                 status: 405,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
         }
-    
+
         const { newHost } = await req.json();
+        const { os, ...hostDataWithoutOS } = newHost;
 
-        const { id, ...hostDataWithoutId } = newHost;
+        // Create a new OS record for each host
+        const createdOS = await prisma.oS.create({
+            data: { name: os.name, version: os.version || '' }
+        });
 
-        console.log('The new host object', hostDataWithoutId)
-
+        // Upsert the host data
         try {
             await prisma.host.upsert({
-                where: {
-                    ip: hostDataWithoutId.ip,
-                    hostname: hostDataWithoutId.hostname,
-                },
-                create: {
-                    ...hostDataWithoutId
-                },
-                update: {
-                    ...hostDataWithoutId
-                }
+                where: { ip: hostDataWithoutOS.ip },
+                create: { ...hostDataWithoutOS, osId: createdOS.id },
+                update: { ...hostDataWithoutOS, osId: createdOS.id }
             });
-    
+
             return new Response(JSON.stringify({ success: 'Host added to database' }), {
                 status: 200,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
             
         } catch (error) {
-            
+            console.error('Error in upserting host:', error);
             return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
                 status: 500,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
         }
         
     } catch (error) {
+        console.error('Error in processing request:', error);
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
             status: 500,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
     }
-
-}
+};

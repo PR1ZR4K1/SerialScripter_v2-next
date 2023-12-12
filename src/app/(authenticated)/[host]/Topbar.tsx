@@ -87,7 +87,7 @@ export default function Topbar({hostname}: {hostname: string}) {
 
 
   return (
-    <Navbar fullWidth className="flex w-[90%] bg-white/60 border-none dark:bg-black/5 dark:border-black/30 py-4 rounded-3xl mt-4">
+    <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-black/5 dark:border-black/30 py-4 rounded-3xl mt-4">
       <div className="flex items-center text-blue-gray-900 absolute top-1/2 -translate-y-1/2 left-6">
         <Typography
           as="a"

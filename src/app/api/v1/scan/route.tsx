@@ -3,6 +3,26 @@ import { exec } from 'child_process';
 import util from 'util';
 import { Host } from '@prisma/client';
 
+type OS = {
+    name: string;
+    version: string;
+};
+
+type newHost = {
+    id: number;
+    hostname: string;
+    ip: string;
+    osId?: number;
+    status: 'UP' | 'DOWN';
+    systemSpecId?: number | null;
+    macAddress?: string | null;
+    gateway?: string | null;
+    dhcp?: boolean | null;
+    createdAt: Date;
+    os?: OS;
+};
+
+
 const execPromise = util.promisify(exec);
 
 async function getOS(ip: string) {
@@ -39,7 +59,7 @@ async function getOS(ip: string) {
 
 async function parseNmapOutput(scanOutput: string) {
     const hostReports = scanOutput.split('Nmap scan report for ');
-    const hosts: Host[] = [];
+    const hosts: newHost[] = [];
     let idCounter = 1;
 
     for (const report of hostReports) {
@@ -59,16 +79,20 @@ async function parseNmapOutput(scanOutput: string) {
                 continue;
             }
 
-            const os = await getOS(ipAddress);
+            const osName = await getOS(ipAddress);
+
+            const os = {
+                name: osName,
+                version: '',
+            }
+
+
 
             hosts.push({
                 id: idCounter++,
                 hostname: hostname,
                 ip: ipAddress,
-                os: os, // OS information is not provided by Nmap
-                cpu_cores: 0, // CPU cores information is not provided by Nmap
-                memory: 0, // Memory information is not provided by Nmap
-                disk: 0, // Disk information is not provided by Nmap
+                os: os,
                 status: status,
                 createdAt: new Date(),
             });

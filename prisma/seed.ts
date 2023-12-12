@@ -10,6 +10,9 @@ interface HostData {
     memory: number;
     disk: number;
     status: 'UP' | 'DOWN'; // Update with appropriate status values
+    gateway: string,
+    dhcp: boolean,
+    macAddress: string;
     networkServices?: NetworkServiceTypes[];
     userAccounts?:   UserAccountTypes[];
 
@@ -42,9 +45,23 @@ async function createNetworkServices(services: NetworkServiceTypes[], hostId: nu
             },
         })
     ));
-}
+};
 
-async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, disk, status, networkServices }: HostData) {
+async function createUserAccounts(userAccounts: UserAccountTypes[], hostId: number) {
+    return Promise.all(userAccounts.map(userAccount => 
+        prisma.userAccount.create({
+            data: {
+                username: userAccount.username,
+                password: userAccount.password,
+                userType: userAccount.userType, // Correct field name as per schema
+                hostId: hostId, // Link each user account to the created host
+            },
+        })
+    ));
+};
+
+
+async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, disk, status, gateway, dhcp, macAddress, networkServices, userAccounts }: HostData) {
 
     // Create OS records
     const os = {
@@ -70,6 +87,9 @@ async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, d
         os: { connect: { id: createdOS.id } },
         systemSpec: { connect: { id: createdSpecs.id } },
         status,
+        gateway,
+        dhcp,
+        macAddress,
     };
 
     const createdHost = await prisma.host.create({ data: host });
@@ -77,6 +97,10 @@ async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, d
     // Create related records for the host's services
     if (networkServices && networkServices.length > 0) {
         await createNetworkServices(networkServices, createdHost.id);
+    }
+
+    if (userAccounts && userAccounts.length > 0) {
+        await createUserAccounts(userAccounts, createdHost.id);
     }
 
     // Additional data creation (software, containers, volumes) can be added here if needed
@@ -173,6 +197,9 @@ async function main() {
         memory: 8192,
         disk: 256,
         status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '00:1A:2B:3C:4D:5E',
         networkServices: host1Services,
         userAccounts: host1UserAccounts,
     });
@@ -186,6 +213,9 @@ async function main() {
         memory: 16384,
         disk: 512,
         status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '56:78:9A:BC:DE:F0',
         networkServices: host2Services,
         userAccounts: host2UserAccounts,
     });
