@@ -18,6 +18,7 @@ import {
   HomeModernIcon,
   PencilSquareIcon,
   ExclamationTriangleIcon,
+  RectangleGroupIcon
 } from "@heroicons/react/24/solid";
 
 
@@ -63,6 +64,15 @@ export function SidebarWithLogo() {
             <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Scripting Hub
+            </span>
+          </Link>
+        </button>
+
+        <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
+          <Link href='/cron' className="flex items-center">
+            <RectangleGroupIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
+              Cron
             </span>
           </Link>
         </button>
