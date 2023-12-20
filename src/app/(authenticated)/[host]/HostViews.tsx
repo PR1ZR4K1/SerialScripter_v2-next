@@ -7,6 +7,7 @@ import { Host as PrismaHost, OS, NetworkService, UserAccount } from "@prisma/cli
 import Home from './Home';
 import Services from './Services';
 import Users from './Users';
+import { convertToPST } from '@/lib/formatTime';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -42,8 +43,6 @@ export default function HostViews({hostname}: {hostname: string}) {
 
     let content;
 
-    console.log(host)
-
     // conditionally render content in my page
     if (view === 'home'){
         content = <Home />
@@ -55,15 +54,23 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <div>My Dashboard: {hostname}</div>;
     }
 
+    let lastCreated = 'N/A';
+
+    if (host.createdAt) {
+        lastCreated = convertToPST(host.createdAt.toString());
+    }
 
     return (
         <>
-            <div className='absolute bottom-2 right-0 font-extralight'>
+            <div className='absolute top-0 left-10 font-extralight'>
+                First Scanned: {lastCreated} 
+            </div>
+            <div className='absolute bottom-4 right-0 font-extralight'>
                 Last Updated - {lastUpdated}
             </div>
-            <div className='flex w-full mt-4 justify-center '>
+            <div className='flex w-full mt-12 justify-center '>
                 {content}
             </div> 
         </>
     );
-}
+};

@@ -10,11 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum IncidentStatus {
-    OPEN
-    CLOSED
-}
-
 enum Status {
     UP
     DOWN
@@ -92,9 +87,9 @@ model Incident {
   id          Int          @id @default(autoincrement())
   name        String
   description String
+  tags        String[]
   host        Host         @relation(fields: [hostId], references: [id])
   hostId      Int
-  status      IncidentStatus
   createdAt   DateTime     @default(now())
 }
 
