@@ -19,7 +19,6 @@ export default function Home() {
   ]);
 
   let imgSrc = '/assets/router.png'; // Default image
-  let lastCreated = 'N/A';
 
   try {
     if (host.os) {
@@ -31,18 +30,13 @@ export default function Home() {
         }  
     }
 
-    if (host.createdAt) {
-        lastCreated = convertToPST(host.createdAt.toString());
+    } catch (error) {
+        console.log('dont know what to do w this', error)
     }
-
-  } catch (error) {
-    console.log('dont know what to do w this', error)
-  }
-
-  
+    
   return (
     <div className='flex w-[95%] h-[90%] items-start gap-x-6'>
-        <div className='flex h-full justify-center items-center w-1/5 bg-white/70 dark:bg-[#18181B] rounded-xl '>
+        <div className='flex h-full justify-center items-center w-1/5 bg-white/70 dark:bg-[#0062A3] rounded-xl '>
            <div className='flex flex-col h-1/2 w-full my-8 px-4 gap-y-6 relative items-center justify-center'>
                 <div className='flex justify-center'>
                     <Image
@@ -75,22 +69,13 @@ export default function Home() {
             </div>
         </div>
         <div className='flex flex-col w-4/5 h-full items-center gap-y-6'>
-            <div className='flex flex-1 w-full justify-center items-center rounded-xl bg-white/70 dark:bg-[#18181B]'>
+            <div className='flex flex-1 w-full justify-center items-center rounded-xl bg-white/70 dark:bg-[#0062A3]'>
                 <div className='flex w-[90%] h-[90%] relative'>
                     <div className='absolute top-1/2 -translate-y-1/2 left-1/2 border-1 border-black/30 rounded-full h-full' />
 
-                    <div className='flex items-center justify-center w-1/2'>
-                        <div className='flex items-center gap-x-4'>
-                            <ClockIcon height={50} width={50}/>
-                            <p>
-                                First Scanned: {lastCreated} 
-                            </p>
-                        </div>
-                    </div>
-                    <div className='w-1/2 pl-12'>
-
+                    <div className='flex items-center justify-center w-1/2 relative'>
                         <div className='flex relative font-light justify-center items-center gap-y-6 flex-col h-full'>
-                            <div className='absolute top-0 left-1/2 -translate-x-1/2 font-semibold' >
+                            <div className='absolute top-0 left-1/2 -translate-x-1/2 font-semibold whitespace-nowrap' >
                                 Network Statistics
                             </div>
                             <div className='flex items-center gap-x-2'>
@@ -111,9 +96,13 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
+                    <div className='w-1/2 pl-12'>
+
+
+                    </div>
                 </div>
             </div>
-            <div className='flex flex-1 w-full rounded-xl bg-white/70 dark:bg-[#18181B] justify-center items-center'>
+            <div className='flex flex-1 w-full rounded-xl bg-white/70 dark:bg-[#0062A3] justify-center items-center'>
                 Coming Soon...
             </div>
         </div>

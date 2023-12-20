@@ -19,7 +19,7 @@ Front-end pages: - Host page/Dashboard - Monitor or make changes to Users - Moni
         - IP
         - OS
         - Up/Down
-        - Last Checked
+        - Last Checked 
         - 
 
 Back-end functionality:

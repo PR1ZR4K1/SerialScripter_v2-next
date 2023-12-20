@@ -43,7 +43,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
     DOWN: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "incidents", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "status", "actions"];
 
 type Host = PrismaHost & {
   os?: OS;
@@ -81,15 +81,15 @@ export function HostsTable() {
 
     const [timeRefetched, setTimeRefetched] = useState(Date.now());
 
-function getTimeDifference(timeRefetched: number) {
-    const currentTime = Date.now();
-    const timeDifference = currentTime - timeRefetched; // Difference in milliseconds
+    function getTimeDifference(timeRefetched: number) {
+        const currentTime = Date.now();
+        const timeDifference = currentTime - timeRefetched; // Difference in milliseconds
 
-    // Convert to seconds and format to two decimal places
-    const timeInSeconds = (timeDifference / 1000).toFixed(2);
+        // Convert to seconds and format to two decimal places
+        const timeInSeconds = (timeDifference / 1000).toFixed(2);
 
-    return parseFloat(timeInSeconds);
-}
+        return parseFloat(timeInSeconds);
+    }
 
 
     useEffect(() => {
@@ -204,18 +204,6 @@ function getTimeDifference(timeRefetched: number) {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">{cellValue as any}</p>
-                    </div>
-                );
-            case "incidents":
-                return (
-                    <div className="flex pl-6">
-                        <p className="text-bold text-small capitalize">  
-                            {
-                                typeof cellValue === 'string' ?
-                                    cellValue ? cellValue.toString() : "0"
-                                : '0'
-                            }
-                        </p>
                     </div>
                 );
             case "status":
