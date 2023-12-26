@@ -1,12 +1,16 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemSpec } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk } from "@prisma/client";
 
 type Host = PrismaHost & {
   os?: OS;
-  systemSpec?: SystemSpec;
+  systemInfo?: SystemInfo;
+  systemServices?: SystemService[];
   networkServices?: NetworkService[];
   userAccounts?: UserAccount[];
+  incidents?: Incident[];
+  software?: Software[];
+  disks?: Disk[];
 };
 
 interface HostsStoreTypes {
@@ -24,7 +28,6 @@ interface HostsStoreTypes {
 }
 
 const { signal } = new AbortController()
-
 
 export const useHostsStore = create<HostsStoreTypes>((set) => ({
     refetchCounter: 0,
@@ -61,7 +64,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         status: 'UP', // Default status
         gateway: null,
         dhcp: null,
-        systemSpecId: null, // Assuming systemSpecId can be null
+        systemInfoId: null, // Assuming systemSpecId can be null
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder
         createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
         networkServices: [],

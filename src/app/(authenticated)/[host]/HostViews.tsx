@@ -8,6 +8,7 @@ import Home from './Home';
 import Services from './Services';
 import Users from './Users';
 import { convertToPST } from '@/lib/formatTime';
+import Disks from './Disks';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -52,7 +53,10 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <Users />
     } else if (view === 'xterm') {
         content = <div>My Dashboard: {hostname}</div>;
+    } else if (view === 'disks') {
+        content = <Disks />
     }
+    
 
     let lastCreated = 'N/A';
 

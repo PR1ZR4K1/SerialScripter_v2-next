@@ -26,7 +26,9 @@ export async function POST(req: Request) {
         userAccounts: true,
         os: true,
         networkServices: true,
-        systemSpec: true,
+        systemServices: true,
+        systemInfo: true,
+        disks: true,
       }
   });
 

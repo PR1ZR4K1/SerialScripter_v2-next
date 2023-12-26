@@ -15,6 +15,17 @@ enum Status {
     DOWN
 }
 
+enum PortStatus {
+    OPEN
+    CLOSED
+    FILTERED
+}
+
+enum SystemStatus {
+    RUNNING
+    STOPPED
+}
+
 enum UserType {
     PRIVILEGED
     USER // Assuming there might be regular users as well.
@@ -35,12 +46,13 @@ model Host {
   osId              Int          @unique
   status            Status       // Changed to enum type
   os                OS           @relation(fields: [osId], references: [id])
-  systemSpecId      Int?         @unique
-  systemSpec        SystemSpec?  @relation(fields: [systemSpecId], references: [id])
+  systemInfoId      Int?         @unique
+  systemInfo        SystemInfo?  @relation(fields: [systemInfoId], references: [id])
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
   createdAt         DateTime     @default(now())
+  disks             Disk[]
   systemServices    SystemService[]
   networkServices   NetworkService[]
   incidents         Incident[]
@@ -56,19 +68,30 @@ model OS {
   host    Host?
 }
 
-model SystemSpec {
+model SystemInfo {
   id        Int    @id @default(autoincrement())
   cpuCores  Int
+  cpuName   String
   memory    Int    // Assuming this is in MB or GB
-  disk      Int    // Assuming this is in GB
   host      Host?
+}
+
+model Disk {
+  id                  Int     @id @default(autoincrement())
+  name                String
+  mountPoint          String
+  filesystem          String
+  totalSpace          Int
+  availableSpace      Int
+  hostId              Int
+  host                Host   @relation(fields: [hostId], references: [id])
 }
 
 model SystemService {
   id          Int    @id @default(autoincrement())
   name        String
   description String?
-  status      Status // Assuming Status is an enum with values like UP, DOWN
+  status      SystemStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
   host        Host   @relation(fields: [hostId], references: [id])
 }
@@ -78,7 +101,7 @@ model NetworkService {
   name        String
   port        Int
   description String?
-  status      Status // Assuming Status is an enum with values like UP, DOWN
+  status      PortStatus // Port can be OPEN, CLOSED, or FILTERED
   hostId      Int
   host        Host   @relation(fields: [hostId], references: [id])
 }
@@ -125,9 +148,12 @@ model Volume {
 
 model UserAccount {
   id        Int       @id @default(autoincrement())
-  username  String
+  name      String
   password  String
   userType  UserType  // Changed to enum type
+  isLocal   Boolean
+  uid       String
+  gid       String
   host      Host?     @relation(fields: [hostId], references: [id])
   hostId    Int?
 }

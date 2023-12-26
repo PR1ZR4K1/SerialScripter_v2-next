@@ -4,12 +4,11 @@ import React from "react";
 import {
   Navbar,
   Collapse,
-  MobileNav,
   Typography,
   IconButton,
 } from "@material-tailwind/react";
 
-import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon, Bars3Icon, XCircleIcon } from "@heroicons/react/24/outline";
+import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon, Bars3Icon, XCircleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import { useHostsStore } from "@/store/HostsStore";
 
 export default function Topbar({hostname}: {hostname: string}) {
@@ -68,6 +67,19 @@ export default function Topbar({hostname}: {hostname: string}) {
           </a>
         </Typography>
       </button>
+      <button onClick={() => setView('disks')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <CircleStackIcon className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Disks
+          </a>
+        </Typography>
+      </button>
       <button onClick={() => setView('xterm')}>
         <Typography
           as="li"
@@ -87,7 +99,7 @@ export default function Topbar({hostname}: {hostname: string}) {
 
 
   return (
-    <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-[#303073] dark:border-black/30 py-4 rounded-3xl mt-6">
+    <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-purple-900 dark:border-black/30 py-4 rounded-3xl mt-6">
         <div className="flex items-center text-blue-gray-900 absolute top-1/2 -translate-y-1/2 left-6">
           <Typography
             as="a"
