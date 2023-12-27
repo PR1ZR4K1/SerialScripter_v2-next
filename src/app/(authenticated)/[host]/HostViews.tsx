@@ -43,7 +43,6 @@ export default function HostViews({hostname}: {hostname: string}) {
     }, [hostname, setHost]);
 
     let content;
-
     // conditionally render content in my page
     if (view === 'home'){
         content = <Home />
@@ -57,7 +56,6 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <Disks />
     }
     
-
     let lastCreated = 'N/A';
 
     if (host.createdAt) {

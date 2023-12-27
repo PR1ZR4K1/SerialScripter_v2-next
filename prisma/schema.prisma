@@ -38,13 +38,18 @@ model User {
   name     String?
 }
 
+model API_KEYS {
+  id          Int @id @default(autoincrement())
+  key         String 
+  lifetime    Int  
+}
 
 model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
   ip                String       @unique
   osId              Int          @unique
-  status            Status       // Changed to enum type
+  status            Status?       // Changed to enum type
   os                OS           @relation(fields: [osId], references: [id])
   systemInfoId      Int?         @unique
   systemInfo        SystemInfo?  @relation(fields: [systemInfoId], references: [id])
@@ -84,7 +89,7 @@ model Disk {
   totalSpace          Int
   availableSpace      Int
   hostId              Int
-  host                Host   @relation(fields: [hostId], references: [id])
+  host                Host?  @relation(fields: [hostId], references: [id])
 }
 
 model SystemService {
@@ -93,7 +98,7 @@ model SystemService {
   description String?
   status      SystemStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
-  host        Host   @relation(fields: [hostId], references: [id])
+  host        Host?  @relation(fields: [hostId], references: [id])
 }
 
 model NetworkService {
@@ -103,7 +108,7 @@ model NetworkService {
   description String?
   status      PortStatus // Port can be OPEN, CLOSED, or FILTERED
   hostId      Int
-  host        Host   @relation(fields: [hostId], references: [id])
+  host        Host?  @relation(fields: [hostId], references: [id])
 }
 
 model Incident {
@@ -111,7 +116,7 @@ model Incident {
   name        String
   description String
   tags        String[]
-  host        Host         @relation(fields: [hostId], references: [id])
+  host        Host?        @relation(fields: [hostId], references: [id])
   hostId      Int
   createdAt   DateTime     @default(now())
 }
@@ -121,7 +126,7 @@ model Software {
   name        String
   version     String?
   path        String?
-  host        Host     @relation(fields: [hostId], references: [id])
+  host        Host?    @relation(fields: [hostId], references: [id])
   hostId      Int
 }
 
@@ -130,7 +135,7 @@ model Container {
   containerId String   @unique
   name        String
   type        String
-  host        Host     @relation(fields: [hostId], references: [id])
+  host        Host?    @relation(fields: [hostId], references: [id])
   hostId      Int
   volumes     Volume[] // One-to-many relationship with Volume
 }
@@ -149,11 +154,11 @@ model Volume {
 model UserAccount {
   id        Int       @id @default(autoincrement())
   name      String
-  password  String
-  userType  UserType  // Changed to enum type
+  password  String?
+  userType  UserType?  // Changed to enum type
   isLocal   Boolean
   uid       String
   gid       String
-  host      Host?     @relation(fields: [hostId], references: [id])
-  hostId    Int?
+  host      Host?    @relation(fields: [hostId], references: [id])
+  hostId    Int
 }

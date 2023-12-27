@@ -1,182 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-import { Disk as PrismaDisk, Prisma } from '@prisma/client';
-
-interface HostData {
-    hostname: string;
-    ip: string;
-    osName: string;
-    osVersion: string;
-    cpuCores: number;
-    cpuName: string
-    memory: number;
-    status: 'UP' | 'DOWN'; // Update with appropriate status values
-    gateway: string,
-    dhcp: boolean,
-    macAddress: string;
-    disks: Disk[];
-    systemServices: SystemServiceTypes[];
-    networkServices?: NetworkServiceTypes[];
-    userAccounts?:   UserAccountTypes[];
-}
-
-interface UserAccountTypes {
-    name: string;
-    password: string;
-    userType: 'PRIVILEGED' | 'USER';
-    isLocal: Boolean;
-    uid: string;
-    gid: string;
-    // lastLogin: Date;
-    // loginAttempts: number;
-}
-
-interface Disk {
-  name: string;
-  mountPoint: string;
-  filesystem: string;
-  totalSpace: number;
-  availableSpace: number;
-}
-
-interface NetworkServiceTypes {
-    name: string;
-    description?: string;
-    port: number;
-    status: 'OPEN' | 'CLOSED' | 'FILTERED'; 
-}
-
-interface SystemServiceTypes {
-    name: string;
-    description?: string;
-    status: 'RUNNING' | 'STOPPED' ; 
-}
-async function createUserAccounts(userAccounts: UserAccountTypes[], hostId: number) {
-    return Promise.all(userAccounts.map(userAccount => 
-        prisma.userAccount.create({
-            data: {
-                name: userAccount.name,
-                password: userAccount.password,
-                userType: userAccount.userType, // Correct field name as per schema
-                hostId: hostId, // Link each user account to the created host
-                isLocal: userAccount.isLocal,
-                uid: userAccount.uid,
-                gid: userAccount.gid,
-            },
-        })
-    ));
-};
-
-async function createNetworkServices(services: NetworkServiceTypes[], hostId: number) {
-    return Promise.all(services.map(service => 
-        prisma.networkService.create({
-            data: {
-                name: service.name,
-                description: service.description,
-                port: service.port,
-                status: service.status,
-                hostId: hostId, // Link each service to the created host
-            },
-        })
-    ));
-};
-async function createSystemServices(services: SystemServiceTypes[], hostId: number) {
-    return Promise.all(services.map(service => 
-        prisma.systemService.create({
-            data: {
-                name: service.name,
-                description: service.description,
-                status: service.status,
-                hostId: hostId, // Link each service to the created host
-            },
-        })
-    ));
-};
-
-async function createDisks(disks: Disk[], hostId: number): Promise<PrismaDisk[]> {
-    console.log("Creating disks for hostId:", hostId);
-    console.log("Disks to create:", JSON.stringify(disks, null, 2));
-
-    return Promise.all(disks.map(disk => {
-        console.log("Creating disk:", JSON.stringify(disk, null, 2));
-
-        return prisma.Disk.create({
-            data: {
-                name: disk.name,
-                mountPoint: disk.mountPoint,
-                filesystem: disk.filesystem,
-                totalSpace: disk.totalSpace,
-                availableSpace: disk.availableSpace,
-                hostId: hostId,
-            },
-        }).then((createdDisk: PrismaDisk) => {
-            console.log("Created disk:", JSON.stringify(createdDisk, null, 2));
-            return createdDisk;
-        }).catch((error: Error) => {
-            console.error("Error creating disk:", JSON.stringify(disk, null, 2), "Error:", error);
-            throw error;
-        });
-    }));
-};
-
-
-async function createHost({ hostname, ip, osName, osVersion, cpuCores, memory, status, gateway, dhcp, macAddress, networkServices, systemServices, userAccounts, disks, cpuName }: HostData) {
-
-    // Create OS records
-    const os = {
-        name: osName,
-        version: osVersion,
-    };
-
-    const createdOS = await prisma.OS.create({ data: os });
-
-    // Create SystemSpec records
-    const systemInfo = {
-        cpuCores,
-        memory,
-        cpuName
-    };
-
-    const createdSystemInfo = await prisma.systemInfo.create({ data: systemInfo });
-
-    // Create Host record
-    const host = {
-        hostname,
-        ip,
-        os: { connect: { id: createdOS.id } },
-        systemInfo: { connect: { id: createdSystemInfo.id } },
-        status,
-        gateway,
-        dhcp,
-        macAddress,
-    };
-
-    const createdHost = await prisma.host.create({ data: host });
-
-    // Create related records for the host's services
-    if (networkServices && networkServices.length > 0) {
-        await createNetworkServices(networkServices, createdHost.id);
-    }
-
-    if (systemServices && systemServices.length > 0) {
-        await createSystemServices(systemServices, createdHost.id);
-    }
-
-    if (userAccounts && userAccounts.length > 0) {
-        await createUserAccounts(userAccounts, createdHost.id);
-    }
-
-    if (disks && disks.length > 0) {
-        await createDisks(disks, createdHost.id);
-    }
-
-    // Additional data creation (software, containers, volumes) can be added here if needed
-
-    return createdHost;
-}
+import { Prisma } from '@prisma/client';
+import { createHost } from '../src/lib/prismaHelper';
 
 async function main() {
-    const host1NetworkServices: NetworkServiceTypes[] = [
+    const host1NetworkServices: Prisma.NetworkServiceCreateManyHostInput[] = [
         {
             name: 'SMB',
             port: 445, // SMB typically uses port 445
@@ -197,7 +25,7 @@ async function main() {
         }
     ];
 
-    const host1SystemServices: SystemServiceTypes[] = [
+    const host1SystemServices: Prisma.SystemServiceCreateManyHostInput[] = [
         {
             name: 'systemd',
             description: 'System and Service Manager',
@@ -215,7 +43,7 @@ async function main() {
         }
     ];
 
-    const host1UserAccounts: UserAccountTypes[] = [
+    const host1UserAccounts: Prisma.UserAccountCreateInput[] = [
         {
             name: 'root',
             password: 'password123',
@@ -242,7 +70,7 @@ async function main() {
         },
     ];
 
-    const host1Disks: Disk[] = [
+    const host1Disks: Prisma.DiskCreateManyHostInput[] = [
         {
             name: "/dev/nvme1n1p3",
             mountPoint: "/",
@@ -274,7 +102,7 @@ async function main() {
     ];
 
 
-    const host2NetworkServices: NetworkServiceTypes[] = [
+    const host2NetworkServices: Prisma.NetworkServiceCreateManyHostInput[] = [
         {
             name: 'sshd',
             port: 22,
@@ -295,7 +123,7 @@ async function main() {
         }
     ];
 
-    const host2SystemServices: SystemServiceTypes[] = [
+    const host2SystemServices: Prisma.SystemServiceCreateManyHostInput[] = [
         {
             name: 'WSearch',
             description: 'Windows Search Service',
@@ -313,7 +141,7 @@ async function main() {
         }
     ];
 
-    const host2UserAccounts: UserAccountTypes[] = [
+    const host2UserAccounts: Prisma.UserAccountCreateInput[] = [
         {
             name: 'administrator',
             password: 'password123',
@@ -340,7 +168,7 @@ async function main() {
         },
     ];
 
-    const host2Disks: Disk[] = [
+    const host2Disks: Prisma.DiskCreateManyHostInput[] = [
         {
             name: "/dev/nvme1n1p3",
             mountPoint: "/",
@@ -376,8 +204,8 @@ async function main() {
         ip: '192.168.60.253',
         osName: 'Linux',
         osVersion: 'Ubuntu 20.04',
-        cpuCores: 4,
-        cpuName: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        cores: 4,
+        cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
         memory: 8192,
         disks: host1Disks,
         status: 'UP',
@@ -394,9 +222,9 @@ async function main() {
         ip: '192.168.60.254',
         osName: 'Windows',
         osVersion: 'Windows 10 Pro',
-        cpuCores: 8,
+        cores: 8,
         memory: 931712,
-        cpuName: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
         disks: host2Disks,
         status: 'UP',
         gateway: '192.168.60.1',
@@ -410,6 +238,15 @@ async function main() {
     // Additional hosts can be created in a similar way
 
     console.log('Hosts created:', host1, host2);
+
+    await prisma.API_KEYS.create({
+        data: {
+            key: process.env.API_KEY,
+            lifetime: 10,
+        },
+    });
+
+    console.log('API Table created!')
 }
 
 main()
