@@ -10,6 +10,8 @@ import {
 
 import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon, Bars3Icon, XCircleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import { useHostsStore } from "@/store/HostsStore";
+import { VscDebugDisconnect } from "react-icons/vsc";
+
 
 export default function Topbar({hostname}: {hostname: string}) {
   const [openNav, setOpenNav] = React.useState(false);
@@ -77,6 +79,19 @@ export default function Topbar({hostname}: {hostname: string}) {
           <CircleStackIcon className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
           <a className="flex items-center">
             Disks
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('connections')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <VscDebugDisconnect className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Connections
           </a>
         </Typography>
       </button>

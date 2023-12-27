@@ -24,7 +24,7 @@ type Row = {
   port?: number;
   description?: string | null;
   status?: string;
-  password?: string;
+  password?: string | null;
   userType?: string;
   hostId: number | null;
 }
@@ -173,9 +173,9 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="5">5</option>
                             <option value="10">10</option>
-                            <option value="15">15</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
                         </select>
                     </label>
                 </div>
@@ -224,6 +224,7 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
       onSelectionChange={setSelectedKeys}
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
+      isHeaderSticky={true}
       classNames={{
           // th: "dark:bg-[#24344E]",
           td: "dark:bg-[#141B29]",

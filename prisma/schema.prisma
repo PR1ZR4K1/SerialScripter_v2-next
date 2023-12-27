@@ -16,14 +16,25 @@ enum Status {
 }
 
 enum PortStatus {
-    OPEN
-    CLOSED
-    FILTERED
+    established
+    synSent
+    synRecv
+    finWait1
+    finWait2
+    timeWait
+    closed
+    closeWait
+    lastAck
+    listen
+    closing
+    unknown
 }
 
-enum SystemStatus {
-    RUNNING
-    STOPPED
+enum SystemServiceStatus {
+    active
+    inactive
+    failed
+    unknown
 }
 
 enum UserType {
@@ -60,6 +71,7 @@ model Host {
   disks             Disk[]
   systemServices    SystemService[]
   networkServices   NetworkService[]
+  connections       Connections[]
   incidents         Incident[]
   software          Software[]
   containers        Container[]
@@ -95,8 +107,9 @@ model Disk {
 model SystemService {
   id          Int    @id @default(autoincrement())
   name        String
-  description String?
-  status      SystemStatus // Assuming Status is an enum with values like UP, DOWN
+  state       String
+  startMode   String
+  status      SystemServiceStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
   host        Host?  @relation(fields: [hostId], references: [id])
 }
@@ -105,10 +118,24 @@ model NetworkService {
   id          Int    @id @default(autoincrement())
   name        String
   port        Int
-  description String?
-  status      PortStatus // Port can be OPEN, CLOSED, or FILTERED
+  protocol    String
+  pid         Int
+  version     String
+  state       PortStatus 
   hostId      Int
   host        Host?  @relation(fields: [hostId], references: [id])
+}
+
+model Connections {
+  id                  Int    @id @default(autoincrement())
+  name                String
+  localAddress        String
+  remoteAddress       String
+  pid                 Int
+  protocol            String
+  state               PortStatus 
+  hostId              Int
+  host                Host?  @relation(fields: [hostId], references: [id])
 }
 
 model Incident {
@@ -154,11 +181,12 @@ model Volume {
 model UserAccount {
   id        Int       @id @default(autoincrement())
   name      String
-  password  String?
-  userType  UserType?  // Changed to enum type
   isLocal   Boolean
   uid       String
   gid       String
+  shell     String
+  groups    String[]
+  userType  UserType  // Changed to enum type
   host      Host?    @relation(fields: [hostId], references: [id])
   hostId    Int
 }

@@ -128,7 +128,7 @@ export function HostsTable() {
         }
         if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
             filteredHosts = filteredHosts.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
+                Array.from(statusFilter).includes(user.status || 'DOWN'),
             );
         }
 
@@ -197,7 +197,7 @@ export function HostsTable() {
             case "status":
                 return (
                     <div className="flex items-center justify-center">
-                        <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
+                        <Chip className="capitalize" color={statusColorMap[host.status || 'DOWN']} size="sm" variant="flat">
                     {typeof cellValue === 'string' ? cellValue : 'Unknown'}
                         </Chip>
                     </div>

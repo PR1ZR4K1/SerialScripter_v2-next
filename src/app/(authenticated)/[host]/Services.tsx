@@ -15,20 +15,27 @@ export default function Services() {
         label: "Name",
         sortable: true,
       },
-
       {
         key: 'port',
         label: "Port",
         sortable: true,
       }, 
       {
-        key: 'description',
-        label: "Description"
-      },
-      
+        key: 'protocol',
+        label: "Protocol",
+        sortable: true,
+      }, 
       {
-        key: 'status',
-        label: "Status",
+        key: 'pid',
+        label: "PID",
+      }, 
+      {
+        key: 'version',
+        label: "Version",
+      }, 
+      {
+        key: 'state',
+        label: "State",
         sortable: true,
       }
   ];
@@ -40,10 +47,15 @@ export default function Services() {
         sortable: true,
       },
       {
-        key: 'description',
-        label: "Description"
+        key: 'state',
+        label: "State",
+        sortable: true,
       },
-      
+      {
+        key: 'startMode',
+        label: "Start Mode",
+        sortable: true,
+      },
       {
         key: 'status',
         label: "Status",
@@ -58,8 +70,10 @@ export default function Services() {
   };
 
   const systemColorMap: Record<string, ChipProps["color"]> = {
-      RUNNING: "success",
-      STOPPED: "danger",
+      active: "success",
+      inactive: "secondary",
+      failed: "danger",
+      unknown: "warning",
   };
 
   const [serviceType, setServiceType] = useState('system');
@@ -79,17 +93,17 @@ export default function Services() {
   };
 
   return (
-    <div className='h-full w-full flex flex-col items-center justify-center'>
+    <div className='h-full w-full flex flex-col items-center gap-y-20'>
       { serviceType === 'system' ?
 
-        <div className='flex flex-col gap-y-20 items-center w-3/4 h-4/6'>
+        <div className='flex flex-col gap-y-16 items-center w-3/4 h-3/4'>
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s System Services
           </p>
           <HostTable rows={systemServices} colorMap={systemColorMap} columns={systemColumns}/>
         </div>
         :
-        <div className='flex flex-col gap-y-20 items-center w-3/4 h-4/6'>
+        <div className='flex flex-col gap-y-16 items-center w-3/4 h-3/4'>
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s Network Services
           </p>

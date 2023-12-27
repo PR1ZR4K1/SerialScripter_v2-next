@@ -9,6 +9,7 @@ import Services from './Services';
 import Users from './Users';
 import { convertToPST } from '@/lib/formatTime';
 import Disks from './Disks';
+import Connections from './Connections';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -54,7 +55,10 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <div>My Dashboard: {hostname}</div>;
     } else if (view === 'disks') {
         content = <Disks />
+    } else if (view === 'connections') {
+        content = <Connections />
     }
+
     
     let lastCreated = 'N/A';
 

@@ -1,72 +1,90 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 import { Prisma } from '@prisma/client';
-import { createHost } from '../src/lib/prismaHelper';
+import { createHost, ModifiedUserAccountType, ModifiedNetworkServiceType, ModifiedConnectionsType } from '../src/lib/prismaHelper';
 
 async function main() {
-    const host1NetworkServices: Prisma.NetworkServiceCreateManyHostInput[] = [
+    const host1NetworkServices: ModifiedNetworkServiceType[] = [
         {
-            name: 'SMB',
-            port: 445, // SMB typically uses port 445
-            description: 'Server Message Block for file sharing',
-            status: 'OPEN',
+            "port": 1024,
+            "protocol": "UDP",
+            "process": {    
+                "pid": 255467,
+                "name": "nginx",
+            },
+            "version": "1.18.0",
+            "state": "established"
         },
         {
-            name: 'IIS',
-            port: 80,
-            description: 'Internet Information Services',
-            status: 'OPEN',
+            "port": 8080,
+            "protocol": "TCP",
+            "process": {    
+                "pid": 467290,
+                "name": "apache2",
+            },
+            "version": "2.4.46",
+            "state": "closed"
         },
         {
-            name: 'MSSQL',
-            port: 1433,
-            description: 'Microsoft SQL Server database service',
-            status: 'CLOSED',
+            "port": 3306,
+            "protocol": "TCP",
+            "process": {    
+                "pid": 182034,
+                "name": "mysqld",
+            },
+            "version": "8.0.22",
+            "state": "listen"
         }
     ];
 
     const host1SystemServices: Prisma.SystemServiceCreateManyHostInput[] = [
         {
             name: 'systemd',
-            description: 'System and Service Manager',
-            status: 'RUNNING',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'active',
         },
         {
             name: 'cron',
-            description: 'Cron Job Scheduler',
-            status: 'RUNNING',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'inactive',
         },
         {
             name: 'rsyslog',
-            description: 'Logging Service',
-            status: 'RUNNING',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'active',
         }
     ];
 
-    const host1UserAccounts: Prisma.UserAccountCreateInput[] = [
+    const host1UserAccounts: ModifiedUserAccountType[] = [
         {
             name: 'root',
-            password: 'password123',
-            userType: 'PRIVILEGED',
+            isAdmin: true,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: '/bin/bash',
+            groups: ['root', 'sudo', 'admin']
         },
         {
             name: 'kevin',
-            password: 'password123',
-            userType: 'USER',
+            isAdmin: false,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: '/bin/bash',
+            groups: ['root', 'sudo', 'admin'],
         },
         {
             name: 'bruce',
-            password: 'password123',
-            userType: 'USER',
+            isAdmin: false,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: '/bin/bash',
+            groups: ['root', 'sudo', 'admin'],
         },
     ];
 
@@ -101,70 +119,127 @@ async function main() {
         }
     ];
 
+    const host1Connections: ModifiedConnectionsType[] = [
+        {
+            "localAddress": "0.0.0.0:5355",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 352583,
+                "name": "systemd-resolve"
+            }
+        },
+        {
+            "localAddress": "127.0.0.1:631",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 1580,
+                "name": "cupsd"
+            }
+        },
+        {
+            "localAddress": "127.0.2.3:53",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 1348,
+                "name": "warp-svc"
+           }
+        },
+    ];
 
-    const host2NetworkServices: Prisma.NetworkServiceCreateManyHostInput[] = [
+    const host2NetworkServices: ModifiedNetworkServiceType[] = [
         {
-            name: 'sshd',
-            port: 22,
-            description: 'SSH Daemon',
-            status: 'OPEN',
+            "port": 22,
+            "protocol": "TCP",
+            "process": {    
+                "pid": 94177,
+                "name": "sshd",
+            },
+            "version": "8.4p1",
+            "state": "established"
         },
         {
-            name: 'Apache',
-            port: 80,
-            description: 'Web Server',
-            status: 'OPEN',
+            "port": 443,
+            "protocol": "TCP",
+            "process": {    
+                "pid": 48763,
+                "name": "httpd",
+            },
+            "version": "2.4.43",
+            "state": "listen"
         },
         {
-            name: 'MySQL',
-            port: 3306,
-            description: 'MySQL Database Service',
-            status: 'FILTERED',
+            "port": 53,
+            "protocol": "UDP",
+            "process": {    
+                "pid": 337211,
+                "name": "named",
+            },
+            "version": "9.16",
+            "state": "established"
         }
+
     ];
 
     const host2SystemServices: Prisma.SystemServiceCreateManyHostInput[] = [
         {
             name: 'WSearch',
-            description: 'Windows Search Service',
-            status: 'RUNNING',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'active',
         },
         {
             name: 'WinDefend',
-            description: 'Windows Defender Service',
-            status: 'RUNNING',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'unknown',
         },
         {
             name: 'wuauserv',
-            description: 'Windows Update Service',
-            status: 'STOPPED',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'inactive',
+        },
+        {
+            name: 'alsdfh',
+            startMode: 'Enabled',
+            state: 'loaded',
+            status: 'failed',
         }
     ];
 
-    const host2UserAccounts: Prisma.UserAccountCreateInput[] = [
+    const host2UserAccounts: ModifiedUserAccountType[] = [
         {
             name: 'administrator',
-            password: 'password123',
-            userType: 'PRIVILEGED',
+            isAdmin: true,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: 'pwsh.exe', 
+            groups: ['Administrators', 'Users', 'Guests']
         },
         {
             name: 'lupe',
-            password: 'password123',
-            userType: 'USER',
+            isAdmin: false,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: 'pwsh.exe', 
+            groups: ['Administrators', 'Users', 'Guests'],
         },
         {
             name: 'hector',
-            password: 'password123',
-            userType: 'USER',
+            isAdmin: false,
             gid: '10',
             uid: '20',
             isLocal: true,
+            shell: 'pwsh.exe', 
+            groups: ['Administrators', 'Users', 'Guests'],
         },
     ];
 
@@ -198,12 +273,45 @@ async function main() {
             availableSpace: 539,
         }
     ];
+
+    const host2Connections: ModifiedConnectionsType[] = [
+        {
+            "localAddress": "127.0.0.1:6463",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 53396,
+                "name": "Discord"
+            }
+        },
+        {
+            "localAddress": "127.0.0.54:53",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 352583,
+                "name": "systemd-resolve"
+            }
+        },
+        {
+            "localAddress": "127.0.0.53:53",
+            "remoteAddress": "0.0.0.0:0",
+            "state": "listen",
+            "protocol": "TCP",
+            "process": {
+                "pid": 352583,
+                "name": "systemd-resolve"
+            }
+        },
+    ];
     
     const host1 = await createHost({
         hostname: 'bobby',
         ip: '192.168.60.253',
-        osName: 'Linux',
-        osVersion: 'Ubuntu 20.04',
+        os: 'Linux',
+        version: 'Ubuntu 20.04',
         cores: 4,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
         memory: 8192,
@@ -212,16 +320,17 @@ async function main() {
         gateway: '192.168.60.1',
         dhcp: true,
         macAddress: '00:1A:2B:3C:4D:5E',
-        networkServices: host1NetworkServices,
-        systemServices: host1SystemServices,
-        userAccounts: host1UserAccounts,
+        ports: host1NetworkServices,
+        services: host1SystemServices,
+        users: host1UserAccounts,
+        connections: host1Connections,
     });
 
     const host2 = await createHost({
         hostname: 'shmurda',
         ip: '192.168.60.254',
-        osName: 'Windows',
-        osVersion: 'Windows 10 Pro',
+        os: 'Windows',
+        version: 'Windows 10 Pro',
         cores: 8,
         memory: 931712,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
@@ -230,9 +339,10 @@ async function main() {
         gateway: '192.168.60.1',
         dhcp: true,
         macAddress: '56:78:9A:BC:DE:F0',
-        networkServices: host2NetworkServices,
-        systemServices: host2SystemServices,
-        userAccounts: host2UserAccounts,
+        ports: host2NetworkServices,
+        services: host2SystemServices,
+        users: host2UserAccounts,
+        connections: host2Connections,
     });
 
     // Additional hosts can be created in a similar way

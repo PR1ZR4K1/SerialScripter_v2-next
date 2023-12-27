@@ -4,6 +4,7 @@ import React from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
 import HostTable from './HostTable';
+import { UserAccount } from '@prisma/client'
 
 
 export default function Users() {
@@ -12,7 +13,15 @@ export default function Users() {
     state.host,
   ]);
 
-  const users = host.userAccounts || [{hostId: 0, id: 0, password: 'password', name: 'god', userType: 'PRIVILEGED'}]
+  type UserAccountWithGroupString = Omit<UserAccount, 'groups'> & { groups: string };
+
+  const users = host.userAccounts || [];
+
+  const usersWithGroupString: UserAccountWithGroupString[] = users.map(user => {
+    // Use the spread operator to copy other properties of the user
+    let newUser: UserAccountWithGroupString = { ...user, groups: user.groups.join(', ') };
+    return newUser;
+  });
 
   const userColumns = [
     {
@@ -21,9 +30,30 @@ export default function Users() {
       sortable: true,
     }, 
     {
-      key: 'password', 
-      label: "Password"
-    },
+      key: 'isLocal',
+      label: "Is Local",
+      sortable: true,
+    }, 
+    {
+      key: 'uid',
+      label: "User ID",
+      sortable: true,
+    }, 
+    {
+      key: 'gid',
+      label: "Group ID",
+      sortable: true,
+    }, 
+    {
+      key: 'shell',
+      label: "Shell",
+      sortable: true,
+    }, 
+    {
+      key: 'groups',
+      label: "Groups",
+      sortable: true,
+    }, 
     {
       key: 'userType', 
       label: "User Type",
@@ -37,12 +67,12 @@ export default function Users() {
   };
 
   return (
-    <div className='h-full w-full flex flex-col items-center justify-center'>
-        <div className='flex flex-col gap-y-20 items-center w-3/4 h-4/6'>
+    <div className='h-full w-full flex flex-col items-center'>
+        <div className='flex flex-col gap-y-20 items-center w-3/4 h-3/4'>
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s Users
           </p>
-          <HostTable rows={users} colorMap={userTypeColorMap} columns={userColumns}/>
+          <HostTable rows={usersWithGroupString} colorMap={userTypeColorMap} columns={userColumns}/>
         </div>
     </div>
   )

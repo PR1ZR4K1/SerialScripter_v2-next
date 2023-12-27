@@ -14,7 +14,7 @@ Start-Sleep -Seconds 2
 npx prisma generate
 
 # Run Prisma migration for development with the name 'init'
-npx prisma migrate dev --name init
+npx prisma migrate dev
 
 # Seed the database with data
 npx prisma db seed

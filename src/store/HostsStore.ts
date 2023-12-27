@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk, Connections } from "@prisma/client";
 
 type Host = PrismaHost & {
   os?: OS;
@@ -11,6 +11,7 @@ type Host = PrismaHost & {
   incidents?: Incident[];
   software?: Software[];
   disks?: Disk[];
+  connections?: Connections[];
 };
 
 interface HostsStoreTypes {

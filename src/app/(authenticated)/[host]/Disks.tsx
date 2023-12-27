@@ -57,7 +57,7 @@ export default function Disks() {
 
   return (
     <div className='h-full w-full flex flex-col items-center justify-center'>
-        <div className='flex flex-col gap-y-20 items-center w-3/4 h-4/6'>
+        <div className='flex flex-col gap-y-16 items-center w-3/4 h-3/4'>
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s Disks
           </p>
