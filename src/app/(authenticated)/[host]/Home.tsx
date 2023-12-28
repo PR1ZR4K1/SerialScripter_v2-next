@@ -18,7 +18,7 @@ export default function Home() {
   let imgSrc = '/assets/router.png'; // Default image
   let totalPrivilegedUsers = 0;
   let totalServices = 0;
-  let totalOpenPorts = 0;
+  let totalPorts = 0;
 
   try {
     if (host.os) {
@@ -30,12 +30,12 @@ export default function Home() {
         }  
 
         if (host.userAccounts) {
-            totalPrivilegedUsers = host.userAccounts.filter((user) => user.userType === 'PRIVILEGED').length;
+            totalPrivilegedUsers = host.userAccounts.filter((user) => user.isAdmin).length;
         }
 
         if (host.networkServices) {
             totalServices += host.networkServices.length;
-            totalOpenPorts = host.networkServices.filter((service) => service.status === 'OPEN').length;
+            totalPorts = host.networkServices.filter((service) => service.port).length;
         }
 
         if (host.systemServices) {
@@ -132,7 +132,7 @@ export default function Home() {
                             </div>
                             <div className='flex items-center gap-x-2'>
                                 <CgEthernet className='h-5 w-5'/>
-                                Total Open Ports: {totalOpenPorts || 'N/A'}
+                                Total Ports: {totalPorts || 'N/A'}
                             </div>
                         </div>
                     </div>

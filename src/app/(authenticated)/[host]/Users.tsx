@@ -13,13 +13,18 @@ export default function Users() {
     state.host,
   ]);
 
-  type UserAccountWithGroupString = Omit<UserAccount, 'groups'> & { groups: string };
+  enum UserType {
+    'PRIVILEGED',
+    'USER'
+  }
+
+  type ModifiedUserAccountType = Omit<UserAccount, 'groups' | 'isAdmin' | 'isLocal'> & { groups: string, userType: string, isLocal: string };
 
   const users = host.userAccounts || [];
 
-  const usersWithGroupString: UserAccountWithGroupString[] = users.map(user => {
+  const usersWithGroupString: ModifiedUserAccountType[] = users.map(user => {
     // Use the spread operator to copy other properties of the user
-    let newUser: UserAccountWithGroupString = { ...user, groups: user.groups.join(', ') };
+    let newUser: ModifiedUserAccountType = { ...user, groups: user.groups.join(', '), userType: user.isAdmin ? 'PRIVILEGED' : 'USER', isLocal: user.isLocal ? 'Yes' : 'No' };
     return newUser;
   });
 
@@ -64,6 +69,8 @@ export default function Users() {
     const userTypeColorMap: Record<string, ChipProps["color"]> = {
       USER: "success",
       PRIVILEGED: "danger",
+      Yes: 'success',
+      No: 'warning',
   };
 
   return (
@@ -72,7 +79,7 @@ export default function Users() {
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s Users
           </p>
-          <HostTable rows={usersWithGroupString} colorMap={userTypeColorMap} columns={userColumns}/>
+          <HostTable rows={usersWithGroupString} colorMap={userTypeColorMap} columns={userColumns} colorField='userType' colorField2='isLocal'/>
         </div>
     </div>
   )

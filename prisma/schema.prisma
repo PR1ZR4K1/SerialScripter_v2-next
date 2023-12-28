@@ -42,6 +42,12 @@ enum UserType {
     USER // Assuming there might be regular users as well.
 }
 
+enum ShareType {
+  nFS
+  sMB
+}
+
+
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
@@ -76,6 +82,7 @@ model Host {
   software          Software[]
   containers        Container[]
   userAccounts      UserAccount[]
+  shares            Shares[]
 }
 
 model OS {
@@ -108,7 +115,7 @@ model SystemService {
   id          Int    @id @default(autoincrement())
   name        String
   state       String
-  startMode   String
+  startMode   String?
   status      SystemServiceStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
   host        Host?  @relation(fields: [hostId], references: [id])
@@ -116,10 +123,10 @@ model SystemService {
 
 model NetworkService {
   id          Int    @id @default(autoincrement())
-  name        String
+  name        String?
   port        Int
   protocol    String
-  pid         Int
+  pid         Int?
   version     String
   state       PortStatus 
   hostId      Int
@@ -128,10 +135,10 @@ model NetworkService {
 
 model Connections {
   id                  Int    @id @default(autoincrement())
-  name                String
+  name                String?
   localAddress        String
   remoteAddress       String
-  pid                 Int
+  pid                 Int?
   protocol            String
   state               PortStatus 
   hostId              Int
@@ -158,23 +165,39 @@ model Software {
 }
 
 model Container {
-  id          Int      @id @default(autoincrement())
-  containerId String   @unique
-  name        String
-  type        String
-  host        Host?    @relation(fields: [hostId], references: [id])
-  hostId      Int
-  volumes     Volume[] // One-to-many relationship with Volume
+  id                        Int      @id @default(autoincrement())
+  containerId               String   @unique
+  name                      String
+  portBindings              String[]
+  status                    String
+  cmd                       String
+  containerNetworks         ContainerNetwork[]
+  containerVolumes          ContainerVolume[] // One-to-many relationship with Volume
+  host                      Host?    @relation(fields: [hostId], references: [id])
+  hostId                    Int
 }
 
-model Volume {
-  id           Int      @id @default(autoincrement())
-  path         String
-  name         String
-  size         Int      // Assuming this is in MB or GB
-  permissions  String   
-  containerId  Int
-  container    Container @relation(fields: [containerId], references: [id])
+model ContainerNetwork {
+  id                    Int      @id @default(autoincrement())
+  networkName                  String
+  ip                    String
+  gateway               String
+  macAddress            String
+  container             Container? @relation(fields: [containerId], references: [id])
+  containerId           Int
+}
+
+
+model ContainerVolume {
+  id                    Int      @id @default(autoincrement())
+  hostPath              String
+  containerPath              String
+  mode                  String
+  volumeName                  String
+  rw                    Boolean
+  vType                 String   
+  container             Container? @relation(fields: [containerId], references: [id])
+  containerId           Int
 }
 
 
@@ -184,9 +207,17 @@ model UserAccount {
   isLocal   Boolean
   uid       String
   gid       String
-  shell     String
+  shell     String?
   groups    String[]
-  userType  UserType  // Changed to enum type
+  isAdmin   Boolean
   host      Host?    @relation(fields: [hostId], references: [id])
   hostId    Int
+}
+
+model Shares {
+  id            Int     @id @default(autoincrement())
+  shareType     ShareType
+  networkPath   String
+  host          Host?   @relation(fields: [hostId], references: [id])
+  hostId        Int
 }

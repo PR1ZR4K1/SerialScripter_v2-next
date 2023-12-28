@@ -1,87 +1,29 @@
 import { prisma } from './prisma';
 import { Prisma } from '@prisma/client';
 
+type HostConnect = {
+    host: { connect: { id: number } };
+};
 
-async function createUserAccounts(userAccounts: ModifiedUserAccountType[], hostId: number) {
-    return Promise.all(userAccounts.map(userAccount => 
-        prisma.userAccount.create({
-            data: {
-                name: userAccount.name,
-                userType: (userAccount.isAdmin ? 'PRIVILEGED' : 'USER'), // Correct field name as per schema
-                isLocal: userAccount.isLocal,
-                uid: userAccount.uid,
-                gid: userAccount.gid,
-                groups: userAccount.groups,
-                shell: userAccount.shell || '',
-                hostId: hostId, // Link each user account to the created host
-            },
+type ContainerConnect = {
+    container: { connect: { id: number } };
+};
+
+const createHostConnect = (id: number) => ({ host: { connect: { id } } });
+const createContainerConnect = (id: number) => ({ container: { connect: { id } } });
+
+async function processArray<T, U extends HostConnect | ContainerConnect>(
+    items: T[], 
+    connectData: U, 
+    createFunction: (item: T & U) => Promise<any>
+) {
+    return Promise.all(
+        items.map(item => {
+            const itemWithConnect = { ...item, ...connectData };
+            return createFunction(itemWithConnect as any);
         })
-    ));
-};
-
-async function createNetworkServices(services: ModifiedNetworkServiceType[], hostId: number) {
-    return Promise.all(services.map(service => 
-        prisma.networkService.create({
-            data: {
-                name: service.process.name,
-                port: service.port,
-                state: service.state,
-                protocol: service.protocol,
-                version: service.version,
-                pid: service.process.pid,
-                hostId: hostId, // Link each service to the created host
-            },
-        })
-    ));
-};
-
-async function createSystemServices(services: Prisma.SystemServiceCreateManyHostInput[], hostId: number) {
-    return Promise.all(services.map(service => 
-        prisma.systemService.create({
-            data: {
-                name: service.name,
-                state: service.state,
-                startMode: service.startMode || '',
-                status: service.status,
-                hostId: hostId, // Link each service to the created host
-            },
-        })
-    ));
-};
-
-async function createDisks(disks: Prisma.DiskCreateManyHostInput[], hostId: number) {
-
-    return Promise.all(disks.map(disk => {
-
-        return prisma.disk.create({
-            data: {
-                name: disk.name,
-                mountPoint: disk.mountPoint,
-                filesystem: disk.filesystem,
-                totalSpace: disk.totalSpace,
-                availableSpace: disk.availableSpace,
-                hostId: hostId,
-            },
-        });
-    }));
-};
-
-async function createConnections(connections: ModifiedConnectionsType[], hostId: number) {
-
-    return Promise.all(connections.map(connection => {
-        return prisma.connections.create({
-            data: {
-                name: connection.process.name,
-                localAddress: connection.localAddress,
-                remoteAddress: connection.remoteAddress,
-                pid: connection.process.pid,
-                protocol: connection.protocol,
-                state: connection.state,
-                hostId: hostId,
-            },
-        });
-    }));
-};
+    );
+}
 
 export type ModifiedUserAccountType = Omit<Prisma.UserAccountCreateInput, 'userType'> & {
     isAdmin: boolean;
@@ -93,12 +35,18 @@ type ProcessType = {
 }
 
 export type ModifiedNetworkServiceType = Omit<Prisma.NetworkServiceCreateManyHostInput, 'name' | 'pid'> & {
-    process: ProcessType;
+    process?: ProcessType;
 };
 
 export type ModifiedConnectionsType = Omit<Prisma.ConnectionsCreateManyHostInput, 'name' | 'pid'> & {   
     process: ProcessType;
 };
+
+export type ExtendedContainerType = Prisma.ContainerCreateManyHostInput & {
+    containerNetworks?: Prisma.ContainerNetworkCreateInput[];
+    containerVolumes?: Prisma.ContainerVolumeCreateInput[];
+};
+
 
 interface HostData {
     hostname: string;
@@ -115,8 +63,10 @@ interface HostData {
     disks?: Prisma.DiskCreateManyHostInput[];
     services?: Prisma.SystemServiceCreateManyHostInput[];
     ports?: ModifiedNetworkServiceType[];
-    users?:   ModifiedUserAccountType[];
-    connections?: ModifiedConnectionsType[];
+    users?:   Prisma.UserAccountCreateManyHostInput[];
+    connections?: Prisma.ConnectionsCreateManyHostInput[];
+    shares?: Prisma.SharesCreateManyHostInput[];
+    containers?: ExtendedContainerType[];
 }
 
 export async function createHost(hostData : HostData) {
@@ -154,25 +104,104 @@ export async function createHost(hostData : HostData) {
 
     // Create related records for the host's services
     if (hostData.ports && hostData.ports.length > 0) {
-        await createNetworkServices(hostData.ports, createdHost.id);
+        // await createNetworkServices(hostData.ports, createdHost.id);
+        await processArray<ModifiedNetworkServiceType, HostConnect>( hostData.ports.map(flattenProcesses), 
+            createHostConnect(createdHost.id),
+            (service) => prisma.networkService.create({ data: service as Prisma.NetworkServiceCreateInput }));
     }
 
     if (hostData.services && hostData.services.length > 0) {
-        await createSystemServices(hostData.services, createdHost.id);
+        // await createSystemServices(hostData.services, createdHost.id);
+        await processArray<Prisma.SystemServiceCreateInput, HostConnect>(
+            hostData.services, 
+            createHostConnect(createdHost.id),
+            (service) => prisma.systemService.create({ data: service as Prisma.SystemServiceCreateInput })
+        );
     }
 
     if (hostData.users && hostData.users.length > 0) {
-        await createUserAccounts(hostData.users, createdHost.id);
+        // await createUserAccounts(hostData.users, createdHost.id);
+        // Example usage with Prisma's UserAccount type
+        await processArray<Prisma.UserAccountCreateInput, HostConnect>(
+            hostData.users, 
+            createHostConnect(createdHost.id),
+            (userAccount) => prisma.userAccount.create({ data: userAccount as Prisma.UserAccountCreateInput })
+        );
     }
 
     if (hostData.disks && hostData.disks.length > 0) {
-        await createDisks(hostData.disks, createdHost.id);
+        // await createDisks(hostData.disks, createdHost.id);
+        await processArray<Prisma.DiskCreateInput, HostConnect>(
+            hostData.disks, 
+            createHostConnect(createdHost.id),
+            (disk) => prisma.disk.create({ data: disk as Prisma.DiskCreateInput })
+        );
     }
 
     if (hostData.connections && hostData.connections.length > 0) {
-        await createConnections(hostData.connections, createdHost.id);
+        // await createConnections(hostData.connections, createdHost.id);
+        await processArray<ModifiedConnectionsType, HostConnect>(
+            hostData.connections.map(flattenProcesses), 
+            createHostConnect(createdHost.id),
+            (connection) => prisma.connections.create({ data: connection as Prisma.ConnectionsCreateInput })
+        );
+    }
+
+// const createdContainer = prisma.container.create({ data: {...container, hostId: hostId,} });
+
+
+    if (hostData.shares && hostData.shares.length > 0) {
+        // await createShares(hostData.shares, createdHost.id);
+        await processArray<Prisma.SharesCreateInput, HostConnect>(
+            hostData.shares, 
+            createHostConnect(createdHost.id),
+            (share) => prisma.shares.create({ data: share as Prisma.SharesCreateInput })
+        );
+    }
+
+    if (hostData.containers && hostData.containers.length > 0) {
+        // await createContainers(hostData.containers, createdHost.id);
+        for (const containers of hostData.containers) {
+            const {containerNetworks, containerVolumes, ...container} = containers;
+            await createContainer(createdHost.id, container, containerNetworks || [], containerVolumes || []);
+        }
     }
 
     // Additional data creation (software, containers, volumes) can be added here if needed
     return createdHost;
+}
+
+async function createContainer(hostid: number, container: Prisma.ContainerCreateInput, containerNetworks: Prisma.ContainerNetworkCreateInput[], containerVolumes: Prisma.ContainerVolumeCreateInput[]) {
+    const containerWithHost = { ...container, host: { connect: { id: hostid } } };
+    const {id} = await prisma.container.create({data: containerWithHost as Prisma.ContainerCreateInput});
+
+    await processArray<Prisma.ContainerNetworkCreateInput, ContainerConnect>(
+        containerNetworks, 
+        createContainerConnect(id),
+        (network) => prisma.containerNetwork.create({ data: network as Prisma.ContainerNetworkCreateInput })
+    ); 
+
+    await processArray<Prisma.ContainerVolumeCreateInput, ContainerConnect>(
+        containerVolumes, 
+        createContainerConnect(id),
+        (volume) => prisma.containerVolume.create({ data: volume as Prisma.ContainerVolumeCreateInput })
+    ); 
+    
+}
+
+function flattenProcesses(connection: any) {
+    if (!connection.process) {
+        return connection;
+    }
+
+    const { name, pid } = connection.process;
+
+    if (connection.process) 
+        delete connection.process;
+
+    return {
+        ...connection,
+        name: name || '',
+        pid: pid || 0,
+    };
 }

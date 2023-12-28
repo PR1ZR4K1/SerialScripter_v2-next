@@ -34,11 +34,13 @@ export default function Connections() {
     },
     {
       key: 'protocol', 
-      label: "Protocol"
+      label: "Protocol",
+      sortable: true,
     },
     {
       key: 'state', 
-      label: "State"
+      label: "State",
+      sortable: true,
     },
   ];
 

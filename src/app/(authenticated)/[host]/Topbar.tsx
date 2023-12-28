@@ -11,6 +11,8 @@ import {
 import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon, Bars3Icon, XCircleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import { useHostsStore } from "@/store/HostsStore";
 import { VscDebugDisconnect } from "react-icons/vsc";
+import { TbFileImport } from "react-icons/tb";
+import { FiCodesandbox } from "react-icons/fi";
 
 
 export default function Topbar({hostname}: {hostname: string}) {
@@ -92,6 +94,32 @@ export default function Topbar({hostname}: {hostname: string}) {
           <VscDebugDisconnect className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
           <a className="flex items-center">
             Connections
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('shares')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <TbFileImport className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Shares
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('containers')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <FiCodesandbox className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Containers
           </a>
         </Typography>
       </button>

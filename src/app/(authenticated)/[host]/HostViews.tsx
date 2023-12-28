@@ -10,6 +10,8 @@ import Users from './Users';
 import { convertToPST } from '@/lib/formatTime';
 import Disks from './Disks';
 import Connections from './Connections';
+import Shares from './Shares';
+import Containers from './Containers';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -57,6 +59,10 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <Disks />
     } else if (view === 'connections') {
         content = <Connections />
+    } else if (view === 'shares') {
+        content = <Shares />
+    } else if (view === 'containers') {
+        content = <Containers />
     }
 
     

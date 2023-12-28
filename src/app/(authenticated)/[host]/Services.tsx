@@ -100,14 +100,14 @@ export default function Services() {
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s System Services
           </p>
-          <HostTable rows={systemServices} colorMap={systemColorMap} columns={systemColumns}/>
+          <HostTable rows={systemServices} colorMap={systemColorMap} columns={systemColumns} colorField='status'/>
         </div>
         :
         <div className='flex flex-col gap-y-16 items-center w-3/4 h-3/4'>
           <p className='text-2xl font-bold'>
             {host.hostname}&apos;s Network Services
           </p>
-          <HostTable rows={networkServices} colorMap={networkColorMap} columns={networkColumns} />
+          <HostTable rows={networkServices} colorMap={networkColorMap} columns={networkColumns} colorField='status'/>
         </div>
       }
         <div className='flex justify-end w-full'>

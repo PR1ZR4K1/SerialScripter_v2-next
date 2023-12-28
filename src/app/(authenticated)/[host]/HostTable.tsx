@@ -20,16 +20,19 @@ import { SearchIcon } from "@/icons/SearchIcon";
 
 type Row = {
   id: number;
-  name?: string;
+  name?: string | null;
   port?: number;
   description?: string | null;
   status?: string;
   password?: string | null;
   userType?: string;
-  hostId: number | null;
+  isLocal?: string;
+  shareType?: string;
+  rw?: string;
+  hostId?: number | null;
 }
 type NonUndefined<T> = T extends undefined ? never : T;
-type StatusOrUserType = NonUndefined<Row['status']> | NonUndefined<Row['userType']>;
+type StatusOrUserType = NonUndefined<Row['status']> | NonUndefined<Row['userType'] | NonUndefined<Row['isLocal']> | NonUndefined<Row['rw']> | NonUndefined<Row['shareType']> >;
 
 type ColorMap = {
   [key in StatusOrUserType]: ChipProps["color"];
@@ -41,15 +44,20 @@ type Columns = {
   label: string;
   sortable?: boolean;
 }
+
+type NonNullableKeyOf<T> = Exclude<keyof T, undefined | null>;
+type ValidColorField = NonNullableKeyOf<Row>;
  
 interface HostTableTypes {
   rows: Row[];
-  colorMap: ColorMap;
+  colorMap?: ColorMap;
   columns: Columns[];
+  colorField?: ValidColorField;
+  colorField2?: ValidColorField;
 }
 
 
-export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
+export default function HostTable({rows, colorMap, columns, colorField, colorField2}: HostTableTypes) {
 
   const [page, setPage] = React.useState(1);
   const [filterValue, setFilterValue] = React.useState("");
@@ -125,7 +133,7 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
 
   }, [page, filteredItems, rowsPerPage]);    
   
-  const sortedServices = useMemo(() => {
+  const sortedItems = useMemo(() => {
       return [...filteredRows].sort((a, b) => {
 
           const firstValue = a[sortDescriptor.column as keyof Row];
@@ -153,7 +161,7 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
 
   const topContent = useMemo(() => {
     return (
-            <div className="flex flex-col gap-4 ">
+            <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end ">
                     <Input
                         isClearable
@@ -226,10 +234,10 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
       bottomContentPlacement="outside"
       isHeaderSticky={true}
       classNames={{
-          // th: "dark:bg-[#24344E]",
+          th: "dark:bg-[#202F46] bg-gray-200",
           td: "dark:bg-[#141B29]",
           wrapper: "max-h-[382px] dark:bg-[#141B29]",
-          table: 'dark:bg-[#141B29] dark:border-[#141B29]',
+          table: 'dark:bg-[#141B29] dark:border-[#141B29] min-h-[250px]',
           emptyWrapper: 'dark:bg-[#141B29]',
           base: 'dark:bg-transparent',
       }}
@@ -239,27 +247,27 @@ export default function HostTable({rows, colorMap, columns}: HostTableTypes) {
           <TableColumn 
             key={column.key} 
             allowsSorting={column.sortable}
-            className={`${column.key === 'status' || column.key === 'userType' ? "text-center " : ''}`}
+            className={`${column.key === colorField || column.key === colorField2 ? "text-center " : ''}`}
           >
               {column.label}
           </TableColumn>
         }
       </TableHeader>
-      <TableBody items={sortedServices} emptyContent={"No services to display."}>
+      <TableBody items={sortedItems} emptyContent={"Nothing to display."}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => 
               <TableCell>
-                {columnKey === 'status' ? (
-                  <div className="flex items-center justify-center">
-                    <Chip className="capitalize" color={colorMap[item.status!]} size="sm" variant="flat">
-                      {item.status}
+                {columnKey === colorField && item[colorField]  && colorMap? (
+                  <div className="flex items-center justify-center ">
+                    <Chip className="capitalize" color={colorMap[item[colorField] as StatusOrUserType]} size="sm" variant="flat">
+                      {item[colorField]  as StatusOrUserType}
                     </Chip>
                   </div>
-                ) : columnKey === 'userType' ? (
+                ) : columnKey === colorField2 && item[colorField2] && colorMap? (
                   <div className="flex items-center justify-center">
-                    <Chip className="capitalize" color={colorMap[item.userType!]} size="sm" variant="flat">
-                      {item.userType}
+                    <Chip className="capitalize" color={colorMap[item[colorField2] as StatusOrUserType]} size="sm" variant="flat">
+                      {item[colorField2]  as StatusOrUserType}
                     </Chip>
                   </div>
                 ) : (

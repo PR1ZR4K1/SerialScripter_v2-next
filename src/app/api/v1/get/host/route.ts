@@ -31,6 +31,13 @@ export async function POST(req: Request) {
         systemInfo: true,
         disks: true,
         connections: true,
+        shares: true,
+        containers: {
+          include: {
+            containerVolumes: true,
+            containerNetworks: true,
+          }
+        },
       }
   });
 

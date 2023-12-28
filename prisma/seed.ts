@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 import { Prisma } from '@prisma/client';
-import { createHost, ModifiedUserAccountType, ModifiedNetworkServiceType, ModifiedConnectionsType } from '../src/lib/prismaHelper';
+import { createHost, ModifiedUserAccountType, ModifiedNetworkServiceType, ModifiedConnectionsType, ExtendedContainerType } from '../src/lib/prismaHelper';
 
 async function main() {
     const host1NetworkServices: ModifiedNetworkServiceType[] = [
@@ -151,6 +151,30 @@ async function main() {
            }
         },
     ];
+
+    const host1Shares: Prisma.SharesCreateManyHostInput[] = [
+        {
+            "shareType": "nFS",
+            "networkPath": "/var/nfs1"
+        },
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb1"
+        },
+        {
+            "shareType": "nFS",
+            "networkPath": "/var/nfs2"
+        },
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb2"
+        },
+        {
+            "shareType": "nFS",
+            "networkPath": "/var/nfs3"
+        }
+    ];
+
 
     const host2NetworkServices: ModifiedNetworkServiceType[] = [
         {
@@ -306,6 +330,57 @@ async function main() {
             }
         },
     ];
+
+    const host2Shares: Prisma.SharesCreateManyHostInput[] = [
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb3"
+        },
+        {
+            "shareType": "nFS",
+            "networkPath": "/var/nfs4"
+        },
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb4"
+        },
+        {
+            "shareType": "nFS",
+            "networkPath": "/var/nfs5"
+        },
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb5"
+        }
+    ];
+
+    const host2Containers: ExtendedContainerType[] = [
+    {
+      "containerId": "65680f10810410642c109dd26fd37cfe06da9d26ad7c20fda5eecce689d5e371",
+      "name": "/stoic_darwin",
+      "containerNetworks": [
+        {
+          "networkName": "host",
+          "ip": "10.10.69.420",
+          "gateway": "0.0.0.0",
+          "macAddress": "lalalaal"
+        }
+      ],
+      "portBindings": ['12', '22'],
+      "containerVolumes": [
+        {
+          "hostPath": "/var/lib/docker/volumes/test/_data",
+          "containerPath": "/home/root",
+          "mode": "z",
+          "volumeName": "test",
+          "rw": true,
+          "vType": "volume"
+        }
+      ],
+      "status": "running",
+      "cmd": "/bin/bash"
+    }
+  ]
     
     const host1 = await createHost({
         hostname: 'bobby',
@@ -324,6 +399,7 @@ async function main() {
         services: host1SystemServices,
         users: host1UserAccounts,
         connections: host1Connections,
+        shares: host1Shares, 
     });
 
     const host2 = await createHost({
@@ -343,6 +419,8 @@ async function main() {
         services: host2SystemServices,
         users: host2UserAccounts,
         connections: host2Connections,
+        shares: host2Shares,
+        containers: host2Containers,
     });
 
     // Additional hosts can be created in a similar way
