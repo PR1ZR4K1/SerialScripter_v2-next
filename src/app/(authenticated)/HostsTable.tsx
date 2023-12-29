@@ -26,15 +26,11 @@ import { SearchIcon } from "@/icons/SearchIcon";
 import { columns, statusOptions } from "@/data/data";
 import { capitalize } from "@/utils/utils";
 import Image from "next/image";
-// import { getPageData } from "@/actions/serverActions";
 import { Host as PrismaHost, OS } from '@prisma/client';
 import { EyeIcon, InformationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { fetchScanResults } from "@/lib/enumerateNetwork";
 import { addHostToDB } from '@/lib/addToDB'
-// import revalidateHost from '@/lib/actions'
-import revalidate from '@/lib/actions'
-import { revalidatePath } from "next/cache";
 import { useHostsStore } from '@/store/HostsStore';
 import Link from "next/link";
 
@@ -43,19 +39,11 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
     DOWN: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "incidents", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "status", "actions"];
 
 type Host = PrismaHost & {
   os?: OS;
 };
-
-type DatagridProps = {
-    handleDialogOpen: () => void;
-};
-
-interface HostsTableProps {
-  hosts: Host[];
-}
 
 // export function HostsTable({ handleDialogOpen }: DatagridProps) {
 export function HostsTable() {
@@ -81,15 +69,15 @@ export function HostsTable() {
 
     const [timeRefetched, setTimeRefetched] = useState(Date.now());
 
-function getTimeDifference(timeRefetched: number) {
-    const currentTime = Date.now();
-    const timeDifference = currentTime - timeRefetched; // Difference in milliseconds
+    function getTimeDifference(timeRefetched: number) {
+        const currentTime = Date.now();
+        const timeDifference = currentTime - timeRefetched; // Difference in milliseconds
 
-    // Convert to seconds and format to two decimal places
-    const timeInSeconds = (timeDifference / 1000).toFixed(2);
+        // Convert to seconds and format to two decimal places
+        const timeInSeconds = (timeDifference / 1000).toFixed(2);
 
-    return parseFloat(timeInSeconds);
-}
+        return parseFloat(timeInSeconds);
+    }
 
 
     useEffect(() => {
@@ -140,7 +128,7 @@ function getTimeDifference(timeRefetched: number) {
         }
         if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
             filteredHosts = filteredHosts.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
+                Array.from(statusFilter).includes(user.status || 'DOWN'),
             );
         }
 
@@ -206,22 +194,10 @@ function getTimeDifference(timeRefetched: number) {
                         <p className="text-bold text-small capitalize">{cellValue as any}</p>
                     </div>
                 );
-            case "incidents":
-                return (
-                    <div className="flex pl-6">
-                        <p className="text-bold text-small capitalize">  
-                            {
-                                typeof cellValue === 'string' ?
-                                    cellValue ? cellValue.toString() : "0"
-                                : '0'
-                            }
-                        </p>
-                    </div>
-                );
             case "status":
                 return (
                     <div className="flex items-center justify-center">
-                        <Chip className="capitalize" color={statusColorMap[host.status]} size="sm" variant="flat">
+                        <Chip className="capitalize" color={statusColorMap[host.status || 'DOWN']} size="sm" variant="flat">
                     {typeof cellValue === 'string' ? cellValue : 'Unknown'}
                         </Chip>
                     </div>
@@ -491,13 +467,13 @@ function getTimeDifference(timeRefetched: number) {
     return (
 
         <Table
-            aria-label="Example table with custom cells, pagination and sorting"
+            aria-label="Host table with custom cells, pagination and sorting"
             // style={{ backgroundColor: 'white' }}
             isHeaderSticky
             bottomContent={bottomContent}
             bottomContentPlacement="outside"
             classNames={{
-                // th: "dark:bg-[#24344E]",
+                th: "dark:bg-[#202F46] bg-gray-200",
                 td: "dark:bg-[#141B29]",
                 wrapper: "max-h-[382px] dark:bg-[#141B29]",
                 table: 'dark:bg-[#141B29] dark:border-[#141B29]',
@@ -516,7 +492,6 @@ function getTimeDifference(timeRefetched: number) {
                 {(column) => (
                     <TableColumn
                         key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
                         className={`${column.uid === "actions" || column.uid === "status" ? "text-center " : ''} ${column.uid === "os" ? "pl-6" : ''} `}
                         allowsSorting={column.sortable}
                     >
@@ -529,9 +504,6 @@ function getTimeDifference(timeRefetched: number) {
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                        {/* {(columnKey) => <TableCell>{                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">LAME</p>
-                    </div>}</TableCell>} */}
                     </TableRow>
                 )}
             </TableBody>

@@ -36,8 +36,8 @@ const columns = [
 ]
 
 const statusOptions = [
-  {name: "Connected", uid: "connected"},
-  {name: "Disconnected", uid: "disconnected"},
+  {name: "Up", uid: "UP"},
+  {name: "Down", uid: "DOWN"},
 ];
 
 const hosts = [

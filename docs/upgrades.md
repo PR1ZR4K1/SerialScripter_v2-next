@@ -19,8 +19,17 @@ Front-end pages: - Host page/Dashboard - Monitor or make changes to Users - Moni
         - IP
         - OS
         - Up/Down
-        - Last Checked
-        - 
+        - Last Checked 
+    
+    - Dynamic Hosts Page
+
+        - General Info Pane
+            - System Info
+            - OS/Version
+            - User Stats
+            - Services Stats
+            - Number of Open Ports
+            - Scheduled Tasks? (List of tasks that have been scheduled to continuously run on a host and their status maybe)
 
 Back-end functionality:
 

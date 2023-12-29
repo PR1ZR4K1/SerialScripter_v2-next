@@ -5,12 +5,16 @@ import {
   Navbar,
   Collapse,
   Typography,
-  Button,
   IconButton,
 } from "@material-tailwind/react";
 
-import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon } from "@heroicons/react/24/outline";
+import { UsersIcon, CommandLineIcon, HomeIcon, Cog8ToothIcon, Bars3Icon, XCircleIcon, CircleStackIcon } from "@heroicons/react/24/outline";
 import { useHostsStore } from "@/store/HostsStore";
+import { VscDebugDisconnect } from "react-icons/vsc";
+import { TbFileImport } from "react-icons/tb";
+import { FiCodesandbox } from "react-icons/fi";
+import { FaRegLemon } from "react-icons/fa";
+
 
 export default function Topbar({hostname}: {hostname: string}) {
   const [openNav, setOpenNav] = React.useState(false);
@@ -68,6 +72,71 @@ export default function Topbar({hostname}: {hostname: string}) {
           </a>
         </Typography>
       </button>
+      <button onClick={() => setView('disks')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <CircleStackIcon className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Disks
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('connections')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <VscDebugDisconnect className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Connections
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('shares')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <TbFileImport className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Shares
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('containers')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <FiCodesandbox className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Containers
+          </a>
+        </Typography>
+      </button>
+      <button onClick={() => setView('firewall')}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium text-md dark:text-gray-200"
+        >
+          <FaRegLemon className="dark:text-[#1D9FE4] text-blue-600" height={18} width={18}/>
+          <a className="flex items-center">
+            Firewall
+          </a>
+        </Typography>
+      </button>
       <button onClick={() => setView('xterm')}>
         <Typography
           as="li"
@@ -87,63 +156,45 @@ export default function Topbar({hostname}: {hostname: string}) {
 
 
   return (
-    <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-black/5 dark:border-black/30 py-4 rounded-3xl mt-4">
-      <div className="flex items-center text-blue-gray-900 absolute top-1/2 -translate-y-1/2 left-6">
-        <Typography
-          as="a"
-          className="cursor-pointer py-1.5 font-bold whitespace-nowrap dark:text-white"
-        >
-          {hostname}
-        </Typography>
-      </div>
-      <div className="container flex justify-center items-center min-w-full">
+    <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-purple-900 dark:border-black/30 py-4 rounded-3xl mt-6">
+        <div className="flex items-center text-blue-gray-900 absolute top-1/2 -translate-y-1/2 left-6">
+          <Typography
+            as="a"
+            className="cursor-pointer py-1.5 font-bold whitespace-nowrap dark:text-white"
+          >
+            {hostname}
+          </Typography>
+        </div>
+        { !openNav ? (
+          <div className="container flex justify-center items-center min-w-full">
 
-        <div className="hidden lg:block ">{navList}</div>
-        <IconButton
-          variant="text"
-          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-          ripple={false}
-          onClick={() => setOpenNav(!openNav)}
-        >
-          {openNav ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+            <div className="hidden lg:block ">{navList}</div>
+            <IconButton
+              variant="text"
+              className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              ripple={false}
+              onClick={() => setOpenNav(!openNav)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
-        </IconButton>
-      </div>
-      {openNav && (
-        <Collapse open={openNav}>
-          <div className="container ">
-            {navList}
+                <Bars3Icon className="h-6 w-6" />
+            </IconButton>
           </div>
-        </Collapse>
-      )}
+        )
+        :  (
+          <Collapse open={openNav} className="container flex justify-center items-center min-w-full">
+            <div className="mx-auto ">
+              {navList}
+            </div>
+            <IconButton
+              variant="text"
+              className=" h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              ripple={false}
+              onClick={() => setOpenNav(!openNav)}
+            >
+                <XCircleIcon className="h-6 w-6" />
+            </IconButton>
+
+          </Collapse>
+        )}
     </Navbar>
   );
 }

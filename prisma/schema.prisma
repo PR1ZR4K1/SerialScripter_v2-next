@@ -10,20 +10,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum IncidentStatus {
-    OPEN
-    CLOSED
-}
-
 enum Status {
     UP
     DOWN
+}
+
+enum PortStatus {
+    established
+    synSent
+    synRecv
+    finWait1
+    finWait2
+    timeWait
+    closed
+    closeWait
+    lastAck
+    listen
+    closing
+    unknown
+}
+
+enum SystemServiceStatus {
+    active
+    inactive
+    failed
+    unknown
 }
 
 enum UserType {
     PRIVILEGED
     USER // Assuming there might be regular users as well.
 }
+
+enum ShareType {
+  nFS
+  sMB
+}
+
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -32,26 +55,36 @@ model User {
   name     String?
 }
 
+model API_KEYS {
+  id                Int @id @default(autoincrement())
+  key               String
+  albertosFunKey     String 
+  lifetime          Int  
+}
 
 model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
   ip                String       @unique
   osId              Int          @unique
-  status            Status       // Changed to enum type
+  status            Status?       // Changed to enum type
   os                OS           @relation(fields: [osId], references: [id])
-  systemSpecId      Int?         @unique
-  systemSpec        SystemSpec?  @relation(fields: [systemSpecId], references: [id])
+  systemInfoId      Int?         @unique
+  systemInfo        SystemInfo?  @relation(fields: [systemInfoId], references: [id])
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
   createdAt         DateTime     @default(now())
+  disks             Disk[]
   systemServices    SystemService[]
   networkServices   NetworkService[]
+  connections       Connection[]
   incidents         Incident[]
   software          Software[]
   containers        Container[]
   userAccounts      UserAccount[]
+  shares            Share[]
+  firewallRules     FirewallRule[]
 }
 
 model OS {
@@ -61,40 +94,66 @@ model OS {
   host    Host?
 }
 
-model SystemSpec {
+model SystemInfo {
   id        Int    @id @default(autoincrement())
   cpuCores  Int
+  cpuName   String
   memory    Int    // Assuming this is in MB or GB
-  disk      Int    // Assuming this is in GB
   host      Host?
+}
+
+model Disk {
+  id                  Int     @id @default(autoincrement())
+  name                String
+  mountPoint          String
+  filesystem          String
+  totalSpace          Int
+  availableSpace      Int
+  hostId              Int
+  host                Host?  @relation(fields: [hostId], references: [id])
 }
 
 model SystemService {
   id          Int    @id @default(autoincrement())
   name        String
-  description String?
-  status      Status // Assuming Status is an enum with values like UP, DOWN
+  state       String
+  startMode   String?
+  status      SystemServiceStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
-  host        Host   @relation(fields: [hostId], references: [id])
+  host        Host?  @relation(fields: [hostId], references: [id])
 }
 
 model NetworkService {
   id          Int    @id @default(autoincrement())
-  name        String
+  name        String?
   port        Int
-  description String?
-  status      Status // Assuming Status is an enum with values like UP, DOWN
+  protocol    String
+  pid         Int?
+  version     String
+  state       PortStatus 
   hostId      Int
-  host        Host   @relation(fields: [hostId], references: [id])
+  host        Host?  @relation(fields: [hostId], references: [id])
+}
+
+model Connection {
+  id                  Int    @id @default(autoincrement())
+  name                String?
+  localAddress        String
+  remoteAddress       String
+  pid                 Int?
+  protocol            String
+  state               PortStatus 
+  hostId              Int
+  host                Host?  @relation(fields: [hostId], references: [id])
 }
 
 model Incident {
   id          Int          @id @default(autoincrement())
   name        String
   description String
-  host        Host         @relation(fields: [hostId], references: [id])
+  tags        String[]
+  host        Host?        @relation(fields: [hostId], references: [id])
   hostId      Int
-  status      IncidentStatus
   createdAt   DateTime     @default(now())
 }
 
@@ -103,36 +162,74 @@ model Software {
   name        String
   version     String?
   path        String?
-  host        Host     @relation(fields: [hostId], references: [id])
+  host        Host?    @relation(fields: [hostId], references: [id])
   hostId      Int
 }
 
 model Container {
-  id          Int      @id @default(autoincrement())
-  containerId String   @unique
-  name        String
-  type        String
-  host        Host     @relation(fields: [hostId], references: [id])
-  hostId      Int
-  volumes     Volume[] // One-to-many relationship with Volume
+  id                        Int      @id @default(autoincrement())
+  containerId               String   @unique
+  name                      String
+  portBindings              String[]
+  status                    String
+  cmd                       String
+  containerNetworks         ContainerNetwork[]
+  containerVolumes          ContainerVolume[] // One-to-many relationship with Volume
+  host                      Host?    @relation(fields: [hostId], references: [id])
+  hostId                    Int
 }
 
-model Volume {
-  id           Int      @id @default(autoincrement())
-  path         String
-  name         String
-  size         Int      // Assuming this is in MB or GB
-  permissions  String   
-  containerId  Int
-  container    Container @relation(fields: [containerId], references: [id])
+model ContainerNetwork {
+  id                    Int      @id @default(autoincrement())
+  networkName                  String
+  ip                    String
+  gateway               String
+  macAddress            String
+  container             Container? @relation(fields: [containerId], references: [id])
+  containerId           Int
+}
+
+
+model ContainerVolume {
+  id                    Int      @id @default(autoincrement())
+  hostPath              String
+  containerPath         String
+  mode                  String
+  volumeName            String
+  rw                    Boolean
+  vType                 String   
+  container             Container? @relation(fields: [containerId], references: [id])
+  containerId           Int
 }
 
 
 model UserAccount {
   id        Int       @id @default(autoincrement())
-  username  String
-  password  String
-  userType  UserType  // Changed to enum type
-  host      Host?     @relation(fields: [hostId], references: [id])
-  hostId    Int?
+  name      String
+  isLocal   Boolean
+  uid       String
+  gid       String
+  shell     String?
+  groups    String[]
+  isAdmin   Boolean
+  host      Host?    @relation(fields: [hostId], references: [id])
+  hostId    Int
+}
+
+model Share {
+  id            Int     @id @default(autoincrement())
+  shareType     ShareType
+  networkPath   String
+  host          Host?   @relation(fields: [hostId], references: [id])
+  hostId        Int
+}
+
+model FirewallRule {
+  id            Int     @id @default(autoincrement())
+  action        String
+  dport         Int 
+  protocol      String
+  host          Host?   @relation(fields: [hostId], references: [id])
+  hostId        Int
+  @@unique([ dport, hostId])
 }

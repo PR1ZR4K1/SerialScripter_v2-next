@@ -1,0 +1,1492 @@
+{
+  "hostname": "pwn-box",
+  "ip": "192.168.1.160",
+  "version": "38",
+  "cores": 32,
+  "os": "linux",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
+  "memory": 63982,
+  "disks": [
+    {
+      "name": "/dev/nvme1n1p3",
+      "mountPoint": "/",
+      "filesystem": "btrfs",
+      "totalSpace": 975137,
+      "availableSpace": 587468
+    },
+    {
+      "name": "/dev/nvme1n1p3",
+      "mountPoint": "/home",
+      "filesystem": "btrfs",
+      "totalSpace": 975137,
+      "availableSpace": 587468
+    },
+    {
+      "name": "/dev/nvme1n1p2",
+      "mountPoint": "/boot",
+      "filesystem": "ext4",
+      "totalSpace": 973,
+      "availableSpace": 603
+    },
+    {
+      "name": "/dev/nvme1n1p1",
+      "mountPoint": "/boot/efi",
+      "filesystem": "vfat",
+      "totalSpace": 598,
+      "availableSpace": 539
+    },
+    {
+      "name": "overlay",
+      "mountPoint": "/var/lib/docker/overlay2/37815ab76194da140550216d3b3a17f84bafe1f6b8192ae7a67c142d783b24ba/merged",
+      "filesystem": "overlay",
+      "totalSpace": 975137,
+      "availableSpace": 587468
+    },
+    {
+      "name": "overlay",
+      "mountPoint": "/var/lib/docker/overlay2/857ddcc7fbc5393a8939945acbb7aa4694bbe146527a5b74bf437312d61c94ac/merged",
+      "filesystem": "overlay",
+      "totalSpace": 975137,
+      "availableSpace": 587468
+    }
+  ],
+  "networkAdapters": "",
+  "ports": [
+    {
+      "port": 5355,
+      "protocol": "TCP",
+      "process": {
+        "pid": 957013,
+        "name": "systemd-resolve"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 8004,
+      "protocol": "TCP",
+      "process": {
+        "pid": 646849,
+        "name": "docker-proxy"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 22,
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 33333,
+      "protocol": "TCP",
+      "process": {
+        "pid": 646829,
+        "name": "docker-proxy"
+      },
+      "version": "",
+      "state": "listen"
+    }
+  ],
+  "connections": [
+    {
+      "localAddress": "0.0.0.0:5355",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 957013,
+        "name": "systemd-resolve"
+      }
+    },
+    {
+      "localAddress": "127.0.0.1:631",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1580,
+        "name": "cupsd"
+      }
+    },
+    {
+      "localAddress": "0.0.0.0:8004",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646849,
+        "name": "docker-proxy"
+      }
+    },
+    {
+      "localAddress": "127.0.2.3:53",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "127.0.0.1:6463",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 53396,
+        "name": "Discord"
+      }
+    },
+    {
+      "localAddress": "0.0.0.0:22",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "0.0.0.0:33333",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646829,
+        "name": "docker-proxy"
+      }
+    },
+    {
+      "localAddress": "127.0.0.54:53",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 957013,
+        "name": "systemd-resolve"
+      }
+    },
+    {
+      "localAddress": "127.0.0.53:53",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 957013,
+        "name": "systemd-resolve"
+      }
+    },
+    {
+      "localAddress": "127.0.2.2:53",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:51838",
+      "remoteAddress": "162.159.137.105:443",
+      "state": "timeWait",
+      "protocol": "TCP",
+      "process": null
+    },
+    {
+      "localAddress": "192.168.1.160:57654",
+      "remoteAddress": "140.82.114.25:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 13186,
+        "name": "brave"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:60780",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 38505,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:43004",
+      "remoteAddress": "162.159.36.1:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46888",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 773500,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46902",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 773500,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:60772",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 38505,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46906",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:56994",
+      "remoteAddress": "162.159.135.234:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 53258,
+        "name": "Discord"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46896",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 773500,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:22",
+      "remoteAddress": "192.168.1.234:55992",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1063893,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:60756",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 38505,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46922",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46910",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:39968",
+      "remoteAddress": "162.159.137.105:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:42230",
+      "remoteAddress": "162.159.128.232:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 53258,
+        "name": "Discord"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:68",
+      "remoteAddress": "192.168.1.254:67",
+      "state": "established",
+      "protocol": "UDP",
+      "process": {
+        "pid": 1567,
+        "name": "NetworkManager"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:34636",
+      "remoteAddress": "162.159.193.3:2408",
+      "state": "established",
+      "protocol": "UDP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "[::1]:631",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1580,
+        "name": "cupsd"
+      }
+    },
+    {
+      "localAddress": "[::]:5355",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 957013,
+        "name": "systemd-resolve"
+      }
+    },
+    {
+      "localAddress": "[::]:8004",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646857,
+        "name": "docker-proxy"
+      }
+    },
+    {
+      "localAddress": "[::]:22",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "[::]:33333",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646835,
+        "name": "docker-proxy"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:54986",
+      "remoteAddress": "[2602:fd3f:3:ff01::2b]:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 13186,
+        "name": "brave"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:56850",
+      "remoteAddress": "[2606:4700:4700::1111]:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:57888",
+      "remoteAddress": "[2600:1901:1:304::]:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 53258,
+        "name": "Discord"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:50857",
+      "remoteAddress": "[2607:f8b0:4002:c0f::be]:443",
+      "state": "established",
+      "protocol": "UDP",
+      "process": {
+        "pid": 13186,
+        "name": "brave"
+      }
+    }
+  ],
+  "services": [
+    {
+      "name": "abrt-journal-core.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "abrt-oops.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "abrt-xorg.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "abrtd.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "accounts-daemon.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "akmods.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "alsa-state.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "auditd.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "avahi-daemon.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "bluetooth.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "bolt.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "chronyd.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "colord.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "cups.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "dbus-broker.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "docker.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "dracut-shutdown.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "firewalld.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "gdm.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "gssproxy.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "import-state.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "kmod-static-nodes.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "low-memory-monitor.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "lvm2-monitor.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "mcelog.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "ModemManager.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "NetworkManager-wait-online.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "NetworkManager.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "nvidia-fallback.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "● nvidia-powerd.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "failed"
+    },
+    {
+      "name": "pcscd.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "plymouth-quit-wait.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "plymouth-read-write.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "plymouth-start.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "polkit.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "rpc-statd-notify.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "rtkit-daemon.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "sshd.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "sssd-kcm.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "switcheroo-control.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-backlight@backlight:nvidia_wmi_ec_backlight.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-binfmt.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-fsck@dev-disk-by\\x2duuid-4102fcc0\\x2d538a\\x2d4bf0\\x2db744\\x2d6a78d017291e.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-fsck@dev-disk-by\\x2duuid-F129\\x2d3731.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-journal-flush.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-journald.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-logind.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-machined.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-modules-load.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-network-generator.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-oomd.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-random-seed.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-remount-fs.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-resolved.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-sysctl.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-tmpfiles-setup-dev.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-tmpfiles-setup.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-udev-trigger.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-udevd.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-update-utmp.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-user-sessions.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-userdbd.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-vconsole-setup.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "systemd-zram-setup@zram0.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "thermald.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "udisks2.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "upower.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "uresourced.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "user-runtime-dir@1000.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "user@1000.service",
+      "state": "loaded",
+      "startMode": "disabled",
+      "status": "active"
+    },
+    {
+      "name": "● vaultBackup.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "failed"
+    },
+    {
+      "name": "vboxdrv.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "warp-svc.service",
+      "state": "loaded",
+      "startMode": "enabled",
+      "status": "active"
+    },
+    {
+      "name": "wpa_supplicant.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
+      "name": "74",
+      "state": "loaded",
+      "startMode": null,
+      "status": "unknown"
+    }
+  ],
+  "users": [
+    {
+      "name": "root",
+      "uid": "0",
+      "gid": "0",
+      "isAdmin": true,
+      "groups": [
+        "root"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "bin",
+      "uid": "1",
+      "gid": "1",
+      "isAdmin": false,
+      "groups": [
+        "bin"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "daemon",
+      "uid": "2",
+      "gid": "2",
+      "isAdmin": false,
+      "groups": [
+        "daemon"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "adm",
+      "uid": "3",
+      "gid": "4",
+      "isAdmin": false,
+      "groups": [
+        "adm"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "lp",
+      "uid": "4",
+      "gid": "7",
+      "isAdmin": false,
+      "groups": [
+        "lp"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "sync",
+      "uid": "5",
+      "gid": "0",
+      "isAdmin": false,
+      "groups": [
+        "root"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "shutdown",
+      "uid": "6",
+      "gid": "0",
+      "isAdmin": false,
+      "groups": [
+        "root"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "halt",
+      "uid": "7",
+      "gid": "0",
+      "isAdmin": false,
+      "groups": [
+        "root"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "mail",
+      "uid": "8",
+      "gid": "12",
+      "isAdmin": false,
+      "groups": [
+        "mail"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "operator",
+      "uid": "11",
+      "gid": "0",
+      "isAdmin": false,
+      "groups": [
+        "root"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "games",
+      "uid": "12",
+      "gid": "100",
+      "isAdmin": false,
+      "groups": [
+        "users"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "ftp",
+      "uid": "14",
+      "gid": "50",
+      "isAdmin": false,
+      "groups": [
+        "ftp"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "nobody",
+      "uid": "65534",
+      "gid": "65534",
+      "isAdmin": false,
+      "groups": [
+        "nobody"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "dbus",
+      "uid": "81",
+      "gid": "81",
+      "isAdmin": false,
+      "groups": [
+        "dbus"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "apache",
+      "uid": "48",
+      "gid": "48",
+      "isAdmin": false,
+      "groups": [
+        "apache"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "tss",
+      "uid": "59",
+      "gid": "59",
+      "isAdmin": false,
+      "groups": [
+        "tss"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "systemd-network",
+      "uid": "192",
+      "gid": "192",
+      "isAdmin": false,
+      "groups": [
+        "systemd-network"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "systemd-oom",
+      "uid": "999",
+      "gid": "999",
+      "isAdmin": false,
+      "groups": [
+        "systemd-oom"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "systemd-resolve",
+      "uid": "193",
+      "gid": "193",
+      "isAdmin": false,
+      "groups": [
+        "systemd-resolve"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "qemu",
+      "uid": "107",
+      "gid": "107",
+      "isAdmin": false,
+      "groups": [
+        "qemu",
+        "kvm"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "polkitd",
+      "uid": "998",
+      "gid": "997",
+      "isAdmin": false,
+      "groups": [
+        "polkitd"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "avahi",
+      "uid": "70",
+      "gid": "70",
+      "isAdmin": false,
+      "groups": [
+        "avahi"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "geoclue",
+      "uid": "997",
+      "gid": "996",
+      "isAdmin": false,
+      "groups": [
+        "geoclue"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "nm-openconnect",
+      "uid": "996",
+      "gid": "995",
+      "isAdmin": false,
+      "groups": [
+        "nm-openconnect"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "colord",
+      "uid": "995",
+      "gid": "994",
+      "isAdmin": false,
+      "groups": [
+        "colord"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "usbmuxd",
+      "uid": "113",
+      "gid": "113",
+      "isAdmin": false,
+      "groups": [
+        "usbmuxd"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "gluster",
+      "uid": "994",
+      "gid": "993",
+      "isAdmin": false,
+      "groups": [
+        "gluster"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "rtkit",
+      "uid": "172",
+      "gid": "172",
+      "isAdmin": false,
+      "groups": [
+        "rtkit"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "pipewire",
+      "uid": "993",
+      "gid": "992",
+      "isAdmin": false,
+      "groups": [
+        "pipewire"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "chrony",
+      "uid": "992",
+      "gid": "990",
+      "isAdmin": false,
+      "groups": [
+        "chrony"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "dnsmasq",
+      "uid": "991",
+      "gid": "989",
+      "isAdmin": false,
+      "groups": [
+        "dnsmasq"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "rpc",
+      "uid": "32",
+      "gid": "32",
+      "isAdmin": false,
+      "groups": [
+        "rpc"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "saslauth",
+      "uid": "990",
+      "gid": "76",
+      "isAdmin": false,
+      "groups": [
+        "saslauth"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "rpcuser",
+      "uid": "29",
+      "gid": "29",
+      "isAdmin": false,
+      "groups": [
+        "rpcuser"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "openvpn",
+      "uid": "989",
+      "gid": "988",
+      "isAdmin": false,
+      "groups": [
+        "openvpn"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "nm-openvpn",
+      "uid": "988",
+      "gid": "987",
+      "isAdmin": false,
+      "groups": [
+        "nm-openvpn"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "unbound",
+      "uid": "987",
+      "gid": "986",
+      "isAdmin": false,
+      "groups": [
+        "unbound"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "abrt",
+      "uid": "173",
+      "gid": "173",
+      "isAdmin": false,
+      "groups": [
+        "abrt"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "flatpak",
+      "uid": "986",
+      "gid": "984",
+      "isAdmin": false,
+      "groups": [
+        "flatpak"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "gdm",
+      "uid": "42",
+      "gid": "42",
+      "isAdmin": false,
+      "groups": [
+        "gdm"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "gnome-initial-setup",
+      "uid": "985",
+      "gid": "983",
+      "isAdmin": false,
+      "groups": [
+        "gnome-initial-setup"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "vboxadd",
+      "uid": "984",
+      "gid": "1",
+      "isAdmin": false,
+      "groups": [
+        "bin"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "sshd",
+      "uid": "74",
+      "gid": "74",
+      "isAdmin": false,
+      "groups": [
+        "sshd"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "tcpdump",
+      "uid": "72",
+      "gid": "72",
+      "isAdmin": false,
+      "groups": [
+        "tcpdump"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "systemd-coredump",
+      "uid": "978",
+      "gid": "978",
+      "isAdmin": false,
+      "groups": [
+        "systemd-coredump"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "systemd-timesync",
+      "uid": "977",
+      "gid": "977",
+      "isAdmin": false,
+      "groups": [
+        "systemd-timesync"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "cm03",
+      "uid": "1000",
+      "gid": "1000",
+      "isAdmin": true,
+      "groups": [
+        "cm03",
+        "adm",
+        "wheel",
+        "input",
+        "docker"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "akmods",
+      "uid": "976",
+      "gid": "976",
+      "isAdmin": false,
+      "groups": [
+        "akmods"
+      ],
+      "isLocal": true,
+      "shell": null
+    },
+    {
+      "name": "test",
+      "uid": "1001",
+      "gid": "1001",
+      "isAdmin": false,
+      "groups": [
+        "test"
+      ],
+      "isLocal": true,
+      "shell": null
+    }
+  ],
+  "shares": [
+    {
+      "shareType": "nFS",
+      "networkPath": "/var/nfs"
+    }
+  ],
+  "containers": [
+    {
+      "containerId": "e0ce829f11e9e70393a8bda0332cac1941151396cdb322d8396ca2ad3bbbf470",
+      "name": "/ecstatic_solomon",
+      "networks": [
+        {
+          "networkName": "bridge",
+          "ip": "172.17.0.2",
+          "gateway": "172.17.0.1",
+          "macAddress": "02:42:ac:11:00:02"
+        }
+      ],
+      "portBindings": [
+        "0.0.0.0:8004->33/tcp",
+        ":::8004->33/tcp",
+        "0.0.0.0:33333->444/tcp",
+        ":::33333->444/tcp"
+      ],
+      "volumes": [],
+      "status": "running",
+      "cmd": "/bin/sh"
+    }
+  ]
+}

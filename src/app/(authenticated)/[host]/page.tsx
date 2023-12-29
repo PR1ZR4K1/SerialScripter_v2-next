@@ -13,6 +13,6 @@ function Page({ params }: { params: { host: string } }) {
       </div>
     </section>
   )
-}
+};
 
 export default Page

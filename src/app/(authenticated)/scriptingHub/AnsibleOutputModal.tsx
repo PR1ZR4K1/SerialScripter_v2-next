@@ -21,17 +21,7 @@ export default function AnsibleOutputModal() {
   // console.log(ansibleOutput)
   // length of list for pagination
   const pages = ansibleOutput.length;
-  const formattedJsonConfig = {
-      hoverPreviewEnabled: true,
-      hoverPreviewArrayCount: 100,
-      hoverPreviewFieldCount: 5,
-      theme: theme,
-      animateOpen: true,
-      animateClose: true,
-      useToJSON: true,
-      maxArrayItems: 100,
-      exposePath: false
-}
+
 
   // const formatJSON = (jsonString: string) => {
 
@@ -55,6 +45,18 @@ export default function AnsibleOutputModal() {
 
   useEffect(() => {
     if (typeof window !== "undefined" && jsonContainerRef.current && ansibleOutput[page - 1]) {
+
+      const formattedJsonConfig = {
+        hoverPreviewEnabled: true,
+        hoverPreviewArrayCount: 100,
+        hoverPreviewFieldCount: 5,
+        theme: theme,
+        animateOpen: true,
+        animateClose: true,
+        useToJSON: true,
+        maxArrayItems: 100,
+        exposePath: false
+      };
       import('json-formatter-js').then(JSONFormatter => {
         const json = JSON.parse(ansibleOutput[page - 1].output);
         const formatter = new JSONFormatter.default(json, Infinity, formattedJsonConfig);
@@ -65,7 +67,7 @@ export default function AnsibleOutputModal() {
         }
       }).catch(error => console.error('Error loading JSONFormatter:', error));
     }
-  }, [ansibleOutput, page]);
+  }, [ansibleOutput, page, theme]);
 
 
   return (
