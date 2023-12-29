@@ -1,8 +1,20 @@
 import { prisma } from '@/lib/prisma';
-
+import { processArray, createHostConnect, HostConnect } from '@/lib/prismaHelper';
+import { Prisma } from '@prisma/client';
 
 export const revalidate = 10;
 import { Agent, setGlobalDispatcher } from 'undici'
+
+type RulesType = {
+    action: string;
+    dport: string;
+    protocol: string;
+}
+
+function isErrorWithCode(error: unknown): error is { code: string } {
+    return typeof error === 'object' && error !== null && 'code' in error;
+  }
+  
 
 export async function POST(req: Request) {
     
@@ -59,11 +71,11 @@ export async function POST(req: Request) {
             connect: {
               rejectUnauthorized: false
             }
-          })
+        })
           
-          setGlobalDispatcher(agent)
+        setGlobalDispatcher(agent)
 
-        const result = await fetch(`https://192.168.1.21:8000/here/are/my/rules/sire`, {
+        const result = await fetch(`https://192.168.1.22:8000/here/are/my/rules/sire`, {
             method: 'GET',
             headers: {
                 'API-Token': albertosFunKey.albertosFunKey,
@@ -82,9 +94,35 @@ export async function POST(req: Request) {
 
         const data = await result.json();
 
-        console.log('This is the result bozo\n', data.rules);
+        // const data = {'rules': [{'action': 'accept', 'dport': '22', 'protocol': 'tcp'}, {'action': 'accept', 'dport': '80', 'protocol': 'tcp'}, {'action': 'drop', 'dport': '1000', 'protocol': 'tcp'}]}
 
-        return new Response(JSON.stringify({ msg: 'Acquired rules' }), {
+        const hostRules: RulesType[] = data.rules;
+        
+        if (hostRules && hostRules.length > 0) {
+
+            const rules = hostRules.map((rule) => {
+                return {
+                    ...rule,
+                    dport: parseInt(rule.dport),
+                }
+            });
+
+            try {
+                await processArray<Prisma.FirewallRuleCreateInput, HostConnect>(
+                    rules,
+                    createHostConnect(hostId),
+                    (rule) => prisma.firewallRule.create({ data: rule as Prisma.FirewallRuleCreateInput })
+                );
+            } catch (error) {
+                return new Response(JSON.stringify({ error: 'Failed to add rules to DB!' + error }), {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+        }
+        return new Response(JSON.stringify({ msg: 'Added rules to DB!' }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json'
@@ -92,13 +130,23 @@ export async function POST(req: Request) {
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to connect to remote host container!' }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const networkError = error as NodeJS.ErrnoException;
+
+        if (networkError.cause) {
+
+            return new Response(JSON.stringify({ error: `Failed to get firewall rules!\n${networkError.cause}` }), {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        } else {
+            return new Response(JSON.stringify({ error: `Failed to get firewall rules! ${error}` }), {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
     }
-
-
 };

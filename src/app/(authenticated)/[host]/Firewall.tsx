@@ -5,6 +5,11 @@ import { ChipProps } from '@nextui-org/react';
 import { Button } from '@nextui-org/react';
 import toast from 'react-hot-toast';
 
+type FirewallResponseTypes = {
+  success: boolean;
+  message: string;
+}
+
 function Firewall() {
 
   const [host] = useHostsStore((state) => [
@@ -39,11 +44,11 @@ function Firewall() {
     drop: "danger",
   };
 
-  React.useEffect(() => {
-    if (host.firewallRules && host.firewallRules.length > 0) {
-      setHasRules(true);
-    }
-  }, [host.firewallRules])    
+  // React.useEffect(() => {
+  //   if (host.firewallRules && host.firewallRules.length > 0) {
+  //     setHasRules(true);
+  //   }
+  // }, [host.firewallRules])    
 
   const grabRules = async () => {
     const result = await fetch('/api/v1/get/host/firewallRules', {
@@ -57,34 +62,29 @@ function Firewall() {
       })
     });
 
-    const json = await result.json();
+    const response = await result.json();
+    // console.log(response)
 
-    if (json.success) {
-      toast.success('Successfully grabbed firewall rules! Refresh to see them.')
+    if (response.error) {
+      return {success: false, message: response.error};
+    } else {
+      return {success: true, message: response.msg};
     }
   }
 
   const handleGrabRules = async () => {
     setGrabbingRules(true);
     
-    const result = await toast.promise(fetch('/api/v1/get/host/firewallRules', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        hostId: host.id,
-        hostIp: host.ip,
-      })
-    }),
-      {
-        loading: 'Grabbing firewall rules...',
-        success: 'Successfully grabbed firewall rules! Refresh to see them.',
-        error: (err) => 'Failed to grab firewall rules! ' + err.message || 'Unknown error',
-      }
-    );
+    toast.loading('Grabbing firewall rules...', { duration: 1000 });
+    const result = await grabRules();
 
     setGrabbingRules(false);
+
+    if (!result.success) {
+      toast.error(result.message);
+    } else {      
+      toast.success(result.message);
+    }
   }
 
   return (

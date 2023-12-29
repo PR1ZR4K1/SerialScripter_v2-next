@@ -1,7 +1,7 @@
 import { prisma } from './prisma';
 import { Prisma } from '@prisma/client';
 
-type HostConnect = {
+export type HostConnect = {
     host: { connect: { id: number } };
 };
 
@@ -9,7 +9,7 @@ type ContainerConnect = {
     container: { connect: { id: number } };
 };
 
-const createHostConnect = (id: number) => ({ host: { connect: { id } } });
+export const createHostConnect = (id: number) => ({ host: { connect: { id } } });
 const createContainerConnect = (id: number) => ({ container: { connect: { id } } });
 
 export async function processArray<T, U extends HostConnect | ContainerConnect>(
