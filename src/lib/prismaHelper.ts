@@ -65,7 +65,7 @@ interface HostData {
     ports?: ModifiedNetworkServiceType[];
     users?:   Prisma.UserAccountCreateManyHostInput[];
     connections?: Prisma.ConnectionsCreateManyHostInput[];
-    shares?: Prisma.SharesCreateManyHostInput[];
+    shares?: Prisma.ShareCreateManyHostInput[];
     containers?: ExtendedContainerType[];
 }
 
@@ -152,10 +152,10 @@ export async function createHost(hostData : HostData) {
 
     if (hostData.shares && hostData.shares.length > 0) {
         // await createShares(hostData.shares, createdHost.id);
-        await processArray<Prisma.SharesCreateInput, HostConnect>(
+        await processArray<Prisma.ShareCreateInput, HostConnect>(
             hostData.shares, 
             createHostConnect(createdHost.id),
-            (share) => prisma.shares.create({ data: share as Prisma.SharesCreateInput })
+            (share) => prisma.share.create({ data: share as Prisma.ShareCreateInput })
         );
     }
 
@@ -190,7 +190,8 @@ async function createContainer(hostid: number, container: Prisma.ContainerCreate
 }
 
 function flattenProcesses(connection: any) {
-    if (!connection.process) {
+    if (connection.process === null) {
+        delete connection.process;
         return connection;
     }
 

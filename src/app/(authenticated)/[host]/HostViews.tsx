@@ -12,6 +12,7 @@ import Disks from './Disks';
 import Connections from './Connections';
 import Shares from './Shares';
 import Containers from './Containers';
+import Firewall from './Firewall';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -63,6 +64,8 @@ export default function HostViews({hostname}: {hostname: string}) {
         content = <Shares />
     } else if (view === 'containers') {
         content = <Containers />
+    } else if (view === 'firewall') {
+        content = <Firewall />
     }
 
     

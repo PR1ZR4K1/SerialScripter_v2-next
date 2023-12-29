@@ -82,7 +82,7 @@ model Host {
   software          Software[]
   containers        Container[]
   userAccounts      UserAccount[]
-  shares            Shares[]
+  shares            Share[]
 }
 
 model OS {
@@ -191,9 +191,9 @@ model ContainerNetwork {
 model ContainerVolume {
   id                    Int      @id @default(autoincrement())
   hostPath              String
-  containerPath              String
+  containerPath         String
   mode                  String
-  volumeName                  String
+  volumeName            String
   rw                    Boolean
   vType                 String   
   container             Container? @relation(fields: [containerId], references: [id])
@@ -214,7 +214,7 @@ model UserAccount {
   hostId    Int
 }
 
-model Shares {
+model Share {
   id            Int     @id @default(autoincrement())
   shareType     ShareType
   networkPath   String

@@ -222,7 +222,6 @@ export default function HostTable({rows, colorMap, columns, colorField, colorFie
 
   return (
     <Table 
-      selectionMode="multiple" 
       aria-labelledby="Multi-Purpose Table"
       sortDescriptor={sortDescriptor}
       onSortChange={setSortDescriptor}

@@ -1,9 +1,10 @@
 {
   "hostname": "pwn-box",
   "ip": "192.168.1.160",
+  "version": "38",
+  "cores": 32,
   "os": "linux",
   "cpu": "13th Gen Intel(R) Core(TM) i9-13900HX",
-  "cores": 32,
   "memory": 63982,
   "disks": [
     {
@@ -11,14 +12,14 @@
       "mountPoint": "/",
       "filesystem": "btrfs",
       "totalSpace": 975137,
-      "availableSpace": 589530
+      "availableSpace": 587468
     },
     {
       "name": "/dev/nvme1n1p3",
       "mountPoint": "/home",
       "filesystem": "btrfs",
       "totalSpace": 975137,
-      "availableSpace": 589530
+      "availableSpace": 587468
     },
     {
       "name": "/dev/nvme1n1p2",
@@ -36,10 +37,17 @@
     },
     {
       "name": "overlay",
-      "mountPoint": "/var/lib/docker/overlay2/b3b75f27e0bb612c4f2ac490af1baa388f1eb80fe3f0a56333f9ed47607add2f/merged",
+      "mountPoint": "/var/lib/docker/overlay2/37815ab76194da140550216d3b3a17f84bafe1f6b8192ae7a67c142d783b24ba/merged",
       "filesystem": "overlay",
       "totalSpace": 975137,
-      "availableSpace": 589530
+      "availableSpace": 587468
+    },
+    {
+      "name": "overlay",
+      "mountPoint": "/var/lib/docker/overlay2/857ddcc7fbc5393a8939945acbb7aa4694bbe146527a5b74bf437312d61c94ac/merged",
+      "filesystem": "overlay",
+      "totalSpace": 975137,
+      "availableSpace": 587468
     }
   ],
   "networkAdapters": "",
@@ -48,8 +56,38 @@
       "port": 5355,
       "protocol": "TCP",
       "process": {
-        "pid": 352583,
+        "pid": 957013,
         "name": "systemd-resolve"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 8004,
+      "protocol": "TCP",
+      "process": {
+        "pid": 646849,
+        "name": "docker-proxy"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 22,
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      },
+      "version": "",
+      "state": "listen"
+    },
+    {
+      "port": 33333,
+      "protocol": "TCP",
+      "process": {
+        "pid": 646829,
+        "name": "docker-proxy"
       },
       "version": "",
       "state": "listen"
@@ -62,7 +100,7 @@
       "state": "listen",
       "protocol": "TCP",
       "process": {
-        "pid": 352583,
+        "pid": 957013,
         "name": "systemd-resolve"
       }
     },
@@ -74,6 +112,16 @@
       "process": {
         "pid": 1580,
         "name": "cupsd"
+      }
+    },
+    {
+      "localAddress": "0.0.0.0:8004",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646849,
+        "name": "docker-proxy"
       }
     },
     {
@@ -97,12 +145,32 @@
       }
     },
     {
+      "localAddress": "0.0.0.0:22",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "0.0.0.0:33333",
+      "remoteAddress": "0.0.0.0:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646829,
+        "name": "docker-proxy"
+      }
+    },
+    {
       "localAddress": "127.0.0.54:53",
       "remoteAddress": "0.0.0.0:0",
       "state": "listen",
       "protocol": "TCP",
       "process": {
-        "pid": 352583,
+        "pid": 957013,
         "name": "systemd-resolve"
       }
     },
@@ -112,7 +180,7 @@
       "state": "listen",
       "protocol": "TCP",
       "process": {
-        "pid": 352583,
+        "pid": 957013,
         "name": "systemd-resolve"
       }
     },
@@ -127,7 +195,14 @@
       }
     },
     {
-      "localAddress": "192.168.1.160:58476",
+      "localAddress": "192.168.1.160:51838",
+      "remoteAddress": "162.159.137.105:443",
+      "state": "timeWait",
+      "protocol": "TCP",
+      "process": null
+    },
+    {
+      "localAddress": "192.168.1.160:57654",
       "remoteAddress": "140.82.114.25:443",
       "state": "established",
       "protocol": "TCP",
@@ -137,17 +212,17 @@
       }
     },
     {
-      "localAddress": "192.168.1.160:35594",
-      "remoteAddress": "162.159.136.234:443",
+      "localAddress": "192.168.1.160:60780",
+      "remoteAddress": "20.189.172.32:443",
       "state": "established",
       "protocol": "TCP",
       "process": {
-        "pid": 53258,
-        "name": "Discord"
+        "pid": 38505,
+        "name": "node"
       }
     },
     {
-      "localAddress": "192.168.1.160:49102",
+      "localAddress": "192.168.1.160:43004",
       "remoteAddress": "162.159.36.1:443",
       "state": "established",
       "protocol": "TCP",
@@ -157,17 +232,107 @@
       }
     },
     {
-      "localAddress": "192.168.1.160:48654",
-      "remoteAddress": "40.125.67.49:443",
+      "localAddress": "192.168.1.160:46888",
+      "remoteAddress": "20.189.172.32:443",
       "state": "established",
       "protocol": "TCP",
       "process": {
-        "pid": 51679,
-        "name": "code"
+        "pid": 773500,
+        "name": "node"
       }
     },
     {
-      "localAddress": "192.168.1.160:46470",
+      "localAddress": "192.168.1.160:46902",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 773500,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:60772",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 38505,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46906",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:56994",
+      "remoteAddress": "162.159.135.234:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 53258,
+        "name": "Discord"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46896",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 773500,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:22",
+      "remoteAddress": "192.168.1.234:55992",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1063893,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:60756",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 38505,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46922",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:46910",
+      "remoteAddress": "20.189.172.32:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 219935,
+        "name": "node"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:39968",
       "remoteAddress": "162.159.137.105:443",
       "state": "established",
       "protocol": "TCP",
@@ -177,13 +342,13 @@
       }
     },
     {
-      "localAddress": "192.168.1.160:59330",
-      "remoteAddress": "162.159.193.3:4500",
+      "localAddress": "192.168.1.160:42230",
+      "remoteAddress": "162.159.128.232:443",
       "state": "established",
-      "protocol": "UDP",
+      "protocol": "TCP",
       "process": {
-        "pid": 1348,
-        "name": "warp-svc"
+        "pid": 53258,
+        "name": "Discord"
       }
     },
     {
@@ -194,6 +359,16 @@
       "process": {
         "pid": 1567,
         "name": "NetworkManager"
+      }
+    },
+    {
+      "localAddress": "192.168.1.160:34636",
+      "remoteAddress": "162.159.193.3:2408",
+      "state": "established",
+      "protocol": "UDP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
       }
     },
     {
@@ -212,22 +387,62 @@
       "state": "listen",
       "protocol": "TCP",
       "process": {
-        "pid": 352583,
+        "pid": 957013,
         "name": "systemd-resolve"
       }
     },
     {
-      "localAddress": "[::]:5990",
+      "localAddress": "[::]:8004",
       "remoteAddress": "[::]:0",
       "state": "listen",
       "protocol": "TCP",
       "process": {
-        "pid": 51679,
-        "name": "code"
+        "pid": 646857,
+        "name": "docker-proxy"
       }
     },
     {
-      "localAddress": "[2600:1700:4450:32c0::2b]:60728",
+      "localAddress": "[::]:22",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 927813,
+        "name": "sshd"
+      }
+    },
+    {
+      "localAddress": "[::]:33333",
+      "remoteAddress": "[::]:0",
+      "state": "listen",
+      "protocol": "TCP",
+      "process": {
+        "pid": 646835,
+        "name": "docker-proxy"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:54986",
+      "remoteAddress": "[2602:fd3f:3:ff01::2b]:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 13186,
+        "name": "brave"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:56850",
+      "remoteAddress": "[2606:4700:4700::1111]:443",
+      "state": "established",
+      "protocol": "TCP",
+      "process": {
+        "pid": 1348,
+        "name": "warp-svc"
+      }
+    },
+    {
+      "localAddress": "[2600:1700:4450:32c0::2b]:57888",
       "remoteAddress": "[2600:1901:1:304::]:443",
       "state": "established",
       "protocol": "TCP",
@@ -237,13 +452,13 @@
       }
     },
     {
-      "localAddress": "[2600:1700:4450:32c0::2b]:52036",
-      "remoteAddress": "[2606:4700:4700::1111]:443",
+      "localAddress": "[2600:1700:4450:32c0::2b]:50857",
+      "remoteAddress": "[2607:f8b0:4002:c0f::be]:443",
       "state": "established",
-      "protocol": "TCP",
+      "protocol": "UDP",
       "process": {
-        "pid": 1348,
-        "name": "warp-svc"
+        "pid": 13186,
+        "name": "brave"
       }
     }
   ],
@@ -471,6 +686,12 @@
       "status": "active"
     },
     {
+      "name": "sshd.service",
+      "state": "loaded",
+      "startMode": null,
+      "status": "active"
+    },
+    {
       "name": "sssd-kcm.service",
       "state": "loaded",
       "startMode": "disabled",
@@ -687,7 +908,7 @@
       "status": "active"
     },
     {
-      "name": "73",
+      "name": "74",
       "state": "loaded",
       "startMode": null,
       "status": "unknown"
@@ -1053,7 +1274,6 @@
       "gid": "76",
       "isAdmin": false,
       "groups": [
-        "saslauth",
         "saslauth"
       ],
       "isLocal": true,
@@ -1248,29 +1468,25 @@
   ],
   "containers": [
     {
-      "id": "65680f10810410642c109dd26fd37cfe06da9d26ad7c20fda5eecce689d5e371",
-      "name": "/stoic_darwin",
+      "containerId": "e0ce829f11e9e70393a8bda0332cac1941151396cdb322d8396ca2ad3bbbf470",
+      "name": "/ecstatic_solomon",
       "networks": [
         {
-          "name": "host",
-          "ip": "",
-          "gateway": "",
-          "macAddress": ""
+          "networkName": "bridge",
+          "ip": "172.17.0.2",
+          "gateway": "172.17.0.1",
+          "macAddress": "02:42:ac:11:00:02"
         }
       ],
-      "portBindings": [],
-      "volumes": [
-        {
-          "hostPath": "/var/lib/docker/volumes/test/_data",
-          "containerPath": "/home/root",
-          "mode": "z",
-          "name": "test",
-          "rw": true,
-          "vType": "volume"
-        }
+      "portBindings": [
+        "0.0.0.0:8004->33/tcp",
+        ":::8004->33/tcp",
+        "0.0.0.0:33333->444/tcp",
+        ":::33333->444/tcp"
       ],
+      "volumes": [],
       "status": "running",
-      "cmd": "/bin/bash"
+      "cmd": "/bin/sh"
     }
   ]
 }

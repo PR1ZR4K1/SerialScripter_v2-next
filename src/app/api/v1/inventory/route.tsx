@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createHost } from '@/lib/prismaHelper';
+import { Container } from '@prisma/client';
 
 async function decrementLifetime() {
     try {
@@ -64,6 +65,24 @@ export async function POST(req: Request) {
   
   const alive = await isAlive();
   
+  type ExtendedContainer = Container & {
+    networks: {
+      id: number;
+      networkName: string;
+      ipAddress: string;
+      macAddress: string;
+    }[];
+    volumes: {
+      id: number;
+      volumeName: string;
+      hostPath: string;
+      containerPath: string;
+      mode: string;
+      rw: boolean;
+      vType: string;
+    }[];
+  };
+
   if (alive) {
 
     const envKey = process.env.API_KEY;
@@ -74,6 +93,22 @@ export async function POST(req: Request) {
         // get host object
         const host = await req.json();
 
+        if (host.containers) {
+            const updatedContainers = host.containers.map((container: ExtendedContainer) => {
+                // Create a new object with the renamed fields
+                return {
+                    ...container, // Spread the rest of the container properties
+                    containerId: container.containerId.substring(0, 12), // Rename id to containerId
+                    containerNetworks: container.networks, // Rename networks to containerNetworks
+                    containerVolumes: container.volumes, // Rename volumes to containerVolumes
+                    networks: undefined, // Optional: remove the original networks field
+                    volumes: undefined // Optional: remove the original volumes field
+                };
+            });
+
+            // If you want to update the host.containers array itself
+            host.containers = updatedContainers;
+        }
         createHost(host);
 
         decrementLifetime();

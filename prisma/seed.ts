@@ -152,7 +152,7 @@ async function main() {
         },
     ];
 
-    const host1Shares: Prisma.SharesCreateManyHostInput[] = [
+    const host1Shares: Prisma.ShareCreateManyHostInput[] = [
         {
             "shareType": "nFS",
             "networkPath": "/var/nfs1"
@@ -331,7 +331,7 @@ async function main() {
         },
     ];
 
-    const host2Shares: Prisma.SharesCreateManyHostInput[] = [
+    const host2Shares: Prisma.ShareCreateManyHostInput[] = [
         {
             "shareType": "sMB",
             "networkPath": "/var/smb3"
