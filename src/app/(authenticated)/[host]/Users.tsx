@@ -13,11 +13,6 @@ export default function Users() {
     state.host,
   ]);
 
-  enum UserType {
-    'PRIVILEGED',
-    'USER'
-  }
-
   type ModifiedUserAccountType = Omit<UserAccount, 'groups' | 'isAdmin' | 'isLocal'> & { groups: string, userType: string, isLocal: string };
 
   const users = host.userAccounts || [];

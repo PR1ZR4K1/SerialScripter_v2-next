@@ -235,6 +235,7 @@ model FirewallRule {
   action        String
   dport         Int 
   protocol      String
+  description   String?
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
   @@unique([ dport, hostId])
