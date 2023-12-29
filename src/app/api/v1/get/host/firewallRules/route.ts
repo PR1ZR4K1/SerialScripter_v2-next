@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma';
-import { processArray, createHostConnect, HostConnect } from '@/lib/prismaHelper';
 import { Prisma } from '@prisma/client';
 
 export const revalidate = 10;
@@ -34,17 +33,17 @@ export async function POST(req: Request) {
             });
         }
 
-        const albertosFunKey = await prisma.apiKey.findUnique({
+        const firewallKey = await prisma.aPI_KEY.findUnique({
             where: {
-                id: 1,
+                key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
             },
             select: {
                 key: true,
             }
         });
 
-        if (!albertosFunKey) {
-            return new Response(JSON.stringify({ error: 'Failed to get FUN key!' }), {
+        if (!firewallKey) {
+            return new Response(JSON.stringify({ error: 'Failed to get firewall key!' }), {
                 status: 500,
                 headers: {
                     'Content-Type': 'application/json'
@@ -52,28 +51,28 @@ export async function POST(req: Request) {
             });
         }
 
-        const agent = new Agent({
-            connect: {
-              rejectUnauthorized: false
-            }
-        })
+        // const agent = new Agent({
+        //     connect: {
+        //       rejectUnauthorized: false
+        //     }
+        // })
           
-        setGlobalDispatcher(agent)
+        // setGlobalDispatcher(agent)
 
         // const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
-            // method: 'GET',
-            // headers: {
-                // 'API-Token': albertosFunKey.albertosFunKey,
-                // 'Content-Type': 'application/json'
-            // },
+        //     method: 'GET',
+        //     headers: {
+        //         'API-Token': firewallKey.key,
+        //         'Content-Type': 'application/json'
+        //     },
         // });
 
         // const result = await fetch(`https://192.168.1.22:8000/here/are/my/rules/sire`, {
-            // method: 'GET',
-            // headers: {
-                // 'API-Token': albertosFunKey.albertosFunKey,
-                // 'Content-Type': 'application/json'
-            // },
+        //     method: 'GET',
+        //     headers: {
+        //         'API-Token': albertosFunKey.albertosFunKey,
+        //         'Content-Type': 'application/json'
+        //     },
         // });
 
         // if (!result.ok) {

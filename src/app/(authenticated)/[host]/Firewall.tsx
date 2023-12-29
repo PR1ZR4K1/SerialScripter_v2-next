@@ -15,10 +15,10 @@ type FirewallResponseTypes = {
 
 function Firewall({hostname}: {hostname: string}) {
 
-  const [host, view, setHost] = useHostsStore((state) => [
+  const [host, setHost, openFirewallModal] = useHostsStore((state) => [
     state.host,
-    state.view,
     state.setHost,
+    state.openFirewallModal,
   ]);
 
   const [hasRules, setHasRules] = React.useState(false);
@@ -126,7 +126,7 @@ function Firewall({hostname}: {hostname: string}) {
                 color='secondary'
                 variant='shadow'
                 isDisabled={grabbingRules}
-                onClick={() => setHasRules(false)}
+                onClick={openFirewallModal}
               >
                 Update Rules
               </Button>

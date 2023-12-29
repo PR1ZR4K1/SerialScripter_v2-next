@@ -5,6 +5,7 @@ import { createHost } from '@/lib/prismaHelper';
 import { Container } from '@prisma/client';
 
 async function decrementLifetime(key: string) {
+async function decrementLifetime(key: string) {
     try {
         const updatedRecord = await prisma.apiKey.update({
             where: {
@@ -26,6 +27,7 @@ async function decrementLifetime(key: string) {
     }
 }
 
+async function isAlive(key: string) {
 async function isAlive(key: string) {
     try {
         const keyState = await prisma.apiKey.findUnique({
