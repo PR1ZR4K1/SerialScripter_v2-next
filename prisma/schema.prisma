@@ -47,6 +47,10 @@ enum ShareType {
   sMB
 }
 
+enum KeyType {
+    FIREWALL
+    HOST
+}
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -55,18 +59,12 @@ model User {
   name     String?
 }
 
-enum KeyType {
-  INVENTORY
-  FIREWALL
-  BACKDOOR
+model ApiKey {
+  id       Int     @id @default(autoincrement())
+  key      String  @unique
+  type     KeyType
+  lifetime Int?
 }
-
-model API_KEY {
-  id            Int     @id @default(autoincrement())
-  type          KeyType
-  key           String    @unique
-  lifetime      Int?
-}    
 
 model Host {
   id                Int          @id @default(autoincrement())
