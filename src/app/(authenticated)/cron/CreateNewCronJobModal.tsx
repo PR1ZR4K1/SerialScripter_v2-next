@@ -22,6 +22,36 @@ export default function CreateNewCronJobModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentPage, setCurrentPage] = useState<Page>(Page.Name);
 
+  const goToNextPage = () => {
+    setCurrentPage(prevPage => {
+      switch (prevPage) {
+        case Page.Name:
+          return Page.Command;
+        case Page.Command:
+          return Page.Schedule;
+        case Page.Schedule:
+          return Page.Review;
+        case Page.Review:
+          // Optionally handle the last page scenario
+          return Page.Review;
+        default:
+          return prevPage;
+      }
+    });
+  };
+
+  // // Optional: Handle the finish action
+  // const handleFinish = () => {
+  //   // Perform any final actions here
+  //   onClose(); // Close the modal, for example
+  // };
+
+
+  // // Function to update the validity state of the name field
+  // const updateNameValidity = (isValid: boolean) => {
+  //   setIsNameValid(isValid);
+  // };
+
   return (
     <>
       <Button onPress={onOpen} color="primary" className="ml-20">Create New Job</Button>
@@ -50,9 +80,15 @@ export default function CreateNewCronJobModal() {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Cancel
                 </Button>
-                <Button color="primary" onPress={onClose}>
-                  Create New Task
-                </Button>
+                {currentPage !== Page.Review ? (
+                  <Button color="primary" onPress={goToNextPage}>
+                    Next
+                  </Button>
+                ) : (
+                  <Button color="primary" onPress={onClose}>
+                    Finish
+                  </Button>
+                )}
               </ModalFooter>
             </>
           )}
