@@ -39,17 +39,11 @@ async function isAlive() {
 
         // console.log("Lifetime:", alive.lifetime);
         if (alive) {
-
-            if (alive.lifetime > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return alive.lifetime > 0
         }
     } catch (error) {
         console.error("Error grabbing lifetime:", error);
     }
-
 }
 
 export async function POST(req: Request) {

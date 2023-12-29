@@ -227,8 +227,9 @@ model Share {
 model FirewallRule {
   id            Int     @id @default(autoincrement())
   action        String
-  dport         Int
+  dport         Int 
   protocol      String
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
+  @@unique([ dport, hostId])
 }

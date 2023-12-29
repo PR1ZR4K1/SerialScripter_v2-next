@@ -65,7 +65,7 @@ export default function HostViews({hostname}: {hostname: string}) {
     } else if (view === 'containers') {
         content = <Containers />
     } else if (view === 'firewall') {
-        content = <Firewall />
+        content = <Firewall hostname={hostname} />
     }
 
     

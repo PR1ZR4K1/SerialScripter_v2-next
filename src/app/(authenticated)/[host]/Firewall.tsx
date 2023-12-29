@@ -4,16 +4,21 @@ import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
 import { Button } from '@nextui-org/react';
 import toast from 'react-hot-toast';
+import { set } from 'zod';
+import { getHostInfo } from '@/lib/getHostInfo';
+import { Host } from '@prisma/client';
 
 type FirewallResponseTypes = {
   success: boolean;
   message: string;
 }
 
-function Firewall() {
+function Firewall({hostname}: {hostname: string}) {
 
-  const [host] = useHostsStore((state) => [
+  const [host, view, setHost] = useHostsStore((state) => [
     state.host,
+    state.view,
+    state.setHost,
   ]);
 
   const [hasRules, setHasRules] = React.useState(false);
@@ -21,22 +26,23 @@ function Firewall() {
 
   const firewallRules = host.firewallRules || [];
   
-    const firewallColumns = [
-    {
-      key: 'action',
-      label: "Action",
-      sortable: true,
-    }, 
-    {
-      key: 'dport', 
-      label: "Destination Port",
-      sortable: true,
-    },
+  const firewallColumns = [
     {
       key: 'protocol', 
       label: "Protocol",
       sortable: true,
     },
+    {
+      key: 'dport', 
+      label: "Destination Port",
+      sortable: true,
+    },
+
+    {
+      key: 'action',
+      label: "Action",
+      sortable: true,
+    }, 
   ];
 
   const firewallTypeColorMap: Record<string, ChipProps["color"]> = {
@@ -44,11 +50,11 @@ function Firewall() {
     drop: "danger",
   };
 
-  // React.useEffect(() => {
-  //   if (host.firewallRules && host.firewallRules.length > 0) {
-  //     setHasRules(true);
-  //   }
-  // }, [host.firewallRules])    
+  React.useEffect(() => {
+    if (host.firewallRules && host.firewallRules.length > 0) {
+      setHasRules(true);
+    }
+  }, [host.firewallRules])    
 
   const grabRules = async () => {
     const result = await fetch('/api/v1/get/host/firewallRules', {
@@ -68,6 +74,14 @@ function Firewall() {
     if (response.error) {
       return {success: false, message: response.error};
     } else {
+      try {
+        const {now, host}: {now: string, host: Host} = await getHostInfo(hostname);
+        setHost(host);
+        // Use hostInfo here
+    } catch (error) {
+        // Handle error
+        console.log(error);
+    }
       return {success: true, message: response.msg};
     }
   }
@@ -75,7 +89,7 @@ function Firewall() {
   const handleGrabRules = async () => {
     setGrabbingRules(true);
     
-    toast.loading('Grabbing firewall rules...', { duration: 1000 });
+    toast.loading('Grabbing firewall rules...', { duration: 1500 });
     const result = await grabRules();
 
     setGrabbingRules(false);
@@ -92,11 +106,31 @@ function Firewall() {
       {
         hasRules ?
           (
-          <div className='flex flex-col gap-y-20 items-center w-3/4 h-3/4'>
+          <div className='flex flex-col gap-y-10 items-center w-3/4 h-3/4'>
             <p className='text-2xl font-bold'>
               {host.hostname}&apos;s Firewall Configuration
             </p>
-            <HostTable rows={firewallRules} columns={firewallColumns} colorMap={firewallTypeColorMap} colorField='action'/>
+            <HostTable rows={firewallRules} columns={firewallColumns} colorMap={firewallTypeColorMap} colorField='action' />
+            <div className='flex justify-between items-center w-full'>
+              <Button
+                className='w-1/6'
+                color='secondary'
+                variant='ghost'
+                isDisabled={grabbingRules}
+                onClick={handleGrabRules}
+              >
+                Refresh Rules
+              </Button>
+              <Button
+                className='w-1/6'
+                color='secondary'
+                variant='shadow'
+                isDisabled={grabbingRules}
+                onClick={() => setHasRules(false)}
+              >
+                Update Rules
+              </Button>
+            </div>
           </div>
           )
           :

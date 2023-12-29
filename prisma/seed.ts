@@ -405,7 +405,6 @@ async function main() {
         users: host1UserAccounts,
         connections: host1Connections,
         shares: host1Shares, 
-        firewallRules: host1FirewallRules,
     });
 
     const host2 = await createHost({
@@ -430,9 +429,6 @@ async function main() {
     });
 
     // Additional hosts can be created in a similar way
-
-    console.log('Hosts created:', host1, host2);
-
     await prisma.API_KEYS.create({
         data: {
             albertosFunKey: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
@@ -441,7 +437,7 @@ async function main() {
         },
     });
 
-    console.log('API Table created!')
+    console.log('Seed Successful!')
 }
 
 main()

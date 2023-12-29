@@ -9,12 +9,7 @@ type RulesType = {
     action: string;
     dport: string;
     protocol: string;
-}
-
-function isErrorWithCode(error: unknown): error is { code: string } {
-    return typeof error === 'object' && error !== null && 'code' in error;
-  }
-  
+} 
 
 export async function POST(req: Request) {
     
@@ -28,7 +23,7 @@ export async function POST(req: Request) {
     }
     
     try {
-        const { hostId, hostIp } = await req.json();
+        const { hostId , hostIp }: {hostId: number, hostIp: string} = await req.json();
 
         if (!hostId || !hostIp) {
             return new Response(JSON.stringify({ error: 'Missing hostId or hostIp!' }), {
@@ -48,16 +43,6 @@ export async function POST(req: Request) {
             }
         });
 
-        // const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'API-Token': albertosFunKey,
-        //         'Content-Type': 'application/json'
-        //     },
-        //     // idk what to put in the body
-        //     body: '',
-        // });
-
         if (!albertosFunKey) {
             return new Response(JSON.stringify({ error: 'Failed to get FUN key!' }), {
                 status: 500,
@@ -75,26 +60,34 @@ export async function POST(req: Request) {
           
         setGlobalDispatcher(agent)
 
-        const result = await fetch(`https://192.168.1.22:8000/here/are/my/rules/sire`, {
-            method: 'GET',
-            headers: {
-                'API-Token': albertosFunKey.albertosFunKey,
-                'Content-Type': 'application/json'
-            },
-        });
+        // const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
+            // method: 'GET',
+            // headers: {
+                // 'API-Token': albertosFunKey.albertosFunKey,
+                // 'Content-Type': 'application/json'
+            // },
+        // });
 
-        if (!result.ok) {
-            return new Response(JSON.stringify({ error: 'Failed to connect to remote host container!' }), {
-                status: 500,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
+        // const result = await fetch(`https://192.168.1.22:8000/here/are/my/rules/sire`, {
+            // method: 'GET',
+            // headers: {
+                // 'API-Token': albertosFunKey.albertosFunKey,
+                // 'Content-Type': 'application/json'
+            // },
+        // });
 
-        const data = await result.json();
+        // if (!result.ok) {
+        //     return new Response(JSON.stringify({ error: 'Failed to connect to remote host container!' }), {
+        //         status: 500,
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     });
+        // }
 
-        // const data = {'rules': [{'action': 'accept', 'dport': '22', 'protocol': 'tcp'}, {'action': 'accept', 'dport': '80', 'protocol': 'tcp'}, {'action': 'drop', 'dport': '1000', 'protocol': 'tcp'}]}
+        // const data = await result.json();
+
+        const data = { 'rules': [{ 'action': 'drop', 'dport': '22', 'protocol': 'tcp' }, { 'action': 'accept', 'dport': '80', 'protocol': 'tcp' }, { 'action': 'drop', 'dport': '1000', 'protocol': 'tcp' }, {action: 'accept', dport: '443', protocol: 'tcp'}]}
 
         const hostRules: RulesType[] = data.rules;
         
@@ -106,35 +99,67 @@ export async function POST(req: Request) {
                     dport: parseInt(rule.dport),
                 }
             });
-
             try {
-                await processArray<Prisma.FirewallRuleCreateInput, HostConnect>(
-                    rules,
-                    createHostConnect(hostId),
-                    (rule) => prisma.firewallRule.create({ data: rule as Prisma.FirewallRuleCreateInput })
-                );
+                rules.forEach(async (rule) => {
+                    await prisma.firewallRule.upsert({
+                        where: {
+                            dport_hostId: {
+                                dport: rule.dport,
+                                hostId: hostId,
+                            },
+                        },
+                        update: {
+                            action: rule.action,
+                            dport: rule.dport,
+                            protocol: rule.protocol,
+                        },
+                        create: {
+                            action: rule.action,
+                            dport: rule.dport,
+                            protocol: rule.protocol,
+                            host: {
+                                connect: {
+                                    id: hostId,
+                                }
+                            }
+                        },
+                    });
+                });
             } catch (error) {
-                return new Response(JSON.stringify({ error: 'Failed to add rules to DB!' + error }), {
+
+                if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                    if (error.message) {
+                        return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error.message}` }), {
+                            status: 500,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                    }
+                }
+                return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error}` }), {
                     status: 500,
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
             }
-        }
-        return new Response(JSON.stringify({ msg: 'Added rules to DB!' }), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
 
+            // if all is well display this
+            return new Response(JSON.stringify({ msg: 'Added rules to DB!' }), {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        }
     } catch (error) {
         const networkError = error as NodeJS.ErrnoException;
 
-        if (networkError.cause) {
+        if (networkError.message) {
 
-            return new Response(JSON.stringify({ error: `Failed to get firewall rules!\n${networkError.cause}` }), {
+            return new Response(JSON.stringify({ error: `Failed to get firewall rules!\n${networkError.message}` }), {
                 status: 500,
                 headers: {
                     'Content-Type': 'application/json'
