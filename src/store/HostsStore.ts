@@ -34,6 +34,10 @@ interface HostsStoreTypes {
 
     host: Host;
     setHost: (host: Host) => void;
+
+    isFirewallModalOpen: boolean;
+    openFirewallModal: () => void;
+    closeFirewallModal: () => void;
 }
 
 const { signal } = new AbortController()
@@ -79,6 +83,10 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         networkServices: [],
         // Include any other missing fields with their default or placeholder values
     },
-    setHost: (host: Host) => set({ host: host}),
+    setHost: (host: Host) => set({ host: host }),
+    
+    isFirewallModalOpen: false,
+    openFirewallModal: () => set({ isFirewallModalOpen: true }),
+    closeFirewallModal: () => set({ isFirewallModalOpen: false }),
 
 }));

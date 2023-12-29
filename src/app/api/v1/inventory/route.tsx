@@ -4,11 +4,11 @@ import { prisma } from '@/lib/prisma';
 import { createHost } from '@/lib/prismaHelper';
 import { Container } from '@prisma/client';
 
-async function decrementLifetime() {
+async function decrementLifetime(key: string) {
     try {
-        const updatedRecord = await prisma.aPI_KEYS.update({
+        const updatedRecord = await prisma.aPI_KEY.update({
             where: {
-                id: 1,  // or your unique identifier
+                key: key,  // or your unique identifier
             },
             data: {
                 lifetime: {
@@ -26,11 +26,11 @@ async function decrementLifetime() {
     }
 }
 
-async function isAlive() {
+async function isAlive(key: string) {
     try {
-        const alive = await prisma.aPI_KEYS.findUnique({
+        const alive = await prisma.aPI_KEY.findUnique({
             where: {
-                id: 1,  // or your unique identifier
+                key: key,  // or your unique identifier
             },
             select: {
                 lifetime: true  // only return the lifetime field
@@ -57,7 +57,19 @@ export async function POST(req: Request) {
       });
   }
   
-  const alive = await isAlive();
+  const reqKey = req.headers.get('x-api-key');
+    
+    if (!reqKey) {
+        console.log("No API Key");
+        return new Response(JSON.stringify({ error: 'No API Key!' }), {
+            status: 405,
+            headers: {
+                    'Content-Type': 'application/json'
+                }   
+            });
+    }
+    
+  const alive = await isAlive(reqKey);
   
   type ExtendedContainer = Container & {
     networks: {
@@ -80,7 +92,17 @@ export async function POST(req: Request) {
   if (alive) {
 
     const envKey = process.env.API_KEY;
-    const reqKey = req.headers.get('x-api-key');
+    
+    // const inventoryKey = await prisma.aPI_KEY.findUnique({
+    //       where: {
+    //           type: 'INVENTORY',  // or your unique identifier
+    //       },
+    //       select: {
+    //           key: true,
+    //           lifetime: true// only return the inventoryKey field
+    //       }
+    //   });
+      
 
     if (reqKey === envKey) {
 
@@ -105,7 +127,7 @@ export async function POST(req: Request) {
         }
         createHost(host);
 
-        decrementLifetime();
+        decrementLifetime(reqKey);
         return NextResponse.json({ message: "Valid API Key" });
     
     } else {

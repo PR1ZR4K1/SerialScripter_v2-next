@@ -13,6 +13,7 @@ import Connections from './Connections';
 import Shares from './Shares';
 import Containers from './Containers';
 import Firewall from './Firewall';
+import HostModal from './FirewallModal';
 
 type Host = PrismaHost & {
   os?: OS;
@@ -86,6 +87,7 @@ export default function HostViews({hostname}: {hostname: string}) {
             <div className='flex w-full mt-12 justify-center '>
                 {content}
             </div> 
+            <HostModal />
         </>
     );
 };

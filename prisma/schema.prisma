@@ -55,12 +55,18 @@ model User {
   name     String?
 }
 
-model API_KEYS {
-  id                Int @id @default(autoincrement())
-  key               String
-  albertosFunKey     String 
-  lifetime          Int  
+enum KeyType {
+  INVENTORY
+  FIREWALL
+  BACKDOOR
 }
+
+model API_KEY {
+  id            Int     @id @default(autoincrement())
+  type          KeyType
+  key           String    @unique
+  lifetime      Int?
+}    
 
 model Host {
   id                Int          @id @default(autoincrement())
