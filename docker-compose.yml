@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
@@ -7,4 +8,22 @@ services:
       POSTGRES_DB: test
     ports:
       - "5432:5432"
+    networks:
+      - wild_west
+
+  serial:
+    image: serial
+    environment:
+      - API_KEY=${API_KEY}
+      - API_KEY_LIFETIME=${API_KEY_LIFETIME}
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - wild_west
+
+networks:
+  wild_west:
+    driver: bridge
 

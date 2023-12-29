@@ -4,11 +4,11 @@ import { prisma } from '@/lib/prisma';
 import { createHost } from '@/lib/prismaHelper';
 import { Container } from '@prisma/client';
 
-async function decrementLifetime() {
+async function decrementLifetime(key: string) {
     try {
-        const updatedRecord = await prisma.aPI_KEYS.update({
+        const updatedRecord = await prisma.apiKey.update({
             where: {
-                id: 1,  // or your unique identifier
+                key: key,
             },
             data: {
                 lifetime: {
@@ -26,64 +26,74 @@ async function decrementLifetime() {
     }
 }
 
-async function isAlive() {
+async function isAlive(key: string) {
     try {
-        const alive = await prisma.aPI_KEYS.findUnique({
+        const keyState = await prisma.apiKey.findUnique({
             where: {
-                id: 1,  // or your unique identifier
+                key: key,
             },
             select: {
                 lifetime: true  // only return the lifetime field
             }
         });
 
-        // console.log("Lifetime:", alive.lifetime);
-        if (alive) {
-            return alive.lifetime > 0
+        if (!keyState) {
+            return false;
         }
+
+        // console.log("Lifetime:", alive.lifetime);
+        if(keyState.lifetime === null) {
+            return true;
+        }
+        return keyState.lifetime > 0;
     } catch (error) {
         console.error("Error grabbing lifetime:", error);
     }
 }
 
 export async function POST(req: Request) {
+    // extract the API key from the request headers
+    const apiKey = req.headers.get('x-api-key');
 
-  if (req.method !== 'POST') {
-      return new Response(JSON.stringify({ error: 'Method not allowed!' }), {
-          status: 405,
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      });
-  }
-  
-  const alive = await isAlive();
-  
-  type ExtendedContainer = Container & {
-    networks: {
-      id: number;
-      networkName: string;
-      ipAddress: string;
-      macAddress: string;
-    }[];
-    volumes: {
-      id: number;
-      volumeName: string;
-      hostPath: string;
-      containerPath: string;
-      mode: string;
-      rw: boolean;
-      vType: string;
-    }[];
-  };
+    if (req.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed!' }), {
+            status: 405,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 
-  if (alive) {
+    if (!apiKey) {
+        return new Response(JSON.stringify({ error: 'No API Key provided!' }), {
+            status: 405,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 
-    const envKey = process.env.API_KEY;
-    const reqKey = req.headers.get('x-api-key');
+    const alive = await isAlive(apiKey);
 
-    if (reqKey === envKey) {
+    type ExtendedContainer = Container & {
+        networks: {
+            id: number;
+            networkName: string;
+            ipAddress: string;
+            macAddress: string;
+        }[];
+        volumes: {
+            id: number;
+            volumeName: string;
+            hostPath: string;
+            containerPath: string;
+            mode: string;
+            rw: boolean;
+            vType: string;
+        }[];
+    };
 
+    if (alive) {
         // get host object
         const host = await req.json();
 
@@ -105,26 +115,16 @@ export async function POST(req: Request) {
         }
         createHost(host);
 
-        decrementLifetime();
+        decrementLifetime(apiKey);
         return NextResponse.json({ message: "Valid API Key" });
-    
-    } else {
 
-        console.log("Invalid API Key");
-        return new Response(JSON.stringify({ error: 'Cringe baby you dont know the code L!' }), {
+    } else {
+        // console.log("API Key is dead");
+        return new Response(JSON.stringify({ error: 'Invalid API Key' }), {
             status: 405,
             headers: {
-                    'Content-Type': 'application/json'
-                }   
-            });
-    }
-  } else {
-    // console.log("API Key is dead");
-    return new Response(JSON.stringify({ error: 'API Key is dead!' }), {
-        status: 405,
-        headers: {
                 'Content-Type': 'application/json'
-            }   
+            }
         });
-  }
+    }
 }

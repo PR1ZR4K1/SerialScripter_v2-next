@@ -34,12 +34,12 @@ export async function POST(req: Request) {
             });
         }
 
-        const albertosFunKey = await prisma.aPI_KEYS.findUnique({
+        const albertosFunKey = await prisma.apiKey.findUnique({
             where: {
                 id: 1,
             },
             select: {
-                albertosFunKey: true,
+                key: true,
             }
         });
 
