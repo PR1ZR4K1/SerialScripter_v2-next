@@ -71,7 +71,7 @@ export default function Users() {
       PRIVILEGED: "danger",
       Yes: 'success',
       No: 'warning',
-  };
+    };
 
   return (
     <div className='h-full w-full flex flex-col items-center'>

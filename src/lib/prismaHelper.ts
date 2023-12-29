@@ -12,7 +12,7 @@ type ContainerConnect = {
 const createHostConnect = (id: number) => ({ host: { connect: { id } } });
 const createContainerConnect = (id: number) => ({ container: { connect: { id } } });
 
-async function processArray<T, U extends HostConnect | ContainerConnect>(
+export async function processArray<T, U extends HostConnect | ContainerConnect>(
     items: T[], 
     connectData: U, 
     createFunction: (item: T & U) => Promise<any>
@@ -38,7 +38,7 @@ export type ModifiedNetworkServiceType = Omit<Prisma.NetworkServiceCreateManyHos
     process?: ProcessType;
 };
 
-export type ModifiedConnectionsType = Omit<Prisma.ConnectionsCreateManyHostInput, 'name' | 'pid'> & {   
+export type ModifiedConnectionType = Omit<Prisma.ConnectionCreateManyHostInput, 'name' | 'pid'> & {   
     process: ProcessType;
 };
 
@@ -64,9 +64,10 @@ interface HostData {
     services?: Prisma.SystemServiceCreateManyHostInput[];
     ports?: ModifiedNetworkServiceType[];
     users?:   Prisma.UserAccountCreateManyHostInput[];
-    connections?: Prisma.ConnectionsCreateManyHostInput[];
+    connections?: Prisma.ConnectionCreateManyHostInput[];
     shares?: Prisma.ShareCreateManyHostInput[];
     containers?: ExtendedContainerType[];
+    firewallRules?: Prisma.FirewallRuleCreateManyHostInput[];
 }
 
 export async function createHost(hostData : HostData) {
@@ -140,13 +141,21 @@ export async function createHost(hostData : HostData) {
 
     if (hostData.connections && hostData.connections.length > 0) {
         // await createConnections(hostData.connections, createdHost.id);
-        await processArray<ModifiedConnectionsType, HostConnect>(
+        await processArray<ModifiedConnectionType, HostConnect>(
             hostData.connections.map(flattenProcesses), 
             createHostConnect(createdHost.id),
-            (connection) => prisma.connections.create({ data: connection as Prisma.ConnectionsCreateInput })
+            (connection) => prisma.connection.create({ data: connection as Prisma.ConnectionCreateInput })
         );
     }
 
+    if (hostData.firewallRules && hostData.firewallRules.length > 0) {
+        // await createShares(hostData.firewallRules, createdHost.id);
+        await processArray<Prisma.FirewallRuleCreateInput, HostConnect>(
+            hostData.firewallRules, 
+            createHostConnect(createdHost.id),
+            (firewallRule) => prisma.firewallRule.create({ data: firewallRule as Prisma.FirewallRuleCreateInput })
+        );
+    }
 // const createdContainer = prisma.container.create({ data: {...container, hostId: hostId,} });
 
 

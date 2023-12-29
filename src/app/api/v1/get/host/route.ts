@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import { formatTimestampToPST } from '@/lib/formatTime';
 // import { revalidatePath } from 'next/cache'
 export const revalidate = 10;
-export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
 
@@ -32,6 +31,7 @@ export async function POST(req: Request) {
         disks: true,
         connections: true,
         shares: true,
+        firewallRules: true,
         containers: {
           include: {
             containerVolumes: true,

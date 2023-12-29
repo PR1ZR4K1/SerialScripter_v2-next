@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 import { Prisma } from '@prisma/client';
-import { createHost, ModifiedUserAccountType, ModifiedNetworkServiceType, ModifiedConnectionsType, ExtendedContainerType } from '../src/lib/prismaHelper';
+import { createHost, ModifiedUserAccountType, ModifiedNetworkServiceType, ModifiedConnectionType, ExtendedContainerType } from '../src/lib/prismaHelper';
 
 async function main() {
     const host1NetworkServices: ModifiedNetworkServiceType[] = [
@@ -119,7 +119,7 @@ async function main() {
         }
     ];
 
-    const host1Connections: ModifiedConnectionsType[] = [
+    const host1Connections: ModifiedConnectionType[] = [
         {
             "localAddress": "0.0.0.0:5355",
             "remoteAddress": "0.0.0.0:0",
@@ -175,6 +175,11 @@ async function main() {
         }
     ];
 
+    const host1FirewallRules: Prisma.FirewallRuleCreateManyHostInput[] = [
+        {'action': 'accept', 'dport': 22, 'protocol': 'tcp'},
+        {'action': 'accept', 'dport': 80, 'protocol': 'tcp'}, 
+        {'action': 'drop', 'dport': 1000, 'protocol': 'tcp'},
+    ]
 
     const host2NetworkServices: ModifiedNetworkServiceType[] = [
         {
@@ -298,7 +303,7 @@ async function main() {
         }
     ];
 
-    const host2Connections: ModifiedConnectionsType[] = [
+    const host2Connections: ModifiedConnectionType[] = [
         {
             "localAddress": "127.0.0.1:6463",
             "remoteAddress": "0.0.0.0:0",
@@ -400,6 +405,7 @@ async function main() {
         users: host1UserAccounts,
         connections: host1Connections,
         shares: host1Shares, 
+        firewallRules: host1FirewallRules,
     });
 
     const host2 = await createHost({
@@ -429,6 +435,7 @@ async function main() {
 
     await prisma.API_KEYS.create({
         data: {
+            albertosFunKey: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
             key: process.env.API_KEY,
             lifetime: 10,
         },

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk, Connections, Share, Container, ContainerNetwork, ContainerVolume } from "@prisma/client";
+import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk, Connection, Share, Container, ContainerNetwork, ContainerVolume, FirewallRule } from "@prisma/client";
 
 export type ExtendedContainer = Container & {
     containerNetworks?: ContainerNetwork[];
@@ -16,9 +16,10 @@ type Host = PrismaHost & {
   incidents?: Incident[];
   software?: Software[];
   disks?: Disk[];
-  connections?: Connections[];
+  connections?: Connection[];
   shares?: Share[];
   containers?: ExtendedContainer[];
+  firewallRules?: FirewallRule[];
 };
 
 interface HostsStoreTypes {

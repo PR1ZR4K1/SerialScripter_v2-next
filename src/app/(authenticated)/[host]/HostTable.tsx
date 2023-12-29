@@ -29,10 +29,11 @@ type Row = {
   isLocal?: string;
   shareType?: string;
   rw?: string;
+  action?: string;
   hostId?: number | null;
 }
 type NonUndefined<T> = T extends undefined ? never : T;
-type StatusOrUserType = NonUndefined<Row['status']> | NonUndefined<Row['userType'] | NonUndefined<Row['isLocal']> | NonUndefined<Row['rw']> | NonUndefined<Row['shareType']> >;
+type StatusOrUserType = NonUndefined<Row['status']> | NonUndefined<Row['userType'] | NonUndefined<Row['isLocal']> | NonUndefined<Row['rw']> | NonUndefined<Row['shareType']> | NonUndefined<Row['action']> >;
 
 type ColorMap = {
   [key in StatusOrUserType]: ChipProps["color"];

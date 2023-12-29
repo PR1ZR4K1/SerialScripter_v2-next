@@ -56,9 +56,10 @@ model User {
 }
 
 model API_KEYS {
-  id          Int @id @default(autoincrement())
-  key         String 
-  lifetime    Int  
+  id                Int @id @default(autoincrement())
+  key               String
+  albertosFunKey     String 
+  lifetime          Int  
 }
 
 model Host {
@@ -77,12 +78,13 @@ model Host {
   disks             Disk[]
   systemServices    SystemService[]
   networkServices   NetworkService[]
-  connections       Connections[]
+  connections       Connection[]
   incidents         Incident[]
   software          Software[]
   containers        Container[]
   userAccounts      UserAccount[]
   shares            Share[]
+  firewallRules     FirewallRule[]
 }
 
 model OS {
@@ -133,7 +135,7 @@ model NetworkService {
   host        Host?  @relation(fields: [hostId], references: [id])
 }
 
-model Connections {
+model Connection {
   id                  Int    @id @default(autoincrement())
   name                String?
   localAddress        String
@@ -218,6 +220,15 @@ model Share {
   id            Int     @id @default(autoincrement())
   shareType     ShareType
   networkPath   String
+  host          Host?   @relation(fields: [hostId], references: [id])
+  hostId        Int
+}
+
+model FirewallRule {
+  id            Int     @id @default(autoincrement())
+  action        String
+  dport         Int
+  protocol      String
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
 }
