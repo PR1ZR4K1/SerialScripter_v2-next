@@ -205,7 +205,7 @@ export function HostsTable() {
             case "actions":
                 return (
                     <div className="relative flex items-center justify-center gap-2 h-full ">
-                        <Link href={`/${host.hostname}`}>
+                        <Link as='a' href={`/${host.hostname}`}>
                             <Tooltip color="primary" content="View Host">
                                 <span className="text-lg text-primary cursor-pointer active:opacity-50">
                                     <EyeIcon width={25} height={25}/>

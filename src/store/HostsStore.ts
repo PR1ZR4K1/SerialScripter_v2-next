@@ -6,7 +6,12 @@ export type ExtendedContainer = Container & {
     containerNetworks?: ContainerNetwork[];
     containerVolumes?: ContainerVolume[];
 }
-
+type openFirewallModalTypes = {
+    action?: string;
+    dport?: number;
+    description?: string
+}
+  
 type Host = PrismaHost & {
   os?: OS;
   systemInfo?: SystemInfo;
@@ -38,6 +43,11 @@ interface HostsStoreTypes {
     isFirewallModalOpen: boolean;
     openFirewallModal: () => void;
     closeFirewallModal: () => void;
+    isFirstOpen: boolean;
+    setFirstOpen: () => void;
+
+    selectedRule: openFirewallModalTypes;
+    setSelectedRule: (rule: openFirewallModalTypes) => void;
 }
 
 const { signal } = new AbortController()
@@ -86,7 +96,17 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     setHost: (host: Host) => set({ host: host }),
     
     isFirewallModalOpen: false,
-    openFirewallModal: () => set({ isFirewallModalOpen: true }),
+    openFirewallModal: () => set({ isFirewallModalOpen: true, isFirstOpen: true }),
     closeFirewallModal: () => set({ isFirewallModalOpen: false }),
+    isFirstOpen: true,
+    setFirstOpen: () => set({ isFirstOpen: false }),
 
+    selectedRule:
+    {
+        action: '',
+        dport: 0,
+        description: '',
+    },
+
+    setSelectedRule: (rule: openFirewallModalTypes) => set({ selectedRule: rule }),
 }));

@@ -87,7 +87,6 @@ export default function HostViews({hostname}: {hostname: string}) {
             <div className='flex w-full mt-12 justify-center '>
                 {content}
             </div> 
-            <HostModal />
         </>
     );
 };

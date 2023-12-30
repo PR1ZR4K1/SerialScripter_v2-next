@@ -7,18 +7,21 @@ import toast from 'react-hot-toast';
 import { set } from 'zod';
 import { getHostInfo } from '@/lib/getHostInfo';
 import { Host } from '@prisma/client';
+import FirewallModal from './FirewallModal';
 
-type FirewallResponseTypes = {
-  success: boolean;
-  message: string;
+export type openFirewallModalTypes = {
+  action?: string;
+  dport?: number;
+  description?: string
 }
 
 function Firewall({hostname}: {hostname: string}) {
 
-  const [host, setHost, openFirewallModal] = useHostsStore((state) => [
+  const [host, setHost, openFirewallModal, setSelectedRule] = useHostsStore((state) => [
     state.host,
     state.setHost,
     state.openFirewallModal,
+    state.setSelectedRule,
   ]);
 
   const [hasRules, setHasRules] = React.useState(false);
@@ -43,6 +46,10 @@ function Firewall({hostname}: {hostname: string}) {
       label: "Action",
       sortable: true,
     }, 
+    {
+      key: 'editField',
+      label: "Edit Rule",
+    }, 
   ];
 
   const firewallTypeColorMap: Record<string, ChipProps["color"]> = {
@@ -53,8 +60,18 @@ function Firewall({hostname}: {hostname: string}) {
   React.useEffect(() => {
     if (host.firewallRules && host.firewallRules.length > 0) {
       setHasRules(true);
+
+      // each host can have a field in local storage that stores the rules to update
+      const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
+      if (localStorage.getItem(firewallRulesLocalStorage) !== null) {
+        let value = localStorage.getItem(firewallRulesLocalStorage);
+        const rulesToUpdate = JSON.parse(value || '[]');
+      } else {
+        localStorage.setItem(firewallRulesLocalStorage, JSON.stringify([]));
+      }
     }
-  }, [host.firewallRules])    
+
+  }, [host.firewallRules, hostname])    
 
   const grabRules = async () => {
     const result = await fetch('/api/v1/get/host/firewallRules', {
@@ -106,11 +123,23 @@ function Firewall({hostname}: {hostname: string}) {
       {
         hasRules ?
           (
+            <>
           <div className='flex flex-col gap-y-10 items-center w-3/4 h-3/4'>
             <p className='text-2xl font-bold'>
               {host.hostname}&apos;s Firewall Configuration
             </p>
-            <HostTable rows={firewallRules} columns={firewallColumns} colorMap={firewallTypeColorMap} colorField='action' />
+                <HostTable
+                  rows={firewallRules}
+                  columns={firewallColumns}
+                  colorMap={firewallTypeColorMap}
+                  colorField='action'
+                  editField={({ action, dport, description }: openFirewallModalTypes) =>
+                  {
+                    setSelectedRule({ action, dport, description: description || ''});
+                    openFirewallModal();
+                  }}
+
+                />
             <div className='flex justify-between items-center w-full'>
               <Button
                 className='w-1/6'
@@ -126,12 +155,14 @@ function Firewall({hostname}: {hostname: string}) {
                 color='secondary'
                 variant='shadow'
                 isDisabled={grabbingRules}
-                onClick={openFirewallModal}
+                // onClick={openFirewallModal}
               >
                 Update Rules
               </Button>
             </div>
-          </div>
+            </div>
+              <FirewallModal hostname={hostname} />
+          </>
           )
           :
           (
