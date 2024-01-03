@@ -1,6 +1,7 @@
 import { toast } from 'react-hot-toast';
 import isValidEmail from './validateEmail';
 import { signIn, signOut } from 'next-auth/react';
+import { createLogEntry } from './ServerLogHelper';
 
 // try to sign user in with input sanitization and toasts  
 
@@ -22,6 +23,7 @@ export const login = async (e: FormData) => {
       // Handle error - show an error toast or some other user feedback mechanism
       toast.error("Incorrect email or password please try again.");
     } else {
+      createLogEntry({email: email, success: true, module: "login", message: "User logged in successfully"})
       // Optionally, redirect the user if the sign-in was successful
       toast.success("Success! Logging you in...");
       window.location.href = "/";

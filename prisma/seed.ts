@@ -443,6 +443,14 @@ async function main() {
             lifetime: 10,
         },
     });
+    await prisma.serverLog.create({
+        data: {
+            email: 'test',
+            success: true,
+            module: 'ur mom',
+            message: 'gay',
+        },
+    });
 
     console.log('Seed Successful!')
 }

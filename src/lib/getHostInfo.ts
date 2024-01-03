@@ -1,3 +1,5 @@
+'use server';
+
 export const getHostInfo = async (hostname: string) => {
     try {
 

@@ -14,7 +14,6 @@ import {
     ChipProps,
     SortDescriptor,
     getKeyValue,
-    Tooltip
 } from "@nextui-org/react";
 import { SearchIcon } from "@/icons/SearchIcon";
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
