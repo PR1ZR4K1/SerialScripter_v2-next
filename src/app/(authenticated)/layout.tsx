@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
     return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-gray-300 dark:bg-[#1E2A3F]`}>
+      <body className={`${inter.className} bg-gray-200 dark:bg-[#1E2A3F]`}>
         <Providers>
             <SidebarWithLogo />
             <div className="ml-[15rem]">

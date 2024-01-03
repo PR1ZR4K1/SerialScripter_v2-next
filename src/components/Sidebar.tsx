@@ -51,7 +51,7 @@ export function SidebarWithLogo() {
       </div>
       <List className="flex gap-y-3">
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='a' href='/' className="flex items-center">
+          <Link as='/' href='/' className="flex items-center">
             <HomeModernIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
                 Dashboard
@@ -61,7 +61,7 @@ export function SidebarWithLogo() {
 
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='a' href='/scriptingHub' className="flex items-center">
+          <Link as='scriptingHub' href='/scriptingHub' className="flex items-center">
             <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Scripting Hub
@@ -70,7 +70,7 @@ export function SidebarWithLogo() {
         </button>
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='a' href='/cron' className="flex items-center">
+          <Link as='cron' href='/cron' className="flex items-center">
             <RectangleGroupIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Cron
@@ -80,7 +80,7 @@ export function SidebarWithLogo() {
 
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='a' href='/incidentReport' className="flex items-center">
+          <Link as='incidentReport' href='/incidentReport' className="flex items-center">
             <FlagIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Incident Report
@@ -89,7 +89,7 @@ export function SidebarWithLogo() {
         </button>
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='a' href='/serverLogs' className="flex items-center">
+          <Link as='serverLogs' href='/serverLogs' className="flex items-center">
             <PencilSquareIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Server Logs

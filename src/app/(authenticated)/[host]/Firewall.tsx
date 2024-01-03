@@ -1,33 +1,143 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import HostTable from './HostTable'
 import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
 import { Button } from '@nextui-org/react';
 import toast from 'react-hot-toast';
-import { set } from 'zod';
 import { getHostInfo } from '@/lib/getHostInfo';
 import { Host } from '@prisma/client';
 import FirewallModal from './FirewallModal';
+import { ArrowLeftIcon, CheckCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 export type openFirewallModalTypes = {
   action?: string;
   dport?: number;
-  description?: string
+  description?: string | null
+}
+
+interface CompareRulesProps {
+  originalRules: openFirewallModalTypes[];
+  rulesToUpdate: openFirewallModalTypes[];
+}
+
+function CompareRules({ originalRules, rulesToUpdate }: CompareRulesProps) {
+  
+  // ensure there are rules to compare
+  if (originalRules.length === 0 || rulesToUpdate.length === 0) {
+    return (
+      <div className='flex flex-col gap-y-20 items-center justify-center w-3/4 h-3/4'>
+        <p className='text-2xl font-bold'>
+          No firewall rules to update
+        </p>
+      </div>
+    );
+  } else {
+    return (
+      <div className='flex flex-col items-center gap-y-12 overflow-y-auto h-full w-full'>
+        <div className='flex justify-center items-start w-full'>
+          <div className='flex justify-center w-1/2'>
+            <p>
+              <span className='font-bold text-2xl text-center'>Current Rules</span>
+            </p>
+          </div>
+          <div className='flex justify-center w-1/2'>
+            <p>
+              <span className='font-bold text-2xl text-center'>Incoming Rules</span>
+            </p>
+          </div>
+        </div>
+          {rulesToUpdate.map((ruleToUpdate, index) => {
+            const originalRule = originalRules.find(rule => rule.dport === ruleToUpdate.dport) || ruleToUpdate;
+            
+            const changedAction = originalRule.action !== ruleToUpdate.action;
+            const changedDescription = originalRule.description !== ruleToUpdate.description;
+            return (
+
+              <div key={index} className='flex justify-start w-full relative'>
+                {/* Current Rule Side */}
+                <div className='flex justify-center items-center gap-x-8 w-1/2 h-8 '>
+
+                  <Button
+                    className='h-8'
+                    variant='flat'
+                    color={changedAction ? 'danger' : 'primary'}
+                    isDisabled
+                  >
+                    {originalRule.action}
+                  </Button>
+                  <Button
+                    className='h-8'
+                    variant='solid'
+                    isDisabled
+                  >
+                    {originalRule.dport}
+                  </Button>
+                  <p
+                    className={`flex h-8 w-[205.33px] text-ellipsis ${changedDescription ? 'text-red-500' : ''} items-center justify-center text-center font-light text-xs`}
+                  >
+                    {originalRule.description || ''}
+                  </p>
+                </div>
+
+                <div className='mr-8 h-8 border-l-1 dark:border-l-gray-500 border-l-black/70' />
+
+                {/* Incoming Rule Side */}
+                <div className='flex justify-center items-center gap-x-8 w-1/2 '>
+
+                  <Button
+                    className='h-8'
+                    variant='flat'
+                    color={changedAction ? 'success' : 'primary'}
+                    isDisabled
+                  >
+                    {ruleToUpdate.action}
+                  </Button>
+                  <Button
+                    className='h-8'
+                    variant='solid'
+                    isDisabled
+                  >
+                    {ruleToUpdate.dport}
+                  </Button>
+                  <p
+                    className={`flex items-center justify-center h-8 w-[205.33px] text-ellipsis ${changedDescription ? 'text-green-500' : ''} text-center font-light text-xs`}
+                  >
+                    {ruleToUpdate.description || ''}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+      </div>
+    )
+  }
 }
 
 function Firewall({hostname}: {hostname: string}) {
 
-  const [host, setHost, openFirewallModal, setSelectedRule] = useHostsStore((state) => [
+  const [host, setHost, openFirewallModal, setSelectedRule, setActionKeys, setDescription] = useHostsStore((state) => [
     state.host,
     state.setHost,
     state.openFirewallModal,
     state.setSelectedRule,
+    state.setActionKeys,
+    state.setFirewallRuleDescription,
   ]);
 
   const [hasRules, setHasRules] = React.useState(false);
   const [grabbingRules, setGrabbingRules] = React.useState(false);
+  const [tableView, setTableView] = React.useState(true);
+  const [originalRules, setOriginalRules] = React.useState<openFirewallModalTypes[]>([]);
+  const [rulesToUpdate, setRulesToUpdate] = React.useState<openFirewallModalTypes[]>([]);
 
   const firewallRules = host.firewallRules || [];
+
+  const firewallRulesWithDescription = firewallRules.map((rule) => {
+    return {
+      ...rule,
+      description: rule.description || 'Add description...',
+    }
+  });
   
   const firewallColumns = [
     {
@@ -40,7 +150,10 @@ function Firewall({hostname}: {hostname: string}) {
       label: "Destination Port",
       sortable: true,
     },
-
+    {
+      key: 'description', 
+      label: "Description of Purpose",
+    },
     {
       key: 'action',
       label: "Action",
@@ -57,21 +170,29 @@ function Firewall({hostname}: {hostname: string}) {
     drop: "danger",
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (host.firewallRules && host.firewallRules.length > 0) {
       setHasRules(true);
-
-      // each host can have a field in local storage that stores the rules to update
-      const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
-      if (localStorage.getItem(firewallRulesLocalStorage) !== null) {
-        let value = localStorage.getItem(firewallRulesLocalStorage);
-        const rulesToUpdate = JSON.parse(value || '[]');
-      } else {
-        localStorage.setItem(firewallRulesLocalStorage, JSON.stringify([]));
+  
+      const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`;
+      let localRules: openFirewallModalTypes[] = JSON.parse(localStorage.getItem(firewallRulesLocalStorage) || '[]');
+  
+      if (tableView !== true) {
+        let computedOriginalRules: openFirewallModalTypes[] = localRules.map(ruleToUpdate => {
+          const correspondingRule = host.firewallRules!.find(firewallRule => firewallRule.dport === ruleToUpdate.dport);
+          return correspondingRule ? {
+            ...ruleToUpdate,
+            action: correspondingRule.action,
+            description: correspondingRule.description || 'Add description...',
+          } : null;
+        }).filter(rule => rule !== null) as openFirewallModalTypes[];
+  
+        setOriginalRules(computedOriginalRules);
       }
+      
+      setRulesToUpdate(localRules);
     }
-
-  }, [host.firewallRules, hostname])    
+  }, [host.firewallRules, hostname, tableView]);
 
   const grabRules = async () => {
     const result = await fetch('/api/v1/get/host/firewallRules', {
@@ -103,6 +224,29 @@ function Firewall({hostname}: {hostname: string}) {
     }
   }
 
+  const updateRules = async () => {
+    const result = await fetch('/api/v1/update/firewallRules', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        hostId: host.id,
+        hostIp: host.ip,
+        rules: rulesToUpdate,
+      })
+    });
+
+    const response = await result.json();
+    // console.log(response)
+
+    if (response.error) {
+      return {success: false, message: response.error};
+    } else {
+      return {success: true, message: response.msg};
+    }
+  }
+
   const handleGrabRules = async () => {
     setGrabbingRules(true);
     
@@ -111,58 +255,126 @@ function Firewall({hostname}: {hostname: string}) {
 
     setGrabbingRules(false);
 
-    if (!result.success) {
-      toast.error(result.message);
-    } else {      
+    if (result.success) {
       toast.success(result.message);
+    } else {      
+      toast.error(result.message);
     }
   }
+
+  // handler for updating rules
+  const handleUpdateRules = async () => {
+    
+    toast.loading(`Updating ${hostname}'s firewall rules...` , { duration: 1500 });
+    const result = await updateRules();
+
+    if (result.success) {
+      setOriginalRules([]);
+      setRulesToUpdate([]); 
+      window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify([]));
+      setTableView(true);
+      toast.success(result.message);
+    } else {      
+      toast.error(result.message);
+    }
+  }
+
+  const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
 
   return (
     <div className='h-full w-full flex flex-col items-center'>
       {
         hasRules ?
           (
-            <>
-          <div className='flex flex-col gap-y-10 items-center w-3/4 h-3/4'>
-            <p className='text-2xl font-bold'>
-              {host.hostname}&apos;s Firewall Configuration
-            </p>
-                <HostTable
-                  rows={firewallRules}
-                  columns={firewallColumns}
-                  colorMap={firewallTypeColorMap}
-                  colorField='action'
-                  editField={({ action, dport, description }: openFirewallModalTypes) =>
-                  {
-                    setSelectedRule({ action, dport, description: description || ''});
-                    openFirewallModal();
-                  }}
+            tableView ? (
+              <>
+                <div className='flex flex-col gap-y-10 items-center w-3/4 h-3/4'>
+                  <p className='text-2xl font-bold'>
+                    {host.hostname}&apos;s Firewall Configuration
+                  </p>
+                  <HostTable
+                    rows={firewallRulesWithDescription}
+                    columns={firewallColumns}
+                    colorMap={firewallTypeColorMap}
+                    colorField='action'
+                    editField={({ action, dport, description }: openFirewallModalTypes) =>
+                    {
+                      setSelectedRule({ action, dport, description: description || 'Add description...' });
+                      setActionKeys(new Set([action as string]));
+                      setDescription(description || 'Add description...');
+                      openFirewallModal();
+                    }}
 
-                />
-            <div className='flex justify-between items-center w-full'>
-              <Button
-                className='w-1/6'
-                color='secondary'
-                variant='ghost'
-                isDisabled={grabbingRules}
-                onClick={handleGrabRules}
-              >
-                Refresh Rules
-              </Button>
-              <Button
-                className='w-1/6'
-                color='secondary'
-                variant='shadow'
-                isDisabled={grabbingRules}
-                // onClick={openFirewallModal}
-              >
-                Update Rules
-              </Button>
-            </div>
-            </div>
-              <FirewallModal hostname={hostname} />
-          </>
+                  />
+                  <div className='flex justify-between items-center w-full'>
+                    <Button
+                      className='w-1/6'
+                      color='secondary'
+                      variant='ghost'
+                      endContent={<ArrowPathIcon width={15} height={15} />}
+                      isDisabled={grabbingRules}
+                      onClick={handleGrabRules}
+                    >
+                      Refresh Rules
+                    </Button>
+                    <Button
+                      className='w-1/6'
+                      color='secondary'
+                      variant='shadow'
+                      isDisabled={grabbingRules}
+                      onClick={() => setTableView(false)}
+                    >
+                      Update Rules
+                    </Button>
+                  </div>
+                </div>
+                <FirewallModal hostname={hostname} />
+              </>
+            )
+            :
+            (
+              <div className='flex flex-col gap-y-14 items-center w-3/4 h-[85%]'>
+                
+                <CompareRules originalRules={originalRules} rulesToUpdate={rulesToUpdate} />
+                <div className='flex justify-between items-center w-full'>
+                    <Button
+                      className='w-1/6'
+                      color='secondary'
+                      variant='ghost'
+                      startContent={<ArrowLeftIcon width={15} height={15} />}
+                      onClick={() => {
+                        setTableView(true)
+                      }}
+                    >
+                      Return
+                    </Button>
+                    <Button
+                      className='w-1/6'
+                      color='secondary'
+                      variant='flat'
+                      isDisabled={rulesToUpdate.length === 0}
+                      onClick={() => {
+                        window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify([]));
+                        setOriginalRules([]);
+                        setTableView(true);
+                        toast.success('Changes cleared!');
+                      }}
+                    >
+                      Clear Changes
+                    </Button>
+                    <Button
+                      className='w-1/6'
+                      color='secondary'
+                      variant='shadow'
+                      isDisabled={rulesToUpdate.length === 0}
+                      endContent={<CheckCircleIcon width={20} height={20} />}
+                      onClick={handleUpdateRules}
+                    >
+                      Confirm
+                    </Button>
+                </div>  
+              </div>
+            )
           )
           :
           (

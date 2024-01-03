@@ -10,7 +10,9 @@ export default function FirewallRuleUpdator() {
     ]);
 
     const [actionKeys, setActionKeys] = React.useState(new Set([selectedRule["action"] as string]));
-    const [description, setDescription] = React.useState(selectedRule["description"]);
+
+    const newDescription = selectedRule["description"] || '';
+    const [description, setDescription] = React.useState(newDescription);
 
 
     const selectedAction = React.useMemo(

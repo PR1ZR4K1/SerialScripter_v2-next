@@ -25,7 +25,7 @@ type Row = {
   id: number;
   name?: string | null;
   port?: number;
-  description?: string;
+  description?: string | null;
   status?: string;
   password?: string | null;
   userType?: string;

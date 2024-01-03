@@ -4,26 +4,30 @@ import { useHostsStore } from "@/store/HostsStore";
 import toast from "react-hot-toast";
 
 export default function FirewallModal({hostname}: {hostname: string}) {
-  const [ isFirewallModalOpen, closeFirewallModal, selectedRule, isFirstOpen, setFirstOpen ] = useHostsStore((state) =>
+  const [ isFirewallModalOpen, closeFirewallModal, selectedRule, isFirstOpen, setFirstOpen, actionKeys, setActionKeys, description, setDescription ] = useHostsStore((state) =>
       [
         state.isFirewallModalOpen,
         state.closeFirewallModal,
         state.selectedRule,
         state.isFirstOpen,
         state.setFirstOpen,
+        state.actionKeys,
+        state.setActionKeys,
+        state.firewallRuleDescription,
+        state.setFirewallRuleDescription,
       ]
   );
 
 
-  const [actionKeys, setActionKeys] = React.useState(new Set([selectedRule["action"] as string]));
-  const [description, setDescription] = React.useState(selectedRule["description"] || '');
+  // const [actionKeys, setActionKeys] = React.useState(new Set([selectedRule["action"] as string]));
+  // const [description, setDescription] = React.useState(selectedRule["description"] || '');
 
   const selectedAction = React.useMemo(
     () => Array.from(actionKeys).join(", ").replaceAll("_", " "),
     [actionKeys]
   );
 
-  const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
+const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
 
   // console.log(actionKeys)
   
@@ -49,54 +53,53 @@ export default function FirewallModal({hostname}: {hostname: string}) {
                 <div className="w-11/12 h-[1px] dark:bg-white bg-black"/>
               </ModalHeader>
               <ModalBody className="flex flex-col mt-10 items-center justify-center gap-y-8">
-              <div className='flex justify-evenly gap-x-4 w-full px-4'>
-                <div className='flex flex-col gap-y-2 w-28'>
-                    <p>
-                        <span className='font-semibold'>Action:</span>
-                    </p>
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button
-                                variant="ghost" 
-                                className="capitalize h-14"
-                                >
-                                {isFirstOpen ?  selectedRule['action'] : selectedAction}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu 
-                            aria-label="Single selection mode"
-                            variant="flat"
-                            disallowEmptySelection
-                            selectionMode="single"
-                            selectedKeys={actionKeys}
-                            onSelectionChange={(keys) => { setActionKeys(keys as Set<string>); setFirstOpen()}}
-                        >
-                            <DropdownItem key="accept" textValue='accept'><Chip className="capitalize" color='success' size="sm" variant="flat">ACCEPT</Chip></DropdownItem>
-                            <DropdownItem key="drop" textValue='drop'><Chip className="capitalize" color='danger' size="sm" variant="flat">DROP</Chip></DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-                <div className='flex flex-col gap-y-2 w-28'>
+                <div className='flex justify-evenly gap-x-4 w-full px-4'>
+                  <div className='flex flex-col gap-y-2 w-28'>
+                      <p>
+                          <span className='font-semibold'>Action:</span>
+                      </p>
+                      <Dropdown>
+                          <DropdownTrigger>
+                              <Button
+                                  variant="ghost" 
+                                  className="capitalize h-14"
+                                  >
+                                  {isFirstOpen ?  selectedRule['action'] : selectedAction}
+                              </Button>
+                          </DropdownTrigger>
+                          <DropdownMenu 
+                              aria-label="Single selection mode"
+                              variant="flat"
+                              disallowEmptySelection
+                              selectionMode="single"
+                              selectedKeys={actionKeys}
+                              onSelectionChange={(keys) => { setActionKeys(keys as Set<string>); setFirstOpen()}}
+                          >
+                              <DropdownItem key="accept" textValue='accept'><Chip className="capitalize" color='success' size="sm" variant="flat">ACCEPT</Chip></DropdownItem>
+                              <DropdownItem key="drop" textValue='drop'><Chip className="capitalize" color='danger' size="sm" variant="flat">DROP</Chip></DropdownItem>
+                          </DropdownMenu>
+                      </Dropdown>
+                  </div>
+                  <div className='flex flex-col gap-y-2 w-28'>
 
-                    <p>
-                        <span className='font-semibold'>Port:</span>
-                    </p>
-                    <Button isDisabled className='h-14 font-semibold' variant='solid'>{selectedRule['dport']}</Button>
-                </div>
-                <div className='flex flex-col gap-y-2 w-28'>
+                      <p>
+                          <span className='font-semibold'>Port:</span>
+                      </p>
+                      <Button isDisabled className='h-14 font-semibold' variant='solid'>{selectedRule['dport']}</Button>
+                  </div>
+                  <div className='flex flex-col gap-y-2 w-28'>
 
-                    <p>
-                        <span className='font-semibold'>Description:</span>
-                    </p>
-                    <Input
-                        onChange={e => setDescription(e.target.value)}
-                        name='description'
-                        value={description}
-                        variant='underlined'
-                        placeholder="purpose..." />
+                      <p>
+                          <span className='font-semibold'>Description:</span>
+                      </p>
+                      <Input
+                          onChange={e => setDescription(e.target.value)}
+                          name='description'
+                          value={description}
+                          variant='underlined'
+                          placeholder="purpose..." />
+                  </div>
                 </div>
-            </div>
-                <div className="w-5/6 h-[1px] dark:bg-white/80 bg-black/80"/>
               </ModalBody>
               <ModalFooter className="mt-10">
                 <Button color="danger" variant="light" onPress={onClose}>
@@ -105,16 +108,39 @@ export default function FirewallModal({hostname}: {hostname: string}) {
               <Button
                 color="primary"
                 onClick={() => { 
-
-                      if (selectedAction === '' && description === selectedRule["description"] || selectedAction === selectedRule["action"] && description === selectedRule["description"]) {
+                  
+                  // console.log('1', selectedAction, '2', selectedRule["action"])
+                  // console.log('1', description, '2', selectedRule["description"])
+                      // ensure a change has occured
+                      // compare current state to initial state. if they are the same, no changes have been made
+                      if (selectedAction === '' && description === selectedRule['description'] || selectedAction === selectedRule["action"] && description === selectedRule["description"]) {
                         toast.error("No changes made to firewall rule.");
+
+                        // rule has changed
                       } else if (selectedAction !== selectedRule["action"] || description !== selectedRule["description"]) {
+
+                        // get current state of local storage
+                        const value = window.localStorage.getItem(firewallRulesLocalStorage);
+                        const rulesToUpdate = value ? JSON.parse(value) : [];
+
+                        // check if rule already exists in local storage
+                        const ruleIndex = rulesToUpdate.findIndex((rule: any) => rule.dport === selectedRule['dport'])
+
+                        // if it does, remove it
+                        if (ruleIndex !== -1) {
+                          rulesToUpdate.splice(ruleIndex, 1)
+                        }
+
+                        // add new rule to local storage
+                        rulesToUpdate.push({ action: selectedAction, dport: selectedRule['dport'], description: description })
                         
-                        const rulesToUpdate = window.localStorage.getItem(firewallRulesLocalStorage);
-                        console.log(rulesToUpdate)
+                        // update local storage with new rule
+                        window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify(rulesToUpdate));
+
+                        // console.log(window.localStorage.getItem(firewallRulesLocalStorage))
                         toast.success("Firewall rule updated.");
                       }
-                      console.log('bruh')
+                      // console.log('bruh')
                       onClose();
                     }}>
                   Add Change

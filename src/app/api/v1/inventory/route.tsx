@@ -5,7 +5,6 @@ import { createHost } from '@/lib/prismaHelper';
 import { Container } from '@prisma/client';
 
 async function decrementLifetime(key: string) {
-async function decrementLifetime(key: string) {
     try {
         const updatedRecord = await prisma.apiKey.update({
             where: {
@@ -28,7 +27,6 @@ async function decrementLifetime(key: string) {
 }
 
 async function isAlive(key: string) {
-async function isAlive(key: string) {
     try {
         const keyState = await prisma.apiKey.findUnique({
             where: {
@@ -44,7 +42,7 @@ async function isAlive(key: string) {
         }
 
         // console.log("Lifetime:", alive.lifetime);
-        if(keyState.lifetime === null) {
+        if (keyState.lifetime === null) {
             return true;
         }
         return keyState.lifetime > 0;
@@ -130,3 +128,4 @@ export async function POST(req: Request) {
         });
     }
 }
+
