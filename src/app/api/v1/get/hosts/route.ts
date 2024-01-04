@@ -7,19 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
 
-  const hosts = await prisma.host.findMany({
-    include:
-      {
-        os:
-          {
-            select:
-              {
-                name: true,
-                version: false
-              }
-          }
-      }
-  });
+  const hosts = await prisma.host.findMany();
   
 
   return NextResponse.json({ now: Date.now(), data: hosts })

@@ -24,10 +24,8 @@ export async function POST(req: Request) {
       },
       include: {
         userAccounts: true,
-        os: true,
         networkServices: true,
         systemServices: true,
-        systemInfo: true,
         disks: true,
         connections: true,
         shares: true,

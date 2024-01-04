@@ -70,11 +70,12 @@ model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
   ip                String       @unique
-  osId              Int          @unique
   status            Status?       // Changed to enum type
-  os                OS           @relation(fields: [osId], references: [id])
-  systemInfoId      Int?         @unique
-  systemInfo        SystemInfo?  @relation(fields: [systemInfoId], references: [id])
+  os                String
+  version           String
+  cpu               String
+  cores             Int
+  memory            Int
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
@@ -89,21 +90,8 @@ model Host {
   userAccounts      UserAccount[]
   shares            Share[]
   firewallRules     FirewallRule[]
-}
 
-model OS {
-  id      Int    @id @default(autoincrement())
-  name    String // Linux, Windows, Router, Unknown
-  version String?
-  host    Host?
-}
-
-model SystemInfo {
-  id        Int    @id @default(autoincrement())
-  cpuCores  Int
-  cpuName   String
-  memory    Int    // Assuming this is in MB or GB
-  host      Host?
+  @@unique([ hostname, ip])
 }
 
 model Disk {
@@ -115,6 +103,8 @@ model Disk {
   availableSpace      Int
   hostId              Int
   host                Host?  @relation(fields: [hostId], references: [id])
+
+  @@unique([ mountPoint, hostId])
 }
 
 model SystemService {
@@ -125,18 +115,22 @@ model SystemService {
   status      SystemServiceStatus // Assuming Status is an enum with values like UP, DOWN
   hostId      Int
   host        Host?  @relation(fields: [hostId], references: [id])
+
+  @@unique([ name, hostId])
 }
 
 model NetworkService {
   id          Int    @id @default(autoincrement())
   name        String?
-  port        Int
+  port        Int 
   protocol    String
   pid         Int?
   version     String
   state       PortStatus 
   hostId      Int
   host        Host?  @relation(fields: [hostId], references: [id])
+
+  @@unique([ port, hostId])
 }
 
 model Connection {
@@ -149,6 +143,8 @@ model Connection {
   state               PortStatus 
   hostId              Int
   host                Host?  @relation(fields: [hostId], references: [id])
+
+  @@unique([ localAddress, remoteAddress, hostId])
 }
 
 model Incident {
@@ -172,7 +168,7 @@ model Software {
 
 model Container {
   id                        Int      @id @default(autoincrement())
-  containerId               String   @unique
+  containerId               String   
   name                      String
   portBindings              String[]
   status                    String
@@ -181,16 +177,20 @@ model Container {
   containerVolumes          ContainerVolume[] // One-to-many relationship with Volume
   host                      Host?    @relation(fields: [hostId], references: [id])
   hostId                    Int
+
+  @@unique([ containerId, hostId])
 }
 
 model ContainerNetwork {
   id                    Int      @id @default(autoincrement())
-  networkName                  String
+  networkName           String
   ip                    String
   gateway               String
   macAddress            String
   container             Container? @relation(fields: [containerId], references: [id])
   containerId           Int
+
+  @@unique([ networkName, containerId])
 }
 
 
@@ -204,6 +204,8 @@ model ContainerVolume {
   vType                 String   
   container             Container? @relation(fields: [containerId], references: [id])
   containerId           Int
+
+  @@unique([ volumeName, containerId])
 }
 
 
@@ -218,6 +220,8 @@ model UserAccount {
   isAdmin   Boolean
   host      Host?    @relation(fields: [hostId], references: [id])
   hostId    Int
+
+  @@unique([ name, hostId])
 }
 
 model Share {
@@ -226,6 +230,8 @@ model Share {
   networkPath   String
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
+  
+  @@unique([ networkPath, hostId])
 }
 
 model FirewallRule {

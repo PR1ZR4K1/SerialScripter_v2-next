@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk, Connection, Share, Container, ContainerNetwork, ContainerVolume, FirewallRule } from "@prisma/client";
+import { Host as PrismaHost, NetworkService, UserAccount, Incident, Software, SystemService, Disk, Connection, Share, Container, ContainerNetwork, ContainerVolume, FirewallRule } from "@prisma/client";
 
 export type ExtendedContainer = Container & {
     containerNetworks?: ContainerNetwork[];
@@ -8,18 +8,16 @@ export type ExtendedContainer = Container & {
 }
 
 type Host = PrismaHost & {
-  os?: OS;
-  systemInfo?: SystemInfo;
-  systemServices?: SystemService[];
-  networkServices?: NetworkService[];
-  userAccounts?: UserAccount[];
-  incidents?: Incident[];
-  software?: Software[];
-  disks?: Disk[];
-  connections?: Connection[];
-  shares?: Share[];
-  containers?: ExtendedContainer[];
-  firewallRules?: FirewallRule[];
+    systemServices?: SystemService[];
+    networkServices?: NetworkService[];
+    userAccounts?: UserAccount[];
+    incidents?: Incident[];
+    software?: Software[];
+    disks?: Disk[];
+    connections?: Connection[];
+    shares?: Share[];
+    containers?: ExtendedContainer[];
+    firewallRules?: FirewallRule[];
 };
 
 interface HostsStoreTypes {
@@ -45,7 +43,7 @@ const { signal } = new AbortController()
 export const useHostsStore = create<HostsStoreTypes>((set) => ({
     refetchCounter: 0,
     setRefetchCounter: () => {
-    set((state) => ({ refetchCounter: state.refetchCounter + 1 }));
+        set((state) => ({ refetchCounter: state.refetchCounter + 1 }));
     },
 
 
@@ -67,24 +65,27 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     },
 
     view: 'home',
-    setView: (view: string) => set({view: view}),
+    setView: (view: string) => set({ view: view }),
 
     host: {
         id: 0, // Default ID, assuming 0 is an invalid or placeholder ID
         hostname: 'N/A', // Placeholder value
+        os: 'N/A', // Placeholder value
+        version: 'N/A', // Placeholder value
+        memory: 0, // Placeholder value
+        cores: 0, // Placeholder value
+        cpu: 'N/A', // Placeholder value
         ip: '0.0.0.0', // Default IP, indicating an invalid or non-existent IP
-        osId: 0, // Default OS ID, assuming 0 is a placeholder value
         status: 'UP', // Default status
         gateway: null,
         dhcp: null,
-        systemInfoId: null, // Assuming systemSpecId can be null
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder
         createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
         networkServices: [],
         // Include any other missing fields with their default or placeholder values
     },
     setHost: (host: Host) => set({ host: host }),
-    
+
     isFirewallModalOpen: false,
     openFirewallModal: () => set({ isFirewallModalOpen: true }),
     closeFirewallModal: () => set({ isFirewallModalOpen: false }),

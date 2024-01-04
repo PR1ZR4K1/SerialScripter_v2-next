@@ -12,9 +12,24 @@ type ContainerConnect = {
 export const createHostConnect = (id: number) => ({ host: { connect: { id } } });
 const createContainerConnect = (id: number) => ({ container: { connect: { id } } });
 
+export async function upsertItem<T, U extends HostConnect | ContainerConnect>(
+    items: T[],
+    connectData: U,
+    upsertFunction: (item: T & U, whereCondition: any) => Promise<any>,
+    whereConditionFunction: (item: T) => any
+) {
+    return Promise.all(
+        items.map(item => {
+            const itemWithConnect = { ...item, ...connectData };
+            const whereCondition = whereConditionFunction(item);
+            return upsertFunction(itemWithConnect as any, whereCondition);
+        })
+    );
+}
+
 export async function processArray<T, U extends HostConnect | ContainerConnect>(
-    items: T[], 
-    connectData: U, 
+    items: T[],
+    connectData: U,
     createFunction: (item: T & U) => Promise<any>
 ) {
     return Promise.all(
@@ -38,7 +53,7 @@ export type ModifiedNetworkServiceType = Omit<Prisma.NetworkServiceCreateManyHos
     process?: ProcessType;
 };
 
-export type ModifiedConnectionType = Omit<Prisma.ConnectionCreateManyHostInput, 'name' | 'pid'> & {   
+export type ModifiedConnectionType = Omit<Prisma.ConnectionCreateManyHostInput, 'name' | 'pid'> & {
     process: ProcessType;
 };
 
@@ -63,115 +78,118 @@ interface HostData {
     disks?: Prisma.DiskCreateManyHostInput[];
     services?: Prisma.SystemServiceCreateManyHostInput[];
     ports?: ModifiedNetworkServiceType[];
-    users?:   Prisma.UserAccountCreateManyHostInput[];
+    users?: Prisma.UserAccountCreateManyHostInput[];
     connections?: Prisma.ConnectionCreateManyHostInput[];
     shares?: Prisma.ShareCreateManyHostInput[];
     containers?: ExtendedContainerType[];
     firewallRules?: Prisma.FirewallRuleCreateManyHostInput[];
 }
 
-export async function createHost(hostData : HostData) {
-
-    // Create OS records
-    const os = {
-        name: hostData.os,
-        version: hostData.version,
-    };
-
-    const createdOS = await prisma.oS.create({ data: os });
-
-    // Create SystemSpec records
-    const systemInfo = {
-        cpuCores: hostData.cores,
-        memory: hostData.memory,
-        cpuName: hostData.cpu,
-    };
-
-    const createdSystemInfo = await prisma.systemInfo.create({ data: systemInfo });
-
+export async function createHost(hostData: HostData) {
     // Create Host record
     const host = {
         hostname: hostData.hostname,
         ip: hostData.ip,
-        os: { connect: { id: createdOS.id } },
-        systemInfo: { connect: { id: createdSystemInfo.id } },
+        os: hostData.os,
+        cpu: hostData.cpu,
+        cores: hostData.cores,
+        memory: hostData.memory,
+        version: hostData.version,
         status: hostData.status,
         gateway: hostData.gateway,
         dhcp: hostData.dhcp,
         macAddress: hostData.macAddress,
     };
 
-    const createdHost = await prisma.host.create({ data: host });
+    const createdHost = await prisma.host.upsert({
+        where: { hostname_ip: { hostname: host.hostname, ip: host.ip } },
+        create: host,
+        update: host,
+    });
 
     // Create related records for the host's services
     if (hostData.ports && hostData.ports.length > 0) {
         // await createNetworkServices(hostData.ports, createdHost.id);
-        await processArray<ModifiedNetworkServiceType, HostConnect>( hostData.ports.map(flattenProcesses), 
+        await upsertItem<ModifiedNetworkServiceType, HostConnect>(
+            hostData.ports.map(flattenProcesses),
             createHostConnect(createdHost.id),
-            (service) => prisma.networkService.create({ data: service as Prisma.NetworkServiceCreateInput }));
+            (service, whereCondition) => prisma.networkService.upsert({ where: whereCondition, create: service as Prisma.NetworkServiceCreateInput, update: service as Prisma.NetworkServiceUpdateInput }),
+            (service) => ({ port_hostId: { port: service.port, hostId: createdHost.id } }) // where condition
+        );
+
+        //await processArray<ModifiedNetworkServiceType, HostConnect>( hostData.ports.map(flattenProcesses), 
+        //  createHostConnect(createdHost.id),
+        // (service) => prisma.networkService.create({ data: service as Prisma.NetworkServiceCreateInput }));
     }
 
     if (hostData.services && hostData.services.length > 0) {
         // await createSystemServices(hostData.services, createdHost.id);
-        await processArray<Prisma.SystemServiceCreateInput, HostConnect>(
-            hostData.services, 
+        await upsertItem<Prisma.SystemServiceCreateManyHostInput, HostConnect>(
+            hostData.services,
             createHostConnect(createdHost.id),
-            (service) => prisma.systemService.create({ data: service as Prisma.SystemServiceCreateInput })
+            (service, whereCondition) => prisma.systemService.upsert({ where: whereCondition, create: service as Prisma.SystemServiceCreateInput, update: service as Prisma.SystemServiceUpdateInput }),
+            (service) => ({ name_hostId: { name: service.name, hostId: createdHost.id } }) // where condition
         );
     }
 
     if (hostData.users && hostData.users.length > 0) {
         // await createUserAccounts(hostData.users, createdHost.id);
         // Example usage with Prisma's UserAccount type
-        await processArray<Prisma.UserAccountCreateInput, HostConnect>(
-            hostData.users, 
+        await upsertItem<ModifiedUserAccountType, HostConnect>(
+            hostData.users,
             createHostConnect(createdHost.id),
-            (userAccount) => prisma.userAccount.create({ data: userAccount as Prisma.UserAccountCreateInput })
+            (user, whereCondition) => prisma.userAccount.upsert({ where: whereCondition, create: user as Prisma.UserAccountCreateInput, update: user as Prisma.UserAccountUpdateInput }),
+            (user) => ({ name_hostId: { name: user.name, hostId: createdHost.id } }) // where condition
         );
     }
 
     if (hostData.disks && hostData.disks.length > 0) {
         // await createDisks(hostData.disks, createdHost.id);
-        await processArray<Prisma.DiskCreateInput, HostConnect>(
-            hostData.disks, 
+        await upsertItem<Prisma.DiskCreateManyHostInput, HostConnect>(
+            hostData.disks,
             createHostConnect(createdHost.id),
-            (disk) => prisma.disk.create({ data: disk as Prisma.DiskCreateInput })
+            (disk, whereCondition) => prisma.disk.upsert({ where: whereCondition, create: disk as Prisma.DiskCreateInput, update: disk as Prisma.DiskUpdateInput }),
+            (disk) => ({ mountPoint_hostId: { mountPoint: disk.mountPoint, hostId: createdHost.id } }) // where condition
         );
     }
 
     if (hostData.connections && hostData.connections.length > 0) {
         // await createConnections(hostData.connections, createdHost.id);
-        await processArray<ModifiedConnectionType, HostConnect>(
-            hostData.connections.map(flattenProcesses), 
+
+        await upsertItem<ModifiedConnectionType, HostConnect>(
+            hostData.connections.map(flattenProcesses),
             createHostConnect(createdHost.id),
-            (connection) => prisma.connection.create({ data: connection as Prisma.ConnectionCreateInput })
+            (connection, whereCondition) => prisma.connection.upsert({ where: whereCondition, create: connection as Prisma.ConnectionCreateInput, update: connection as Prisma.ConnectionUpdateInput }),
+            (connection) => ({ localAddress_remoteAddress_hostId: { localAddress: connection.localAddress, remoteAddress: connection.remoteAddress, hostId: createdHost.id } }) // where condition
         );
     }
 
     if (hostData.firewallRules && hostData.firewallRules.length > 0) {
         // await createShares(hostData.firewallRules, createdHost.id);
-        await processArray<Prisma.FirewallRuleCreateInput, HostConnect>(
-            hostData.firewallRules, 
+        await upsertItem<Prisma.FirewallRuleCreateManyHostInput, HostConnect>(
+            hostData.firewallRules,
             createHostConnect(createdHost.id),
-            (firewallRule) => prisma.firewallRule.create({ data: firewallRule as Prisma.FirewallRuleCreateInput })
+            (rule, whereCondition) => prisma.firewallRule.upsert({ where: whereCondition, create: rule as Prisma.FirewallRuleCreateInput, update: rule as Prisma.FirewallRuleUpdateInput }),
+            (rule) => ({ dport_hostId: { dport: rule.dport, hostId: createdHost.id } }) // where condition
         );
     }
-// const createdContainer = prisma.container.create({ data: {...container, hostId: hostId,} });
+    // const createdContainer = prisma.container.create({ data: {...container, hostId: hostId,} });
 
 
     if (hostData.shares && hostData.shares.length > 0) {
         // await createShares(hostData.shares, createdHost.id);
-        await processArray<Prisma.ShareCreateInput, HostConnect>(
-            hostData.shares, 
+        await upsertItem<Prisma.ShareCreateManyHostInput, HostConnect>(
+            hostData.shares,
             createHostConnect(createdHost.id),
-            (share) => prisma.share.create({ data: share as Prisma.ShareCreateInput })
+            (share, whereCondition) => prisma.share.upsert({ where: whereCondition, create: share as Prisma.ShareCreateInput, update: share as Prisma.ShareUpdateInput }),
+            (share) => ({ networkPath_hostId: { networkPath: share.networkPath, hostId: createdHost.id } }) // where condition
         );
     }
 
     if (hostData.containers && hostData.containers.length > 0) {
         // await createContainers(hostData.containers, createdHost.id);
         for (const containers of hostData.containers) {
-            const {containerNetworks, containerVolumes, ...container} = containers;
+            const { containerNetworks, containerVolumes, ...container } = containers;
             await createContainer(createdHost.id, container, containerNetworks || [], containerVolumes || []);
         }
     }
@@ -182,20 +200,27 @@ export async function createHost(hostData : HostData) {
 
 async function createContainer(hostid: number, container: Prisma.ContainerCreateInput, containerNetworks: Prisma.ContainerNetworkCreateInput[], containerVolumes: Prisma.ContainerVolumeCreateInput[]) {
     const containerWithHost = { ...container, host: { connect: { id: hostid } } };
-    const {id} = await prisma.container.create({data: containerWithHost as Prisma.ContainerCreateInput});
 
-    await processArray<Prisma.ContainerNetworkCreateInput, ContainerConnect>(
-        containerNetworks, 
-        createContainerConnect(id),
-        (network) => prisma.containerNetwork.create({ data: network as Prisma.ContainerNetworkCreateInput })
-    ); 
 
-    await processArray<Prisma.ContainerVolumeCreateInput, ContainerConnect>(
-        containerVolumes, 
+    const { id } = await prisma.container.upsert({
+        where: { containerId_hostId: { containerId: container.containerId, hostId: hostid } },
+        create: containerWithHost as Prisma.ContainerCreateInput,
+        update: containerWithHost as Prisma.ContainerUpdateInput,
+    });
+
+    await upsertItem<Prisma.ContainerNetworkCreateInput, ContainerConnect>(
+        containerNetworks,
         createContainerConnect(id),
-        (volume) => prisma.containerVolume.create({ data: volume as Prisma.ContainerVolumeCreateInput })
-    ); 
-    
+        (network, whereCondition) => prisma.containerNetwork.upsert({ where: whereCondition, create: network as Prisma.ContainerNetworkCreateInput, update: network as Prisma.ContainerNetworkUpdateInput }),
+        (network) => ({ networkName_containerId: { networkName: network.networkName, containerId: id } }) // where condition
+    );
+
+    await upsertItem<Prisma.ContainerVolumeCreateInput, ContainerConnect>(
+        containerVolumes,
+        createContainerConnect(id),
+        (volume, whereCondition) => prisma.containerVolume.upsert({ where: whereCondition, create: volume as Prisma.ContainerVolumeCreateInput, update: volume as Prisma.ContainerVolumeUpdateInput }),
+        (volume) => ({ volumeName_containerId: { volumeName: volume.volumeName, containerId: id } }) // where condition
+    );
 }
 
 function flattenProcesses(connection: any) {
@@ -206,7 +231,7 @@ function flattenProcesses(connection: any) {
 
     const { name, pid } = connection.process;
 
-    if (connection.process) 
+    if (connection.process)
         delete connection.process;
 
     return {

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { getHostInfo } from '@/lib/getHostInfo';
-import { Host as PrismaHost, OS, NetworkService, UserAccount } from "@prisma/client";
+import { Host as PrismaHost, NetworkService, UserAccount } from "@prisma/client";
 import Home from './Home';
 import Services from './Services';
 import Users from './Users';
@@ -16,7 +16,6 @@ import Firewall from './Firewall';
 import HostModal from './FirewallModal';
 
 type Host = PrismaHost & {
-  os?: OS;
   networkServices?: NetworkService[];
   users?: UserAccount[];
 };
