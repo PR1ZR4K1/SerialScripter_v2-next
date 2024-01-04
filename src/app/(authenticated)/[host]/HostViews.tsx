@@ -30,10 +30,10 @@ export default function HostViews({hostname}: {hostname: string}) {
 
     const [lastUpdated, setLastUpdated] = useState('');
 
-    useEffect( () => {
+    useEffect(() => {
         async function fetchHostInfo() {
             try {
-                const {now, host}: {now: string, host: Host} = await getHostInfo(hostname);
+                const { now, host }: { now: string, host: Host } = await getHostInfo(hostname);
                 setHost(host);
                 setLastUpdated(now)
                 // Use hostInfo here
@@ -42,13 +42,10 @@ export default function HostViews({hostname}: {hostname: string}) {
                 console.log(error);
             }
         };
-        if (host.hostname === hostname) {
-            console.log(host)
-            fetchHostInfo();
-        } else {
-            notFound();
-        }
-    }, [hostname, setHost, host]);
+
+        fetchHostInfo();
+
+    }, [hostname, setHost]);
 
     let content;
     // conditionally render content in my page

@@ -79,7 +79,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
             }
 
             const data = await response.json();
-            console.log(data.data)
+            // console.log(data.data)
             set({ hosts: data.data }); // Update the hosts in the store
         } catch (error) {
             console.error("Error fetching host data:", error);

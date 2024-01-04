@@ -16,8 +16,6 @@ export const getHostInfo = async (hostname: string) => {
         // If you still want to do something with the response, you can
         const data = await result.json();
         // For example, console.log it:
-        // console.log(data);
-
         return data
 
     } catch (error) {
