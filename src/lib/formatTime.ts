@@ -1,3 +1,5 @@
+import { create } from "domain";
+
 export function formatTimestampToPST(timestamp: number) {
 
 //set options
@@ -21,4 +23,17 @@ export function convertToPST(dateString: string): string {
         hour12: true,
         timeZone: 'America/Los_Angeles'
     }).format(date);
+}
+
+export function formatCreatedAt(createdAt: Date) {
+  const date = new Date(createdAt);
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short', 
+    day: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit', 
+    hour12: false  // Use this to get 24-hour format; remove it for 12-hour format
+  };
+  return date.toLocaleString('en-US', options);
 }

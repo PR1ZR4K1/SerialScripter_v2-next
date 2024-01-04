@@ -5,7 +5,7 @@ docker-compose down
 Start-Sleep -Seconds 2
 
 # Start Docker Compose containers in the background
-docker-compose up -d
+docker-compose -f .\docker-compose-testing.yml up -d
 
 # Wait for 2 seconds
 Start-Sleep -Seconds 2

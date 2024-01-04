@@ -42,7 +42,7 @@ async function isAlive(key: string) {
         }
 
         // console.log("Lifetime:", alive.lifetime);
-        if(keyState.lifetime === null) {
+        if (keyState.lifetime === null) {
             return true;
         }
         return keyState.lifetime > 0;
@@ -128,3 +128,4 @@ export async function POST(req: Request) {
         });
     }
 }
+

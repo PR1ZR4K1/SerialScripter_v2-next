@@ -6,7 +6,12 @@ export type ExtendedContainer = Container & {
     containerNetworks?: ContainerNetwork[];
     containerVolumes?: ContainerVolume[];
 }
-
+type openFirewallModalTypes = {
+    action?: string;
+    dport?: number;
+    description?: string | null
+}
+  
 type Host = PrismaHost & {
     systemServices?: SystemService[];
     networkServices?: NetworkService[];
@@ -36,6 +41,23 @@ interface HostsStoreTypes {
     isFirewallModalOpen: boolean;
     openFirewallModal: () => void;
     closeFirewallModal: () => void;
+    isFirstOpen: boolean;
+    setFirstOpen: () => void;
+
+    selectedRule: openFirewallModalTypes;
+    setSelectedRule: (rule: openFirewallModalTypes) => void;
+
+    actionKeys: Set<string>;
+    setActionKeys: (keys: Set<string>) => void;
+
+    firewallRuleDescription: string;
+    setFirewallRuleDescription: (description: string) => void;
+
+    firewallPort: string;
+    setFirewallPort: (description: string) => void;
+
+    isNewRule: boolean;
+    setIsNewRule: (isNewRule: boolean) => void;
 }
 
 const { signal } = new AbortController()
@@ -87,7 +109,28 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     setHost: (host: Host) => set({ host: host }),
 
     isFirewallModalOpen: false,
-    openFirewallModal: () => set({ isFirewallModalOpen: true }),
-    closeFirewallModal: () => set({ isFirewallModalOpen: false }),
+    openFirewallModal: () => set({ isFirewallModalOpen: true, isFirstOpen: true }),
+    closeFirewallModal: () => set({ isFirewallModalOpen: false, isNewRule: false }),
+    isFirstOpen: true,
+    setFirstOpen: () => set({ isFirstOpen: false }),
 
+    selectedRule:
+    {
+        action: '',
+        dport: 0,
+        description: 'Add description...',
+    },
+    setSelectedRule: (rule: openFirewallModalTypes) => set({ selectedRule: rule }),
+
+    actionKeys: new Set(),
+    setActionKeys: (keys: Set<string>) => set({ actionKeys: keys }),
+
+    firewallRuleDescription: '',
+    setFirewallRuleDescription: (description: string) => set({ firewallRuleDescription: description }),
+
+    firewallPort: '',
+    setFirewallPort: (port: string) => set({ firewallPort: port }),
+
+    isNewRule: false,
+    setIsNewRule: (isNewRule: boolean) => set({ isNewRule: isNewRule }),
 }));
