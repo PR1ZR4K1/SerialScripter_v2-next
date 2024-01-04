@@ -54,6 +54,12 @@ interface HostsStoreTypes {
 
     firewallRuleDescription: string;
     setFirewallRuleDescription: (description: string) => void;
+
+    firewallPort: string;
+    setFirewallPort: (description: string) => void;
+
+    isNewRule: boolean;
+    setIsNewRule: (isNewRule: boolean) => void;
 }
 
 const { signal } = new AbortController()
@@ -103,7 +109,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     
     isFirewallModalOpen: false,
     openFirewallModal: () => set({ isFirewallModalOpen: true, isFirstOpen: true }),
-    closeFirewallModal: () => set({ isFirewallModalOpen: false }),
+    closeFirewallModal: () => set({ isFirewallModalOpen: false, isNewRule: false }),
     isFirstOpen: true,
     setFirstOpen: () => set({ isFirstOpen: false }),
 
@@ -121,4 +127,9 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     firewallRuleDescription: '',
     setFirewallRuleDescription: (description: string) => set({ firewallRuleDescription: description }),
 
+    firewallPort: '',
+    setFirewallPort: (port: string) => set({ firewallPort: port }),
+
+    isNewRule: false,
+    setIsNewRule: (isNewRule: boolean) => set({ isNewRule: isNewRule }),
 }));

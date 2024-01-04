@@ -9,6 +9,7 @@ type RuleType = Omit<Prisma.FirewallRuleCreateInput, 'protocol' | 'dport'> & {
     action: string;
     dport: number;
     protocol: string;
+    description: string;
 }
 
 export async function POST(req: Request) {
@@ -64,14 +65,6 @@ export async function POST(req: Request) {
           
         setGlobalDispatcher(agent)
 
-        // const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
-        //     method: 'GET',
-        //     headers: {
-        //         'API-Token': firewallKey.key,
-        //         'Content-Type': 'application/json'
-        //     },
-        // });
-
         type formattedRulesType = {
             drop: string[];
             accept: string[];
@@ -86,7 +79,14 @@ export async function POST(req: Request) {
             }
         });
 
-        // console.log(formattedRules)
+        // const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property/update`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'API-Token': firewallKey.key,
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(formattedRules)
+        // });
 
         const result = await fetch(`https://192.168.1.21:8000/hippity/hoppity/your/packets/are/my/property/update`, {
             method: 'PUT',

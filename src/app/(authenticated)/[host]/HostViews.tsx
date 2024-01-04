@@ -13,6 +13,7 @@ import Connections from './Connections';
 import Shares from './Shares';
 import Containers from './Containers';
 import Firewall from './Firewall';
+import { notFound } from 'next/navigation'
 
 type Host = PrismaHost & {
   os?: OS;
@@ -42,9 +43,13 @@ export default function HostViews({hostname}: {hostname: string}) {
                 console.log(error);
             }
         };
-
-        fetchHostInfo();
-    }, [hostname, setHost]);
+        if (host.hostname === hostname) {
+            console.log(host)
+            fetchHostInfo();
+        } else {
+            notFound();
+        }
+    }, [hostname, setHost, host]);
 
     let content;
     // conditionally render content in my page

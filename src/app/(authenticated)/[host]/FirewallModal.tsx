@@ -4,7 +4,7 @@ import { useHostsStore } from "@/store/HostsStore";
 import toast from "react-hot-toast";
 
 export default function FirewallModal({hostname}: {hostname: string}) {
-  const [ isFirewallModalOpen, closeFirewallModal, selectedRule, isFirstOpen, setFirstOpen, actionKeys, setActionKeys, description, setDescription ] = useHostsStore((state) =>
+  const [ isFirewallModalOpen, closeFirewallModal, selectedRule, isFirstOpen, setFirstOpen, actionKeys, setActionKeys, description, setDescription, isNewRule, firewallPort, setFirewallPort ] = useHostsStore((state) =>
       [
         state.isFirewallModalOpen,
         state.closeFirewallModal,
@@ -15,12 +15,11 @@ export default function FirewallModal({hostname}: {hostname: string}) {
         state.setActionKeys,
         state.firewallRuleDescription,
         state.setFirewallRuleDescription,
+        state.isNewRule,
+        state.firewallPort,
+        state.setFirewallPort,
       ]
   );
-
-
-  // const [actionKeys, setActionKeys] = React.useState(new Set([selectedRule["action"] as string]));
-  // const [description, setDescription] = React.useState(selectedRule["description"] || '');
 
   const selectedAction = React.useMemo(
     () => Array.from(actionKeys).join(", ").replaceAll("_", " "),
@@ -29,8 +28,6 @@ export default function FirewallModal({hostname}: {hostname: string}) {
 
 const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
 
-  // console.log(actionKeys)
-  
   return (
       <Modal 
         backdrop="opaque" 
@@ -85,7 +82,29 @@ const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
                       <p>
                           <span className='font-semibold'>Port:</span>
                       </p>
-                      <Button isDisabled className='h-14 font-semibold' variant='solid'>{selectedRule['dport']}</Button>
+                      { isNewRule ? (
+                          <Input
+                            onChange={e => setFirewallPort(e.target.value)}
+                            name='port'
+                            type="number"
+                            min='1'
+                            max='65535'
+                            value={firewallPort}
+                            variant='flat'
+                            placeholder="port..."
+                          />
+                        )
+                        :
+                        (
+                          <Button
+                            isDisabled
+                            className='h-14 font-semibold'
+                            variant='solid'
+                          >
+                            {selectedRule['dport']}
+                          </Button>
+                        )
+                      }
                   </div>
                   <div className='flex flex-col gap-y-2 w-28'>
 
@@ -106,11 +125,8 @@ const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
                   Close
                 </Button>
               <Button
-                color="primary"
+                color="secondary"
                 onClick={() => { 
-                  
-                  // console.log('1', selectedAction, '2', selectedRule["action"])
-                  // console.log('1', description, '2', selectedRule["description"])
                       // ensure a change has occured
                       // compare current state to initial state. if they are the same, no changes have been made
                       if (selectedAction === '' && description === selectedRule['description'] || selectedAction === selectedRule["action"] && description === selectedRule["description"]) {
@@ -123,22 +139,49 @@ const firewallRulesLocalStorage = `rulesToUpdate-${hostname}`
                         const value = window.localStorage.getItem(firewallRulesLocalStorage);
                         const rulesToUpdate = value ? JSON.parse(value) : [];
 
-                        // check if rule already exists in local storage
-                        const ruleIndex = rulesToUpdate.findIndex((rule: any) => rule.dport === selectedRule['dport'])
+                        if (isNewRule) {
 
-                        // if it does, remove it
-                        if (ruleIndex !== -1) {
-                          rulesToUpdate.splice(ruleIndex, 1)
+                          // check if port field is a valid port
+                          if (parseInt(firewallPort) > 65535 || parseInt(firewallPort) < 1) {
+                            toast.error("Invalid port number.");
+                            return;
+                          }
+
+                          // check if rule already exists in local storage
+                          const ruleIndex = rulesToUpdate.findIndex((rule: any) => rule.dport === parseInt(firewallPort))
+
+                          // if it does, remove it
+                          if (ruleIndex !== -1) {
+                            rulesToUpdate.splice(ruleIndex, 1)
+                          }
+
+                          // add new rule to local storage
+                          rulesToUpdate.push({ action: selectedAction, dport: parseInt(firewallPort), description: description })
+                          
+                          // update local storage with new rule
+                          window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify(rulesToUpdate));
+
+                          // console.log(window.localStorage.getItem(firewallRulesLocalStorage))
+                          toast.success("Firewall rule added.");
+                        } else {
+
+                          // check if rule already exists in local storage
+                          const ruleIndex = rulesToUpdate.findIndex((rule: any) => rule.dport === selectedRule['dport'])
+
+                          // if it does, remove it
+                          if (ruleIndex !== -1) {
+                            rulesToUpdate.splice(ruleIndex, 1)
+                          }
+
+                          // add new rule to local storage
+                          rulesToUpdate.push({ action: selectedAction, dport: selectedRule['dport'], description: description })
+                          
+                          // update local storage with new rule
+                          window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify(rulesToUpdate));
+
+                          // console.log(window.localStorage.getItem(firewallRulesLocalStorage))
+                          toast.success("Firewall rule updated.");
                         }
-
-                        // add new rule to local storage
-                        rulesToUpdate.push({ action: selectedAction, dport: selectedRule['dport'], description: description })
-                        
-                        // update local storage with new rule
-                        window.localStorage.setItem(firewallRulesLocalStorage, JSON.stringify(rulesToUpdate));
-
-                        // console.log(window.localStorage.getItem(firewallRulesLocalStorage))
-                        toast.success("Firewall rule updated.");
                       }
                       // console.log('bruh')
                       onClose();

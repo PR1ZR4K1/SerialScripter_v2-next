@@ -242,7 +242,7 @@ export default function HostTable({rows, colorMap, columns, editField, colorFiel
           th: "dark:bg-[#202F46] bg-gray-200",
           td: "dark:bg-[#141B29]",
           wrapper: "max-h-[382px] dark:bg-[#141B29]",
-          table: 'dark:bg-[#141B29] dark:border-[#141B29] min-h-[250px]',
+          table: 'dark:bg-[#141B29] dark:border-[#141B29] min-h-[250px] max-h-[382px]',
           emptyWrapper: 'dark:bg-[#141B29]',
           base: 'dark:bg-transparent',
       }}
