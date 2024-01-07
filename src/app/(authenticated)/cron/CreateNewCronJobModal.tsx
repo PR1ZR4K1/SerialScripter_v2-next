@@ -72,8 +72,18 @@ export default function CreateNewCronJobModal() {
                     </div>
                     <NameInputBox/>
                 </div>}
-                {currentPage === Page.Command && <div>Command Content</div>}
-                {currentPage === Page.Schedule && <div>Schedule Content</div>}
+                {currentPage === Page.Command && <div>
+                  <div className="mb-5 mt-1">
+                      Please enter the command you want to run
+                  </div>
+                  <CommandInputBox/>
+                </div>}
+                {currentPage === Page.Schedule && <div>
+                  <div className="mb-5 mt-1">
+                      Please enter the schedule you want to run
+                  </div>
+                  <CustomSchedule/>
+                </div>}
                 {currentPage === Page.Review && <div>Review Content</div>}
               </ModalBody>
               <ModalFooter>
@@ -145,4 +155,97 @@ const NameInputBox: React.FC<AppProps> = () => {
         className="max-w-xs"
       />
     );
-  };
+};
+  
+
+
+const CommandInputBox: React.FC<AppProps> = () => {
+  // Specify the type of state
+  const [value, setValue] = useState<string>("");
+
+  return (
+    <Input
+      value={value}
+      type="command"
+      label="Command"
+      variant="bordered"
+      onValueChange={(e: string) => setValue(e)}
+      className="max-w-xs"
+    />
+  );
+};
+
+
+const CustomSchedule: React.FC<AppProps> = () => {
+  // Specify the type of state
+  const [value, setValue] = useState<string>("");
+
+  return (
+    <>
+      <Input
+        value={value}
+        type="minute"
+        label="Minute"
+        variant="bordered"
+        onValueChange={(a: string) => setValue(a)}
+        className="w-1/6"
+      />
+      <Input
+        value={value}
+        type="hour"
+        label="Hour"
+        variant="bordered"
+        onValueChange={(e: string) => setValue(e)}
+        className="max-w-xs"
+      />
+      <Input
+        value={value}
+        type="day"
+        label="Day"
+        variant="bordered"
+        onValueChange={(e: string) => setValue(e)}
+        className="max-w-xs"
+      />
+      <Input
+        value={value}
+        type="week"
+        label="Week"
+        variant="bordered"
+        onValueChange={(e: string) => setValue(e)}
+        className="max-w-xs"
+      />
+      <Input
+        value={value}
+        type="month"
+        label="Month"
+        variant="bordered"
+        onValueChange={(e: string) => setValue(e)}
+        className="max-w-xs"
+      />
+      <Input
+        value={value}
+        type="year"
+        label="Year"
+        variant="bordered"
+        onValueChange={(e: string) => setValue(e)}
+        className="max-w-xs"
+      />
+    </>
+  );
+};
+
+const Quick: React.FC<AppProps> = () => {
+  // Specify the type of state
+  const [value, setValue] = useState<string>("");
+
+  return (
+    <Input
+      value={value}
+      type="command"
+      label="Command"
+      variant="bordered"
+      onValueChange={(e: string) => setValue(e)}
+      className="max-w-xs"
+    />
+  );
+};
