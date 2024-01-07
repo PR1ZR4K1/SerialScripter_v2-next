@@ -79,7 +79,7 @@ export async function POST(req: Request) {
             }
         });
 
-        const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property/update`, {
+        const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property/`, {
             method: 'PUT',
             headers: {
                 'API-Token': firewallKey.key,

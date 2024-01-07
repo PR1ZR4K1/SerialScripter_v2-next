@@ -15,6 +15,7 @@ async function main() {
     });
 
     console.log('API Table created!');
+
 }
 
 main()
