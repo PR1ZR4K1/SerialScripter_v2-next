@@ -1,25 +1,28 @@
 import { create } from 'zustand'
 
-import { Host as PrismaHost, OS, NetworkService, UserAccount, SystemInfo, Incident, Software, SystemService, Disk, Connection, Share, Container, ContainerNetwork, ContainerVolume, FirewallRule } from "@prisma/client";
+import { Host as PrismaHost, NetworkService, UserAccount, Incident, Software, SystemService, Disk, Connection, Share, Container, ContainerNetwork, ContainerVolume, FirewallRule } from "@prisma/client";
 
 export type ExtendedContainer = Container & {
     containerNetworks?: ContainerNetwork[];
     containerVolumes?: ContainerVolume[];
 }
-
+type openFirewallModalTypes = {
+    action?: string;
+    dport?: number;
+    description?: string | null
+}
+  
 type Host = PrismaHost & {
-  os?: OS;
-  systemInfo?: SystemInfo;
-  systemServices?: SystemService[];
-  networkServices?: NetworkService[];
-  userAccounts?: UserAccount[];
-  incidents?: Incident[];
-  software?: Software[];
-  disks?: Disk[];
-  connections?: Connection[];
-  shares?: Share[];
-  containers?: ExtendedContainer[];
-  firewallRules?: FirewallRule[];
+    systemServices?: SystemService[];
+    networkServices?: NetworkService[];
+    userAccounts?: UserAccount[];
+    incidents?: Incident[];
+    software?: Software[];
+    disks?: Disk[];
+    connections?: Connection[];
+    shares?: Share[];
+    containers?: ExtendedContainer[];
+    firewallRules?: FirewallRule[];
 };
 
 interface HostsStoreTypes {
@@ -34,6 +37,27 @@ interface HostsStoreTypes {
 
     host: Host;
     setHost: (host: Host) => void;
+
+    isFirewallModalOpen: boolean;
+    openFirewallModal: () => void;
+    closeFirewallModal: () => void;
+    isFirstOpen: boolean;
+    setFirstOpen: () => void;
+
+    selectedRule: openFirewallModalTypes;
+    setSelectedRule: (rule: openFirewallModalTypes) => void;
+
+    actionKeys: Set<string>;
+    setActionKeys: (keys: Set<string>) => void;
+
+    firewallRuleDescription: string;
+    setFirewallRuleDescription: (description: string) => void;
+
+    firewallPort: string;
+    setFirewallPort: (description: string) => void;
+
+    isNewRule: boolean;
+    setIsNewRule: (isNewRule: boolean) => void;
 }
 
 const { signal } = new AbortController()
@@ -41,7 +65,7 @@ const { signal } = new AbortController()
 export const useHostsStore = create<HostsStoreTypes>((set) => ({
     refetchCounter: 0,
     setRefetchCounter: () => {
-    set((state) => ({ refetchCounter: state.refetchCounter + 1 }));
+        set((state) => ({ refetchCounter: state.refetchCounter + 1 }));
     },
 
 
@@ -55,7 +79,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
             }
 
             const data = await response.json();
-            console.log(data.data)
+            // console.log(data.data)
             set({ hosts: data.data }); // Update the hosts in the store
         } catch (error) {
             console.error("Error fetching host data:", error);
@@ -63,22 +87,50 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
     },
 
     view: 'home',
-    setView: (view: string) => set({view: view}),
+    setView: (view: string) => set({ view: view }),
 
     host: {
         id: 0, // Default ID, assuming 0 is an invalid or placeholder ID
         hostname: 'N/A', // Placeholder value
+        os: 'N/A', // Placeholder value
+        version: 'N/A', // Placeholder value
+        memory: 0, // Placeholder value
+        cores: 0, // Placeholder value
+        cpu: 'N/A', // Placeholder value
         ip: '0.0.0.0', // Default IP, indicating an invalid or non-existent IP
-        osId: 0, // Default OS ID, assuming 0 is a placeholder value
         status: 'UP', // Default status
         gateway: null,
         dhcp: null,
-        systemInfoId: null, // Assuming systemSpecId can be null
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder
         createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
         networkServices: [],
         // Include any other missing fields with their default or placeholder values
     },
-    setHost: (host: Host) => set({ host: host}),
+    setHost: (host: Host) => set({ host: host }),
 
+    isFirewallModalOpen: false,
+    openFirewallModal: () => set({ isFirewallModalOpen: true, isFirstOpen: true }),
+    closeFirewallModal: () => set({ isFirewallModalOpen: false, isNewRule: false }),
+    isFirstOpen: true,
+    setFirstOpen: () => set({ isFirstOpen: false }),
+
+    selectedRule:
+    {
+        action: '',
+        dport: 0,
+        description: 'Add description...',
+    },
+    setSelectedRule: (rule: openFirewallModalTypes) => set({ selectedRule: rule }),
+
+    actionKeys: new Set(),
+    setActionKeys: (keys: Set<string>) => set({ actionKeys: keys }),
+
+    firewallRuleDescription: '',
+    setFirewallRuleDescription: (description: string) => set({ firewallRuleDescription: description }),
+
+    firewallPort: '',
+    setFirewallPort: (port: string) => set({ firewallPort: port }),
+
+    isNewRule: false,
+    setIsNewRule: (isNewRule: boolean) => set({ isNewRule: isNewRule }),
 }));

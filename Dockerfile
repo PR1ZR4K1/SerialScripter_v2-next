@@ -41,6 +41,8 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/.env ./
+COPY --from=builder /app/.env.local ./
 
 # Set environment to production
 ENV NODE_ENV=production
@@ -49,4 +51,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["/bin/sh", "-c", "while ! nc -z postgres 5432; do sleep 1; done; npx prisma db push && npx prisma db seed && npm start"]

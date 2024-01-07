@@ -13,9 +13,11 @@ import {
     Selection,
     ChipProps,
     SortDescriptor,
-    getKeyValue
+    getKeyValue,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/icons/SearchIcon";
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { openFirewallModalTypes } from "./Firewall";
 
 
 type Row = {
@@ -29,6 +31,7 @@ type Row = {
   isLocal?: string;
   shareType?: string;
   rw?: string;
+  dport?: number;
   action?: string;
   hostId?: number | null;
 }
@@ -53,12 +56,13 @@ interface HostTableTypes {
   rows: Row[];
   colorMap?: ColorMap;
   columns: Columns[];
+  editField?: ({ action, dport, description }: openFirewallModalTypes) => void;
   colorField?: ValidColorField;
   colorField2?: ValidColorField;
 }
 
 
-export default function HostTable({rows, colorMap, columns, colorField, colorField2}: HostTableTypes) {
+export default function HostTable({rows, colorMap, columns, editField, colorField, colorField2}: HostTableTypes) {
 
   const [page, setPage] = React.useState(1);
   const [filterValue, setFilterValue] = React.useState("");
@@ -185,6 +189,7 @@ export default function HostTable({rows, colorMap, columns, colorField, colorFie
                             <option value="10">10</option>
                             <option value="25">25</option>
                             <option value="50">50</option>
+                            <option value="100">100</option>
                         </select>
                     </label>
                 </div>
@@ -237,7 +242,7 @@ export default function HostTable({rows, colorMap, columns, colorField, colorFie
           th: "dark:bg-[#202F46] bg-gray-200",
           td: "dark:bg-[#141B29]",
           wrapper: "max-h-[382px] dark:bg-[#141B29]",
-          table: 'dark:bg-[#141B29] dark:border-[#141B29] min-h-[250px]',
+          table: 'dark:bg-[#141B29] dark:border-[#141B29] min-h-[250px] max-h-[382px]',
           emptyWrapper: 'dark:bg-[#141B29]',
           base: 'dark:bg-transparent',
       }}
@@ -247,7 +252,7 @@ export default function HostTable({rows, colorMap, columns, colorField, colorFie
           <TableColumn 
             key={column.key} 
             allowsSorting={column.sortable}
-            className={`${column.key === colorField || column.key === colorField2 ? "text-center " : ''}`}
+            className={`${column.key === colorField || column.key === colorField2 || column.key === 'editField' ? "text-center " : ''}`}
           >
               {column.label}
           </TableColumn>
@@ -258,21 +263,26 @@ export default function HostTable({rows, colorMap, columns, colorField, colorFie
           <TableRow key={item.id}>
             {(columnKey) => 
               <TableCell>
-                {columnKey === colorField && item[colorField]  && colorMap? (
-                  <div className="flex items-center justify-center ">
-                    <Chip className="capitalize" color={colorMap[item[colorField] as StatusOrUserType]} size="sm" variant="flat">
-                      {item[colorField]  as StatusOrUserType}
-                    </Chip>
-                  </div>
-                ) : columnKey === colorField2 && item[colorField2] && colorMap? (
-                  <div className="flex items-center justify-center">
-                    <Chip className="capitalize" color={colorMap[item[colorField2] as StatusOrUserType]} size="sm" variant="flat">
-                      {item[colorField2]  as StatusOrUserType}
-                    </Chip>
-                  </div>
-                ) : (
-                  getKeyValue(item, columnKey)
-                )}
+                {columnKey === colorField && item[colorField]  && colorMap ? (
+                    <div className="flex items-center justify-center ">
+                      <Chip className="capitalize" color={colorMap[item[colorField] as StatusOrUserType]} size="sm" variant="flat">
+                        {item[colorField]  as StatusOrUserType}
+                      </Chip>
+                    </div>
+                  ) : columnKey === colorField2 && item[colorField2] && colorMap ? (
+                    <div className="flex items-center justify-center">
+                      <Chip className="capitalize" color={colorMap[item[colorField2] as StatusOrUserType]} size="sm" variant="flat">
+                        {item[colorField2]  as StatusOrUserType}
+                      </Chip>
+                    </div>
+                  ) : columnKey === 'editField' ? (
+                    <span className="flex items-center justify-center text-center text-lg text-primary active:opacity-50 bg-transparent">
+                        <PencilSquareIcon className="cursor-pointer" onClick={() => editField && editField({ action: item.action, dport: item.dport, description: item.description })} width={25} height={25} />
+                    </span>
+                  ) : (
+                    getKeyValue(item, columnKey)
+                  )
+              }
               </TableCell>
             }
           </TableRow>

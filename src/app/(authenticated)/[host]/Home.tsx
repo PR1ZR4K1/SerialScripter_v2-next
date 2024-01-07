@@ -22,7 +22,7 @@ export default function Home() {
 
   try {
     if (host.os) {
-        const osName = host.os?.name || 'unknown'; // Fallback to 'unknown' if os or os.name is undefined  
+        const osName = host.os || 'unknown'; // Fallback to 'unknown' if os or os.name is undefined  
         if (osName.toLowerCase() === 'windows') {
             imgSrc = '/assets/windows.png';
         } else if (osName.toLowerCase() === 'linux') {
@@ -62,18 +62,18 @@ export default function Home() {
                 </div>
 
                 <div className='font-bold text-center'>
-                    {host.os?.version || 'N/A'}
+                    {host.version || 'N/A'}
                 </div>
                 <div className='flex flex-col justify-evenly text-sm h-full font-medium'>
 
                     <div className='flex items-center gap-x-2'>
                         <CpuChipIcon height={30} width={30} className='text-blue-600 dark:text-[#1D9FE4]'/>
-                        {`${host.systemInfo?.cpuCores || 'N/A'} Cores`}
+                        {`${host.cores || 'N/A'} Cores`}
                          
                     </div>
                     <div className='flex items-center gap-x-2'>
                         <LuMemoryStick className='h-[30px] w-[30px] text-blue-600 dark:text-[#1D9FE4]' height={30} width={30}/>
-                        {`${host.systemInfo?.memory || 'N/A'} MB`}
+                        {`${host.memory || 'N/A'} MB`}
                     </div>
                     <div className='flex items-center gap-x-2'>
                         <CircleStackIcon height={30} width={30} className='text-blue-600 dark:text-[#1D9FE4]' />

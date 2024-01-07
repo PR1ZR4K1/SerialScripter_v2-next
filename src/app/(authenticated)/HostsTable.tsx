@@ -26,7 +26,7 @@ import { SearchIcon } from "@/icons/SearchIcon";
 import { columns, statusOptions } from "@/data/data";
 import { capitalize } from "@/utils/utils";
 import Image from "next/image";
-import { Host as PrismaHost, OS } from '@prisma/client';
+import { Host } from '@prisma/client';
 import { EyeIcon, InformationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { fetchScanResults } from "@/lib/enumerateNetwork";
@@ -41,9 +41,6 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = ["hostname", "ip", "os", "status", "actions"];
 
-type Host = PrismaHost & {
-  os?: OS;
-};
 
 // export function HostsTable({ handleDialogOpen }: DatagridProps) {
 export function HostsTable() {
@@ -53,7 +50,7 @@ export function HostsTable() {
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         direction: "ascending",
     });
@@ -160,7 +157,8 @@ export function HostsTable() {
         
         // const handleDialogOpen = () => setDialogOpen(!open);
         if (columnKey === "os") {
-            const osName = host.os?.name || 'unknown'; // Fallback to 'unknown' if os or os.name is undefined
+            const osName = host.os || 'unknown'; // Fallback to 'unknown' if os or os.name is undefined
+
             let imgSrc = '/assets/router.png'; // Default image
 
             if (osName.toLowerCase() === 'windows') {
@@ -205,7 +203,7 @@ export function HostsTable() {
             case "actions":
                 return (
                     <div className="relative flex items-center justify-center gap-2 h-full ">
-                        <Link href={`/${host.hostname}`}>
+                        <Link as={host.hostname} href={`/${host.hostname}`}>
                             <Tooltip color="primary" content="View Host">
                                 <span className="text-lg text-primary cursor-pointer active:opacity-50">
                                     <EyeIcon width={25} height={25}/>
@@ -413,9 +411,9 @@ export function HostsTable() {
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
                         >
-                            <option value="5">5</option>
                             <option value="10">10</option>
-                            <option value="15">15</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
                         </select>
                     </label>
                 </div>

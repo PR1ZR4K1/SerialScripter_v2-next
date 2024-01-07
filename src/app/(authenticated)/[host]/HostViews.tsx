@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { getHostInfo } from '@/lib/getHostInfo';
-import { Host as PrismaHost, OS, NetworkService, UserAccount } from "@prisma/client";
+import { Host as PrismaHost, NetworkService, UserAccount } from "@prisma/client";
 import Home from './Home';
 import Services from './Services';
 import Users from './Users';
@@ -13,9 +13,9 @@ import Connections from './Connections';
 import Shares from './Shares';
 import Containers from './Containers';
 import Firewall from './Firewall';
+import { notFound } from 'next/navigation'
 
 type Host = PrismaHost & {
-  os?: OS;
   networkServices?: NetworkService[];
   users?: UserAccount[];
 };
@@ -30,10 +30,10 @@ export default function HostViews({hostname}: {hostname: string}) {
 
     const [lastUpdated, setLastUpdated] = useState('');
 
-    useEffect( () => {
+    useEffect(() => {
         async function fetchHostInfo() {
             try {
-                const {now, host}: {now: string, host: Host} = await getHostInfo(hostname);
+                const { now, host }: { now: string, host: Host } = await getHostInfo(hostname);
                 setHost(host);
                 setLastUpdated(now)
                 // Use hostInfo here
@@ -44,6 +44,7 @@ export default function HostViews({hostname}: {hostname: string}) {
         };
 
         fetchHostInfo();
+
     }, [hostname, setHost]);
 
     let content;

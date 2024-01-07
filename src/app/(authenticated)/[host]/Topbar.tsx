@@ -157,14 +157,6 @@ export default function Topbar({hostname}: {hostname: string}) {
 
   return (
     <Navbar fullWidth className="flex w-[90%] bg-white/70 border-none dark:bg-purple-900 dark:border-black/30 py-4 rounded-3xl mt-6">
-        <div className="flex items-center text-blue-gray-900 absolute top-1/2 -translate-y-1/2 left-6">
-          <Typography
-            as="a"
-            className="cursor-pointer py-1.5 font-bold whitespace-nowrap dark:text-white"
-          >
-            {hostname}
-          </Typography>
-        </div>
         { !openNav ? (
           <div className="container flex justify-center items-center min-w-full">
 
