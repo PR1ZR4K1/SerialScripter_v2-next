@@ -75,6 +75,13 @@ model ServerLog {
   createdAt     DateTime      @default(now())
 }
 
+model SshKey {
+  id            Int           @id @default(autoincrement())
+  name          String
+  publicKey     String        @unique
+  createdAt     DateTime      @default(now())
+}
+
 model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
