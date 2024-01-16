@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Table from '@/components/DynamicTable';
-import prisma from '@/lib/prisma';
 import { SshKey } from '@prisma/client';
 import { Button } from '@nextui-org/react';
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
@@ -27,7 +26,6 @@ export default function Page() {
         
         
         if (!data) {
-            const shortenedKeys = [];
             return;
         }
 
