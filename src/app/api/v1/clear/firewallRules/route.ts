@@ -59,21 +59,21 @@ export async function POST(req: Request) {
           
         setGlobalDispatcher(agent)
 
-        const result = await fetch(`https://${hostIp}:8000/the/rules/didnt/work`, {
-            method: 'PUT',
-            headers: {
-                'API-Token': firewallKey.key,
-                'Content-Type': 'application/json'
-            },
-        });
-
-        // const result = await fetch(`https://192.168.1.21:8000/the/rules/didnt/work`, {
+        // const result = await fetch(`https://${hostIp}:8000/the/rules/didnt/work`, {
         //     method: 'PUT',
         //     headers: {
         //         'API-Token': firewallKey.key,
         //         'Content-Type': 'application/json'
         //     },
-        // }); 
+        // });
+
+        const result = await fetch(`https://192.168.1.194:8000/the/rules/didnt/work`, {
+            method: 'PUT',
+            headers: {
+                'API-Token': firewallKey.key,
+                'Content-Type': 'application/json'
+            },
+        }); 
 
         // // make sure the request was successful
         if (!result.ok) {
