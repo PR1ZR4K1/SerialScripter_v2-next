@@ -6,5 +6,5 @@
     - name: Add the provided SSH public key to authorized keys
       ansible.builtin.authorized_key:
         user: root
-        state: "{{ ssh_public_key_state }}"
+        state: "{{ ssh_state }}"
         key: "{{ ssh_public_key }}" 

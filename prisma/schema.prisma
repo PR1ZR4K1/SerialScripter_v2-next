@@ -95,6 +95,7 @@ model Host {
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
+  password          String?
   createdAt         DateTime     @default(now())
   disks             Disk[]
   systemServices    SystemService[]

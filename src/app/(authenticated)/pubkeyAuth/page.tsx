@@ -13,17 +13,17 @@ export default function Page() {
   const [tableView, setTableView] = useState(true);
   const [nameValue, setNameValue] = useState('');
   const [keyValue, setKeyValue] = useState('');   
-  
+  const [refreshKeyList, setRefreshKeyList] = useState(false);
+
   useEffect(() => {
     async function fetchKeys() {
       try {
         const response = await fetch("/api/v1/get/sshKeys", { next: { revalidate: 10 }, cache: 'no-store' }); // Replace with your actual API endpoint
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          toast.error('Failed to retrieve ssh keys');
         }
 
         const data: SshKey[] = await response.json();
-        
         
         if (!data) {
             return;
@@ -32,10 +32,12 @@ export default function Page() {
         const shortenedKeys = data.map(key => {
           return {
             ...key,
-            publicKey: key.publicKey.substring(0, 12)
+            publicKey: key.publicKey
           };
         });
+        
         setPublicKeys(shortenedKeys);
+        setRefreshKeyList(false);
         // Use hostInfo here
       } catch (error) {
           // Handle error
@@ -45,7 +47,7 @@ export default function Page() {
 
     fetchKeys();
   
-  }, [setPublicKeys]);
+  }, [setPublicKeys, refreshKeyList]);
 
   const keysColumns = [
     {
@@ -67,7 +69,7 @@ export default function Page() {
     publicKey: string;
     os: 'linux' | 'windows';
     sshState: 'present' | 'absent';
-  }
+  };
   
   const updateKeys = async ({ publicKey, os, sshState }: updateKeysType) => {
     try {
@@ -80,12 +82,12 @@ export default function Page() {
       }
 
       let successes = 0;
-      toast.loading(`Updating authorized_keys files on ${os} hosts...`, { duration: 1500 });
+      toast.loading(`Updating authorized_keys files on ${os} hosts...`, { duration: 2000 });
 
       for (const host of hosts) {
         const result = await fetch(`/api/v1/ansibleDeploy/${os}`, {
           method: "POST",
-          body: JSON.stringify({ host: host.ip, playbook: `ssh_${os}.yml`, extra_vars: `ansible_password=${host.password} ssh_state=${sshState} ssh_public_key=${publicKey}` }),
+          body: JSON.stringify({ hostIp: host.ip, playbook: `ssh_${os}`, extra_vars: `ansible_password=${host.password} ssh_state=${sshState} ssh_public_key='${publicKey}'` }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -103,7 +105,9 @@ export default function Page() {
     }
   };
   
-  const handleDeleteKey = async ({publicKey}: {publicKey: string}) => {
+  const handleDeleteKey = async ({ publicKey }: { publicKey: string }) => {
+    toast.loading(`Removing key from db...`, { duration: 2000 });
+    
     const result = await fetch("/api/v1/delete/sshKey", {
       method: "POST",
       body: JSON.stringify({ publicKey: publicKey }),
@@ -115,17 +119,19 @@ export default function Page() {
     const response = await result.json();
     
     if (response.error) {
-      toast.error(`Failed to delete public key from db!\n${response.error}`);
+      toast.error(`Failed to remove public key from db!\n${response.error}`);
     } else {
-      toast.success('Public key deleted from db successfully!');
+      toast.success('Public key removed from db successfully!');
       await updateKeys({ publicKey: publicKey, os: 'linux', sshState: 'absent' });
-      await updateKeys({ publicKey: publicKey, os: 'windows', sshState: 'absent' });
+      // await updateKeys({ publicKey: publicKey, os: 'windows', sshState: 'absent' });
       setTableView(true);
+      setRefreshKeyList(true);
     }
   };
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    toast.loading(`Adding key to db...`, { duration: 2000 });
     const result = await fetch("/api/v1/add/sshKey", {
         method: "POST",
         body: JSON.stringify({ name: nameValue, publicKey: keyValue }),
@@ -144,9 +150,10 @@ export default function Page() {
       
       await updateKeys({ publicKey: keyValue, os: 'linux', sshState: 'present' });
       
-      await updateKeys({ publicKey: keyValue, os: 'windows', sshState: 'present'});  
+      // await updateKeys({ publicKey: keyValue, os: 'windows', sshState: 'present'});  
       
       setTableView(true);
+      setRefreshKeyList(true);
     }
   }
 
