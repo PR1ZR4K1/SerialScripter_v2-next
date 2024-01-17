@@ -1,23 +1,27 @@
 import React, { useState } from "react";
-import { Input, Textarea, Select, Chip, SelectItem } from "@nextui-org/react";
+import { Input, Textarea, Select, Chip, SelectItem, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from "@nextui-org/react";
 
+
+interface TagsProps {
+  tags: Set<string>;
+  setTags: (keys: Set<string>) => void;
+ }
 
 export default function IncidentForm() {
   const [name, setName] = useState("My super duper bad incident!");
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [time, setTime] = useState(new Date().toISOString().split('T')[1].slice(0, 5));
   const [ip, setIp] = useState("");
+  const [hostname, setHostname] = useState("");
+  const [attach, setAttach] = useState<File | undefined>();
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = React.useState(new Set(["dog"]));
 
   // Handle form submission
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission behavior
     const formData = {
       name,
-      date,
-      time,
       ip,
+      attach,
       description,
       tags
     };
@@ -25,11 +29,24 @@ export default function IncidentForm() {
     // Process formData here (e.g., send to a server)
   };
 
+  function getLocalTime(timezoneOffset: number) {
+    const now = new Date();
+    const localTime = new Date(now.getTime() + timezoneOffset * 60000);
+    return localTime.toISOString().split('T')[1].slice(0, 5);
+  }
 
+  function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+    const target = e.target as HTMLInputElement & {
+      files: FileList;
+    }
+  
+    setAttach(target.files[0]);
+  }
+  
 
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen"> {/* Centering the form on the screen */}
-      <div className="flex flex-col gap-4"> {/* Adding vertical stacking and gap */}
+    <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen w-7xl"> {/* Centering the form on the screen */}
+      <div className="flex flex-col gap-4 w-4xl"> {/* Adding vertical stacking and gap */}
         <div className="flex gap-4"> {/* First row for inputs */}
           <Input
             isRequired
@@ -40,33 +57,35 @@ export default function IncidentForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          
-          <Input
-            isRequired
-            type="date"
-            label="Date"
-            defaultValue={new Date().toISOString().split('T')[0]}
-            className="max-w-xs w-full" // Adjust width to full
-          />
-
-          <Input
-            isRequired
-            type="time"
-            label="Time"
-            defaultValue={new Date().toISOString().split('T')[1].slice(0, 5)}
-            className="max-w-xs w-full" // Adjust width to full
-          />
-        </div>
-
-        <div className="flex gap-4"> {/* Second row for new inputs */}
-          <Tags/>
-
           <Input
             isRequired
             type="text"
             label="IP"
-            placeholder="Enter IP address"
+            placeholder="Enter the IP"
             className="max-w-xs w-full" // Adjust width to full
+            value={ip}
+            onChange={(e) => setIp(e.target.value)}
+          />
+          <Input
+            type="text"
+            label="Hostname"
+            placeholder="Enter the hostname"
+            className="max-w-xs w-full" // Adjust width to full
+            value={hostname}
+            onChange={(e) => setHostname(e.target.value)}
+          />
+        </div>
+
+        <div className="flex gap-4"> {/* Second row for new inputs */}
+          <Tags tags={tags} setTags={setTags} />
+        </div>
+
+        <div className="flex gap-4">
+          <Input
+            type="file"
+            label="Attach"
+            className="max-w-xs w-full" // Adjust width to full
+            onChange={handleOnChange}
           />
         </div>
 
@@ -74,6 +93,8 @@ export default function IncidentForm() {
           label="Description"
           placeholder="Enter your description"
           className="w-full" // Adjust width to full
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Submit
@@ -83,7 +104,7 @@ export default function IncidentForm() {
   );
 }
 
-function Tags() {
+const Tags: React.FC<TagsProps> = ({ tags, setTags }) => {
   const animals = [
     { value: 'dog', label: 'Dog' },
     { value: 'cat', label: 'Cat' },
@@ -97,28 +118,40 @@ function Tags() {
     { value: 'frog', label: 'Frog' }
   ];
   
-  const [tags, setTags] = React.useState<string[]>([]);
-
-  const handleAdd = (tag: string) => {
-    setTags([...tags, tag]);
-  };
-
-  const handleRemove = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-  };
+  const selectedValue = React.useMemo(
+    () => Array.from(tags).join(", ").replaceAll("_", " "),
+    [tags]
+  );
 
   return (
-    <Select
-      label="Tags"
-      placeholder="Select tags"
-      selectionMode="multiple"
-      className="max-w-xs"
-    >
-      {animals.map((animal) => (
-        <SelectItem key={animal.value} value={animal.value}>
-          {animal.label}
-        </SelectItem>
-      ))}
-    </Select>
+    <div className="flex min-w-xl w-full flex-col gap-2">
+      <Select
+        label="Favorite Animal"
+        selectionMode="multiple"
+        placeholder="Select an animal"
+        selectedKeys={tags}
+        onSelectionChange={(keys) => setTags(keys as Set<string>)}
+      >
+        {animals.map((animal) => (
+          <SelectItem key={animal.value} value={animal.value}>
+            {animal.label}
+          </SelectItem>
+        ))}
+      </Select>
+    </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+function setFile(arg0: File) {
+  throw new Error("Function not implemented.");
+}
+

@@ -30,6 +30,13 @@ enum PortStatus {
     unknown
 }
 
+enum IncidentTags {
+    exfiltration
+    access
+    userCompromise
+}
+
+
 enum SystemServiceStatus {
     active
     inactive
@@ -252,4 +259,14 @@ model FirewallRule {
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
   @@unique([ dport, hostId])
+}
+
+model Incidents {
+  id            Int     @id @default(autoincrement())
+  name          String
+  host          String
+  attach        Bytes
+  description   String
+  createdAt     DateTime      @default(now())
+  tags          IncidentTags
 }
