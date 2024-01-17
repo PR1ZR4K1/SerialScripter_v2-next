@@ -389,11 +389,12 @@ async function main() {
     
     const host1 = await createHost({
         hostname: 'bobby',
-        ip: '192.168.60.253',
+        ip: '192.168.1.21',
         os: 'Linux',
         version: 'Ubuntu 20.04',
         cores: 4,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        password: 'MacCheese4Me!',
         memory: 8192,
         disks: host1Disks,
         status: 'UP',
@@ -412,6 +413,7 @@ async function main() {
         ip: '192.168.60.254',
         os: 'Windows',
         version: 'Windows 10 Pro',
+        password: 'MacCheese4Me!',
         cores: 8,
         memory: 931712,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
@@ -436,6 +438,7 @@ async function main() {
     //         lifetime: 10,
     //     },
     // });
+
     await prisma.apiKey.create({
         data: {
             key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',

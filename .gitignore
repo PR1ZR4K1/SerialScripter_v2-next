@@ -42,3 +42,5 @@ env
 .gitignore
 .gitignore
 env.local
+
+certificates

@@ -82,6 +82,13 @@ model ServerLog {
   createdAt     DateTime      @default(now())
 }
 
+model SshKey {
+  id            Int           @id @default(autoincrement())
+  name          String
+  publicKey     String        @unique
+  createdAt     DateTime      @default(now())
+}
+
 model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
@@ -95,6 +102,7 @@ model Host {
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
+  password          String?
   createdAt         DateTime     @default(now())
   disks             Disk[]
   systemServices    SystemService[]

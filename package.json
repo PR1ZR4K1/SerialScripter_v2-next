@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -38,7 +38,7 @@
     "get-google-fonts": "^1.2.2",
     "json-formatter-js": "^2.3.4",
     "lucide-react": "^0.302.0",
-    "next": "13.4.3",
+    "next": "^14.0.4",
     "next-auth": "^4.24.4",
     "next-themes": "^0.2.1",
     "postcss": "^8",

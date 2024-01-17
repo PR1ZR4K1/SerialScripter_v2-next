@@ -12,7 +12,7 @@ export async function GET(req: Request) {
         });
     }
 
-    const logs = await prisma.serverLog.findMany();
+    const keys = await prisma.sshKey.findMany();
 
-    return Response.json(logs);
+    return Response.json(keys);
 }

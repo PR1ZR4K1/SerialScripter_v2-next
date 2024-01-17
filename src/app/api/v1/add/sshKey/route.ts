@@ -12,10 +12,10 @@ export async function POST(req: Request) {
         });
     }
     
-    const newLog = await req.json();
+    const {name, publicKey}: {name: string, publicKey: string} = await req.json();
 
-    if (!newLog) {
-        new Response(JSON.stringify({ error: 'Log not supplied!' }), {
+    if (!name || !publicKey) {
+        new Response(JSON.stringify({ error: 'Name or Key not supplied!' }), {
             status: 500,
             headers: {
                 'Content-Type': 'application/json'
@@ -23,16 +23,17 @@ export async function POST(req: Request) {
         });
     }
 
-    await prisma.serverLog.create({
+    await prisma.sshKey.create({
         data: {
-            ...newLog,
+            name,
+            publicKey,
         },
     });
 
-    return new Response(JSON.stringify({ success: 'log added' }), {
+    return new Response(JSON.stringify({ success: 'key added' }), {
         status: 200,
         headers: {
             'Content-Type': 'application/json'
         }
     });
-}
+};
