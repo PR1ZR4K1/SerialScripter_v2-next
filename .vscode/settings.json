@@ -1,6 +1,6 @@
 {
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "editor.autoIndent": "none", // optional but recommended
+  "editor.autoIndent": "keep", // optional but recommended
   "editor.formatOnPaste": false, // required 
   "editor.formatOnType": true, // required
   "editor.formatOnSave": true, // optional 

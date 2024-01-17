@@ -289,6 +289,15 @@ export default function HostTable({rows, colorMap, columns, editField, deleteFie
                         <TrashIcon className="cursor-pointer" onClick={() => deleteField && item.publicKey && deleteField({publicKey: item.publicKey})} width={25} height={25} />
                     </span>
                   ) 
+                  : columnKey === 'publicKey' ? 
+                  (
+                    <div className="break-words w-96">
+                      {(() => {
+                        const gay = item.publicKey?.split(' ') || ['', '', ''];
+                        return `${gay[0]} ${gay[2]}`
+                      }) ()}
+                    </div>
+                  )
                   :
                   (
                     getKeyValue(item, columnKey)
