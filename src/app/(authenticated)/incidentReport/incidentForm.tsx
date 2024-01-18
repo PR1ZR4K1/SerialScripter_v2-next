@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Input, Textarea, Select, Chip, SelectItem, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from "@nextui-org/react";
+import { FaRegFileAlt } from "react-icons/fa";
+import { IncidentTag } from '@prisma/client';
 
 
 interface TagsProps {
@@ -11,28 +13,29 @@ export default function IncidentForm() {
   const [name, setName] = useState("My super duper bad incident!");
   const [ip, setIp] = useState("");
   const [hostname, setHostname] = useState("");
-  const [attach, setAttach] = useState<File | undefined>();
+  const [attachment, setAttachment] = useState<File | undefined>();
   const [description, setDescription] = useState("");
   const [tags, setTags] = React.useState(new Set(["dog"]));
 
   // Handle form submission
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission behavior
-    const formData = {
-      name,
-      ip,
-      attach,
-      description,
-      tags
-    };
-    console.log("Form Data:", formData);
-    // Process formData here (e.g., send to a server)
-  };
+    // const formData = {
+    //   name,
+    //   ip,
+    //   hostname,
+    //   attachment,
+    //   description,
+    //   tags
+    // };
+    // console.log("Form Data:", {event});
+    const formData = new FormData(event.currentTarget); // Create FormData from the form
 
-  function getLocalTime(timezoneOffset: number) {
-    const now = new Date();
-    const localTime = new Date(now.getTime() + timezoneOffset * 60000);
-    return localTime.toISOString().split('T')[1].slice(0, 5);
+  await fetch('/api/v1/add/incident', {
+      method: 'POST',
+      body: formData, // Pass formData as body
+      // Don't set Content-Type header, the browser will set it with the correct boundary
+    });
   }
 
   function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
@@ -40,39 +43,36 @@ export default function IncidentForm() {
       files: FileList;
     }
   
-    setAttach(target.files[0]);
+    setAttachment(target.files[0]);
   }
-  
 
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen w-7xl"> {/* Centering the form on the screen */}
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex justify-center items-center h-7xl w-7xl"> {/* Centering the form on the screen */}
       <div className="flex flex-col gap-4 w-4xl"> {/* Adding vertical stacking and gap */}
         <div className="flex gap-4"> {/* First row for inputs */}
           <Input
             isRequired
-            type="name"
+            name="name"
+            type="text"
             label="Name"
             defaultValue="My super duper bad incident!"
             className="max-w-xs w-full" // Adjust width to full
-            value={name}
-            onChange={(e) => setName(e.target.value)}
           />
           <Input
             isRequired
+            name="ip"
             type="text"
             label="IP"
             placeholder="Enter the IP"
             className="max-w-xs w-full" // Adjust width to full
-            value={ip}
-            onChange={(e) => setIp(e.target.value)}
           />
           <Input
+            isRequired
+            name="hostname"
             type="text"
             label="Hostname"
             placeholder="Enter the hostname"
             className="max-w-xs w-full" // Adjust width to full
-            value={hostname}
-            onChange={(e) => setHostname(e.target.value)}
           />
         </div>
 
@@ -80,21 +80,27 @@ export default function IncidentForm() {
           <Tags tags={tags} setTags={setTags} />
         </div>
 
-        <div className="flex gap-4">
-          <Input
+        <div className="flex flex-col gap-x-4 justify-center w-full">
+          <input
+            name="attachment"
+            id="file-input"
             type="file"
-            label="Attach"
-            className="max-w-xs w-full" // Adjust width to full
             onChange={handleOnChange}
+            className="hidden" // Adjust width to full
           />
+          <label htmlFor="file-input" className="flex gap-x-4 w-full bg-[#27272A] h-16 rounded-md text-center justify-center items-center">
+            <FaRegFileAlt className="h-10 w-5"/>
+            Upload File Bozo:
+            <p className="font-light">{attachment?.name || ''}</p>
+          </label>
+          
         </div>
 
         <Textarea
+          name='description'
           label="Description"
           placeholder="Enter your description"
           className="w-full" // Adjust width to full
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
         />
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Submit
@@ -105,53 +111,35 @@ export default function IncidentForm() {
 }
 
 const Tags: React.FC<TagsProps> = ({ tags, setTags }) => {
-  const animals = [
-    { value: 'dog', label: 'Dog' },
-    { value: 'cat', label: 'Cat' },
-    { value: 'bird', label: 'Bird' },
-    { value: 'fish', label: 'Fish' },
-    { value: 'hamster', label: 'Hamster' },
-    { value: 'rabbit', label: 'Rabbit' },
-    { value: 'snake', label: 'Snake' },
-    { value: 'turtle', label: 'Turtle' },
-    { value: 'lizard', label: 'Lizard' },
-    { value: 'frog', label: 'Frog' }
-  ];
+  
+    const incidentTagOptions = Object.entries(IncidentTag).map(([key, value]) => ({
+        value: key,
+        label: value.charAt(0).toUpperCase() + value.slice(1)
+    }));
+
   
   const selectedValue = React.useMemo(
     () => Array.from(tags).join(", ").replaceAll("_", " "),
     [tags]
   );
 
+  
   return (
     <div className="flex min-w-xl w-full flex-col gap-2">
       <Select
-        label="Favorite Animal"
+        name="tag"
+        label="Tags"
         selectionMode="multiple"
-        placeholder="Select an animal"
+        placeholder="Select tags"
         selectedKeys={tags}
         onSelectionChange={(keys) => setTags(keys as Set<string>)}
       >
-        {animals.map((animal) => (
-          <SelectItem key={animal.value} value={animal.value}>
-            {animal.label}
+        {incidentTagOptions.map((incidentTagOption) => (
+          <SelectItem key={incidentTagOption.value} value={incidentTagOption.value}>
+            {incidentTagOption.label}
           </SelectItem>
         ))}
       </Select>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-function setFile(arg0: File) {
-  throw new Error("Function not implemented.");
-}
-

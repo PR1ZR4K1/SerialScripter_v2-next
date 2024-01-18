@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+ // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -30,7 +30,7 @@ enum PortStatus {
     unknown
 }
 
-enum IncidentTags {
+enum IncidentTag {
     exfiltration
     access
     userCompromise
@@ -171,16 +171,6 @@ model Connection {
   @@unique([ localAddress, remoteAddress, hostId])
 }
 
-model Incident {
-  id          Int          @id @default(autoincrement())
-  name        String
-  description String
-  tags        String[]
-  host        Host?        @relation(fields: [hostId], references: [id])
-  hostId      Int
-  createdAt   DateTime     @default(now())
-}
-
 model Software {
   id          Int      @id @default(autoincrement())
   name        String
@@ -269,12 +259,15 @@ model FirewallRule {
   @@unique([ dport, hostId])
 }
 
-model Incidents {
-  id            Int     @id @default(autoincrement())
-  name          String
-  host          String
-  attach        Bytes
-  description   String
-  createdAt     DateTime      @default(now())
-  tags          IncidentTags
+model Incident {
+  id                Int     @id @default(autoincrement())
+  name              String
+  ip                String
+  hostname          String
+  attachment        Bytes
+  description       String
+  tags              IncidentTag[]
+  host              Host?        @relation(fields: [hostId], references: [id])
+  hostId            Int
+  createdAt         DateTime      @default(now())
 }
