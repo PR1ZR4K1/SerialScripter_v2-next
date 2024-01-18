@@ -46,6 +46,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/.env ./
 COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/playbooks ./playbooks
