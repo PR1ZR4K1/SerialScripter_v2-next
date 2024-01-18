@@ -57,6 +57,7 @@ enum ShareType {
 enum KeyType {
     FIREWALL
     HOST
+    CRON
 }
 
 model User {

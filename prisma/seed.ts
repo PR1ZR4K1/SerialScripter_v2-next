@@ -446,6 +446,12 @@ async function main() {
             lifetime: 10,
         },
     });
+    await prisma.apiKey.create({
+        data: {
+            key: '04f2104a0fbcf812261b59b29699d2d597b07a34dd4048',
+            type: 'CRON',
+        },
+    });
     await prisma.serverLog.create({
         data: {
             email: 'test',
