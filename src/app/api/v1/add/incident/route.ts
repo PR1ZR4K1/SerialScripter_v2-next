@@ -17,10 +17,9 @@ export async function POST(req: Request) {
     }
     
     const formData = await req.formData();
-    console.log(formData);
 
     if (!formData) {
-        new Response(JSON.stringify({ error: 'Log not supplied!' }), {
+        new Response(JSON.stringify({ error: 'Incident not supplied!' }), {
             status: 500,
             headers: {
                 'Content-Type': 'application/json'
@@ -41,8 +40,10 @@ export async function POST(req: Request) {
       }
     }
 
-    if (file && file instanceof File) {
-        const buffer = await file.arrayBuffer();
+    if (file) {
+        const fileInstance = file as unknown as File;
+
+        const buffer = await fileInstance.arrayBuffer();
         const nodeBuffer = Buffer.from(buffer);
 
         try {
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
               attachment: compressedFile,
               description: description,
               tags: tags,
+              filename: fileInstance.name,
               hostId: hostId?.id,
             },
           });
@@ -79,8 +81,6 @@ export async function POST(req: Request) {
             });
         }
     }
-
-
 
     return new Response(JSON.stringify({ success: 'Successfully uploaded incident to db' }), {
         status: 200,

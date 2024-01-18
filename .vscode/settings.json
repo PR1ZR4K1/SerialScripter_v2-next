@@ -1,13 +1,13 @@
 {
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "editor.autoIndent": "keep", // optional but recommended
+  "editor.autoIndent": "full", // optional but recommended
   "editor.formatOnPaste": false, // required 
-  "editor.formatOnType": true, // required
+  "editor.formatOnType": false, // required
   "editor.formatOnSave": true, // optional 
   "editor.autoClosingBrackets": "always",
   "editor.autoClosingQuotes": "always",
   "editor.tabSize": 2,
-  "editor.formatOnSaveMode": "file", // required to format on save
+  "editor.formatOnSaveMode": "modifications", // required to format on save
   "files.autoSave": "onFocusChange", // optional but recommended
   "vs-code-prettier-eslint.prettierLast": false // set as "true" to run 'prettier' last not first
 }

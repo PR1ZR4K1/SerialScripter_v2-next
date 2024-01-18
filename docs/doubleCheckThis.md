@@ -15,3 +15,6 @@ copy button for ansible output
 
 api key generation for anything maybe add a field in api key table that is optional and is an ip so that I can 
 map a nf tables key to a host for whenever a new key gets generated.
+
+make sure to create everyone's logins for serial scripter
+double check ansible playbook stuff and get back to Brett

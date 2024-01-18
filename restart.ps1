@@ -1,5 +1,5 @@
 # Stop and remove Docker Compose containers
-docker-compose down
+docker-compose -f .\docker-compose-testing.yml down
 
 # Wait for 2 seconds
 Start-Sleep -Seconds 2

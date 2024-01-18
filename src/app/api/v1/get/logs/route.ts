@@ -12,7 +12,25 @@ export async function GET(req: Request) {
         });
     }
 
-    const logs = await prisma.serverLog.findMany();
+    let logs = [];
 
-    return Response.json(logs);
+    try {
+      logs = await prisma.serverLog.findMany();
+
+    } catch (error) { 
+        return new Response(JSON.stringify({ error: `Failed to get Server Logs from db!\n${error}` }), {
+            status: 500,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+  return new Response(JSON.stringify(logs), {
+      status: 200,
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  });
+
 }

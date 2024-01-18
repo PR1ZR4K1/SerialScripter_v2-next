@@ -265,7 +265,8 @@ model Incident {
   name              String
   ip                String
   hostname          String
-  attachment        Bytes
+  attachment        Bytes?
+  filename          String?
   description       String
   tags              IncidentTag[]
   host              Host?        @relation(fields: [hostId], references: [id])
