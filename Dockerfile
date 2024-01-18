@@ -11,6 +11,9 @@ RUN apk --no-cache add --virtual builds-deps build-base python3
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
+# Copy ansible playbooks from the host to builder
+COPY playbooks ./playbooks
+
 # Install dependencies, including Prisma
 RUN npm install
 
@@ -44,6 +47,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/.env ./
 COPY --from=builder /app/.env.local ./
+COPY --from=builder /app/playbooks ./playbooks
 
 # Set environment to production
 ENV NODE_ENV=production

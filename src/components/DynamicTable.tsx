@@ -16,8 +16,8 @@ import {
     getKeyValue,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
-import { openFirewallModalTypes } from "./Firewall";
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { openFirewallModalTypes } from "../app/(authenticated)/[host]/Firewall";
 
 
 type Row = {
@@ -27,6 +27,7 @@ type Row = {
   description?: string | null;
   status?: string;
   password?: string | null;
+  publicKey?: string;
   userType?: string;
   isLocal?: string;
   shareType?: string;
@@ -51,18 +52,23 @@ type Columns = {
 
 type NonNullableKeyOf<T> = Exclude<keyof T, undefined | null>;
 type ValidColorField = NonNullableKeyOf<Row>;
- 
+type DeleteFieldType = {
+  publicKey: string;
+}
+
 interface HostTableTypes {
   rows: Row[];
   colorMap?: ColorMap;
   columns: Columns[];
   editField?: ({ action, dport, description }: openFirewallModalTypes) => void;
+  deleteField?: ({publicKey}: DeleteFieldType) => Promise<void>;
+  downloadField?: ({publicKey}: DeleteFieldType) => Promise<void>;
   colorField?: ValidColorField;
   colorField2?: ValidColorField;
 }
 
 
-export default function HostTable({rows, colorMap, columns, editField, colorField, colorField2}: HostTableTypes) {
+export default function HostTable({rows, colorMap, columns, editField, deleteField, downloadField, colorField, colorField2}: HostTableTypes) {
 
   const [page, setPage] = React.useState(1);
   const [filterValue, setFilterValue] = React.useState("");
@@ -252,7 +258,7 @@ export default function HostTable({rows, colorMap, columns, editField, colorFiel
           <TableColumn 
             key={column.key} 
             allowsSorting={column.sortable}
-            className={`${column.key === colorField || column.key === colorField2 || column.key === 'editField' ? "text-center " : ''}`}
+            className={`${column.key === colorField || column.key === colorField2 || column.key === 'editField' || column.key === 'deleteField' ? "text-center " : ''}`}
           >
               {column.label}
           </TableColumn>
@@ -279,7 +285,26 @@ export default function HostTable({rows, colorMap, columns, editField, colorFiel
                     <span className="flex items-center justify-center text-center text-lg text-primary active:opacity-50 bg-transparent">
                         <PencilSquareIcon className="cursor-pointer" onClick={() => editField && editField({ action: item.action, dport: item.dport, description: item.description })} width={25} height={25} />
                     </span>
-                  ) : (
+                  ) : columnKey === 'deleteField' ? (
+                    <span className="flex items-center justify-center text-center text-lg text-red-700 active:opacity-50 bg-transparent">
+                        <TrashIcon className="cursor-pointer" onClick={() => deleteField && item.publicKey && deleteField({publicKey: item.publicKey})} width={25} height={25} />
+                    </span>
+                  ) : columnKey === 'downloadField' ? (
+                    <span className="flex items-center justify-center text-center text-lg text-red-700 active:opacity-50 bg-transparent">
+                        <TrashIcon className="cursor-pointer" onClick={() => deleteField && item.publicKey && deleteField({publicKey: item.publicKey})} width={25} height={25} />
+                    </span>
+                  ) 
+                  : columnKey === 'publicKey' ? 
+                  (
+                    <div className="break-words w-96">
+                      {(() => {
+                        const shortenedKey = item.publicKey?.split(' ') || ['', '', ''];
+                        return `${shortenedKey[0]} ${shortenedKey[2]}`
+                      }) ()}
+                    </div>
+                  )
+                  :
+                  (
                     getKeyValue(item, columnKey)
                   )
               }

@@ -12,6 +12,7 @@ import {
 } from "@material-tailwind/react";
 
 import { GiScythe } from 'react-icons/gi'
+import { PiLockKeyOpenFill } from "react-icons/pi";
 
 
 import {
@@ -58,17 +59,6 @@ export function SidebarWithLogo() {
            </span>
           </Link>
         </button>
-
-
-        <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='scriptingHub' href='/scriptingHub' className="flex items-center">
-            <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
-            <span className="ml-2 font-thin text-black dark:text-gray-200">
-              Scripting Hub
-            </span>
-          </Link>
-        </button>
-
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
           <Link as='cron' href='/cron' className="flex items-center">
             <RectangleGroupIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
@@ -77,7 +67,22 @@ export function SidebarWithLogo() {
             </span>
           </Link>
         </button>
-
+        <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
+          <Link as='pubkeyAuth' href='/pubkeyAuth' className="flex items-center">
+            <PiLockKeyOpenFill className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
+              PubKey Auth
+            </span>
+          </Link>
+        </button>
+        <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
+          <Link as='scriptingHub' href='/scriptingHub' className="flex items-center">
+            <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
+              Scripting Hub
+            </span>
+          </Link>
+        </button>
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
           <Link as='incidentReport' href='/incidentReport' className="flex items-center">

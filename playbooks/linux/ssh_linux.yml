@@ -1,0 +1,10 @@
+- name: Add SSH public key to remote hosts
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Add the provided SSH public key to authorized keys
+      ansible.builtin.authorized_key:
+        user: root
+        state: "{{ ssh_state }}"
+        key: "{{ ssh_public_key }}" 

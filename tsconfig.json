@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",
@@ -35,7 +35,7 @@
     ".next/types/**/*.ts",
     "src/app/(authenticated)/scriptingHub/windowsActions/scriptDataWindows.ts",
     "src/app/(authenticated)/scriptingHub/linuxActions/scriptDataLinux.ts"
-  ],
+, "src/app/api/v1/ansibleDeploy/linux/route.ts"  ],
   "exclude": [
     "node_modules"
   ]

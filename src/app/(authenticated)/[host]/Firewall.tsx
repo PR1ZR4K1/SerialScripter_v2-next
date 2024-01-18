@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import HostTable from './HostTable'
+import HostTable from '@/components/DynamicTable'
 import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
 import { Button } from '@nextui-org/react';
@@ -213,10 +213,10 @@ function Firewall({hostname}: {hostname: string}) {
         const {now, host}: {now: string, host: Host} = await getHostInfo(hostname);
         setHost(host);
         // Use hostInfo here
-    } catch (error) {
-        // Handle error
-        console.log(error);
-    }
+      } catch (error) {
+          // Handle error
+          console.log(error);
+      }
       return {success: true, message: response.msg};
     }
   }

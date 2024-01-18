@@ -79,16 +79,7 @@ export async function POST(req: Request) {
             }
         });
 
-        const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property/update`, {
-            method: 'PUT',
-            headers: {
-                'API-Token': firewallKey.key,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formattedRules)
-        });
-
-        // const result = await fetch(`https://192.168.1.21:8000/hippity/hoppity/your/packets/are/my/property/update`, {
+        // const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property`, {
         //     method: 'PUT',
         //     headers: {
         //         'API-Token': firewallKey.key,
@@ -96,6 +87,15 @@ export async function POST(req: Request) {
         //     },
         //     body: JSON.stringify(formattedRules)
         // });
+
+        const result = await fetch(`https://192.168.1.194:8000/hippity/hoppity/your/packets/are/my/property`, {
+            method: 'PUT',
+            headers: {
+                'API-Token': firewallKey.key,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formattedRules)
+        });
 
         // make sure the request was successful
         if (!result.ok) {

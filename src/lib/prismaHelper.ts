@@ -71,6 +71,7 @@ interface HostData {
     cores: number;
     cpu: string;
     memory: number;
+    password?: string;
     status?: 'UP' | 'DOWN'; // Update with appropriate status values
     gateway?: string,
     dhcp?: boolean,
@@ -94,6 +95,7 @@ export async function createHost(hostData: HostData) {
         cpu: hostData.cpu,
         cores: hostData.cores,
         memory: hostData.memory,
+        password: hostData.password,
         version: hostData.version,
         status: hostData.status,
         gateway: hostData.gateway,

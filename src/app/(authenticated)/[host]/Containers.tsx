@@ -3,7 +3,7 @@
 import React from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
-import HostTable from './HostTable';
+import HostTable from '@/components/DynamicTable';
 import { ExtendedContainer } from '@/store/HostsStore';
 import { ContainerNetwork, ContainerVolume } from '@prisma/client';
 import {

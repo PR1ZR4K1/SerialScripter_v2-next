@@ -12,10 +12,10 @@ export async function POST(req: Request) {
         });
     }
     
-    const newLog = await req.json();
+    const {publicKey}: {publicKey: string} = await req.json();
 
-    if (!newLog) {
-        new Response(JSON.stringify({ error: 'Log not supplied!' }), {
+    if (!publicKey) {
+        return new Response(JSON.stringify({ error: 'Key not supplied!' }), {
             status: 500,
             headers: {
                 'Content-Type': 'application/json'
@@ -23,16 +23,28 @@ export async function POST(req: Request) {
         });
     }
 
-    await prisma.serverLog.create({
-        data: {
-            ...newLog,
+  try {
+
+    await prisma.sshKey.delete({
+        where: {
+            publicKey: publicKey,
         },
     });
+    
+  } catch (error) {
 
-    return new Response(JSON.stringify({ success: 'log added' }), {
+    return new Response(JSON.stringify({ error: `Failed to delete record!\n${error}` }), {
+            status: 500,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+  }
+
+    return new Response(JSON.stringify({ success: 'key removed' }), {
         status: 200,
         headers: {
             'Content-Type': 'application/json'
         }
     });
-}
+};

@@ -3,7 +3,7 @@
 import React from 'react'
 import { useHostsStore } from '@/store/HostsStore';
 import { ChipProps } from '@nextui-org/react';
-import HostTable from './HostTable';
+import HostTable from '@/components/DynamicTable';
 
 
 export default function Shares() {

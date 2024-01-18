@@ -1,4 +1,4 @@
-// This is your Prisma schema file,
+ // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -29,6 +29,13 @@ enum PortStatus {
     closing
     unknown
 }
+
+enum IncidentTag {
+    exfiltration
+    access
+    userCompromise
+}
+
 
 enum SystemServiceStatus {
     active
@@ -75,6 +82,13 @@ model ServerLog {
   createdAt     DateTime      @default(now())
 }
 
+model SshKey {
+  id            Int           @id @default(autoincrement())
+  name          String
+  publicKey     String        @unique
+  createdAt     DateTime      @default(now())
+}
+
 model Host {
   id                Int          @id @default(autoincrement())
   hostname          String       @unique
@@ -88,6 +102,7 @@ model Host {
   macAddress        String?      // New field
   gateway           String?
   dhcp              Boolean?
+  password          String?
   createdAt         DateTime     @default(now())
   disks             Disk[]
   systemServices    SystemService[]
@@ -154,16 +169,6 @@ model Connection {
   host                Host?  @relation(fields: [hostId], references: [id])
 
   @@unique([ localAddress, remoteAddress, hostId])
-}
-
-model Incident {
-  id          Int          @id @default(autoincrement())
-  name        String
-  description String
-  tags        String[]
-  host        Host?        @relation(fields: [hostId], references: [id])
-  hostId      Int
-  createdAt   DateTime     @default(now())
 }
 
 model Software {
@@ -252,4 +257,17 @@ model FirewallRule {
   host          Host?   @relation(fields: [hostId], references: [id])
   hostId        Int
   @@unique([ dport, hostId])
+}
+
+model Incident {
+  id                Int     @id @default(autoincrement())
+  name              String
+  ip                String
+  hostname          String
+  attachment        Bytes
+  description       String
+  tags              IncidentTag[]
+  host              Host?        @relation(fields: [hostId], references: [id])
+  hostId            Int
+  createdAt         DateTime      @default(now())
 }
