@@ -6,7 +6,9 @@ WORKDIR /app
 
 # Install build dependencies (Alpine uses apk)
 # Note: build dependencies can be removed after building
-RUN apk --no-cache add --virtual builds-deps build-base python3
+RUN apk --no-cache add --virtual builds-deps build-base python3 sshpass
+
+RUN ansible-galaxy collection install community.docker
 
 # Copy package.json and package-lock.json
 COPY package*.json ./

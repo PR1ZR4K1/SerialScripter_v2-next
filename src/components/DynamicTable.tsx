@@ -16,7 +16,7 @@ import {
     getKeyValue,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { openFirewallModalTypes } from "../app/(authenticated)/[host]/Firewall";
 
 
@@ -62,13 +62,13 @@ interface HostTableTypes {
   columns: Columns[];
   editField?: ({ action, dport, description }: openFirewallModalTypes) => void;
   deleteField?: ({publicKey}: DeleteFieldType) => Promise<void>;
-  downloadField?: ({publicKey}: DeleteFieldType) => Promise<void>;
+  downloadAttachment?: ({id}: {id: number}) => Promise<void>;
   colorField?: ValidColorField;
   colorField2?: ValidColorField;
 }
 
 
-export default function HostTable({rows, colorMap, columns, editField, deleteField, downloadField, colorField, colorField2}: HostTableTypes) {
+export default function HostTable({rows, colorMap, columns, editField, deleteField, downloadAttachment, colorField, colorField2}: HostTableTypes) {
 
   const [page, setPage] = React.useState(1);
   const [filterValue, setFilterValue] = React.useState("");
@@ -289,9 +289,9 @@ export default function HostTable({rows, colorMap, columns, editField, deleteFie
                     <span className="flex items-center justify-center text-center text-lg text-red-700 active:opacity-50 bg-transparent">
                         <TrashIcon className="cursor-pointer" onClick={() => deleteField && item.publicKey && deleteField({publicKey: item.publicKey})} width={25} height={25} />
                     </span>
-                  ) : columnKey === 'downloadField' ? (
-                    <span className="flex items-center justify-center text-center text-lg text-red-700 active:opacity-50 bg-transparent">
-                        <TrashIcon className="cursor-pointer" onClick={() => deleteField && item.publicKey && deleteField({publicKey: item.publicKey})} width={25} height={25} />
+                  ) : columnKey === 'downloadAttachment' ? (
+                    <span className="flex items-center justify-center text-center text-lg text-primary active:opacity-50 bg-transparent">
+                        <ArrowDownTrayIcon className="cursor-pointer" onClick={() => downloadAttachment && item.id && downloadAttachment({id: item.id})} width={25} height={25} />
                     </span>
                   ) 
                   : columnKey === 'publicKey' ? 

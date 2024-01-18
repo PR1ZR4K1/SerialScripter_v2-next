@@ -2,40 +2,42 @@ import React, { useState } from "react";
 import { Input, Textarea, Select, Chip, SelectItem, Dropdown, DropdownTrigger, Button, DropdownItem, DropdownMenu } from "@nextui-org/react";
 import { FaRegFileAlt } from "react-icons/fa";
 import { IncidentTag } from '@prisma/client';
-
+import { toast } from "react-hot-toast";
 
 interface TagsProps {
   tags: Set<string>;
   setTags: (keys: Set<string>) => void;
  }
 
-export default function IncidentForm() {
-  const [name, setName] = useState("My super duper bad incident!");
-  const [ip, setIp] = useState("");
-  const [hostname, setHostname] = useState("");
+type IncidentFormProps = {
+  setRefreshIncidentList: (refresh: boolean) => void;
+}
+
+export default function IncidentForm({setRefreshIncidentList}: IncidentFormProps) {
   const [attachment, setAttachment] = useState<File | undefined>();
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = React.useState(new Set(["dog"]));
+  const [tags, setTags] = React.useState(new Set(["exfiltration"]));
 
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission behavior
-    // const formData = {
-    //   name,
-    //   ip,
-    //   hostname,
-    //   attachment,
-    //   description,
-    //   tags
-    // };
-    // console.log("Form Data:", {event});
+
     const formData = new FormData(event.currentTarget); // Create FormData from the form
 
-  await fetch('/api/v1/add/incident', {
+    toast.loading('Adding incident...', {duration: 1250});
+
+    const req = await fetch('/api/v1/add/incident', {
       method: 'POST',
       body: formData, // Pass formData as body
       // Don't set Content-Type header, the browser will set it with the correct boundary
     });
+
+    if (req.ok) {
+      toast.success('Incident added successfully!');
+      setRefreshIncidentList(true);
+    } else {
+      const response = await req.json();
+      toast.error(`Failed to add incident!\n${response.error}`);
+    }
   }
 
   function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
@@ -52,10 +54,10 @@ export default function IncidentForm() {
         <div className="flex gap-4"> {/* First row for inputs */}
           <Input
             isRequired
+            placeholder="Title of Incident"
             name="name"
             type="text"
             label="Name"
-            defaultValue="My super duper bad incident!"
             className="max-w-xs w-full" // Adjust width to full
           />
           <Input
@@ -116,13 +118,6 @@ const Tags: React.FC<TagsProps> = ({ tags, setTags }) => {
         value: key,
         label: value.charAt(0).toUpperCase() + value.slice(1)
     }));
-
-  
-  const selectedValue = React.useMemo(
-    () => Array.from(tags).join(", ").replaceAll("_", " "),
-    [tags]
-  );
-
   
   return (
     <div className="flex min-w-xl w-full flex-col gap-2">
@@ -132,6 +127,7 @@ const Tags: React.FC<TagsProps> = ({ tags, setTags }) => {
         selectionMode="multiple"
         placeholder="Select tags"
         selectedKeys={tags}
+        isRequired
         onSelectionChange={(keys) => setTags(keys as Set<string>)}
       >
         {incidentTagOptions.map((incidentTagOption) => (

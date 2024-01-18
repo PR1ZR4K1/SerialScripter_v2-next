@@ -24,6 +24,6 @@ services:
       - wild_west
 
 networks:
-  wild_west:S
+  wild_west:
     driver: bridge
 

@@ -12,13 +12,23 @@ export async function GET(req: Request) {
         });
     }
 
-    let logs = [];
+    let incidents = [];
 
     try {
-      logs = await prisma.serverLog.findMany();
+      incidents = await prisma.incident.findMany({
+        select: {
+          id: true,
+          ip: true,
+          hostname: true,
+          description: true,
+          createdAt: true,
+          name: true,
+          tags: true,
+        },
+      });
 
     } catch (error) { 
-        return new Response(JSON.stringify({ error: `Failed to get Server Logs from db!\n${error}` }), {
+        return new Response(JSON.stringify({ error: `Failed to get Incidents from db!\n${error}` }), {
             status: 500,
             headers: {
                 'Content-Type': 'application/json'
@@ -26,7 +36,7 @@ export async function GET(req: Request) {
         });
     }
 
-  return new Response(JSON.stringify(logs), {
+  return new Response(JSON.stringify(incidents), {
       status: 200,
       headers: {
           'Content-Type': 'application/json'
