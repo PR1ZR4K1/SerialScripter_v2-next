@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+export const dynamic = "force-dynamic"
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
 var cron = require('node-cron');
 
 
@@ -9,6 +12,9 @@ async function isAlive(key: string) {
             where: {
                 key: key,
             },
+            select: {
+                key: true  // only return the lifetime field
+            }
         });
 
         if (!keyState) {
@@ -23,33 +29,131 @@ async function isAlive(key: string) {
 }
 
 
+
 export async function POST(req: Request) {
-    // extract the API key from the request headers
-    const apiKey = req.headers.get('x-api-key');
+    // Parse the JSON body from the request
+    const postData = await req.json();
 
-    if (isAlive(apiKey) === false) {
-        return new Response(JSON.stringify({ error: 'Invalid API key' }), {
-            status: 403,
-            headers: {
-                'Content-Type': 'application/json'
+    // Extract name, schedule, and command from the POST data
+    const { name, schedule, command, action } = postData;
+
+    switch (action) {
+        case "create":
+            try {
+                console.log("Attempting to create cron job with name: ", name);
+
+                const existingJobs = await prisma.cronJob.findUnique({
+                    where: {
+                        name: name,
+                    },
+                    select: {
+                        name: true  // only return the lifetime field
+                    }
+                });
+
+                if (existingJobs) {
+                    return new Response(JSON.stringify({ error: 'Cron job with that name already exists' }), {
+                        status: 400,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+                const execAsync = promisify(exec);
+                const task = cron.schedule(schedule, async () => {
+                    console.log(command);
+                    try {
+                        const { stdout, stderr } = await execAsync(command);
+                        if (stderr) {
+                            await prisma.cronJob.update({
+                                where: { name: name },
+                                data: { lastOutput: "Error: " + stderr }
+                            });
+                        } else {
+                            await prisma.cronJob.update({
+                                where: { name: name },
+                                data: { lastOutput: stdout }
+                            });
+                        }
+                    } catch (error) {
+                        await prisma.cronJob.update({
+                            where: { name: name },
+                            data: { lastOutput: "Exec Error: " + "error"}
+                        });
+                    }
+                }, {
+                    name: name
+                });
+
+
+                await prisma.cronJob.create({
+                    data: {
+                        name: name,
+                        schedule: schedule,
+                        command: command,
+                    },
+                });
+
+                return new Response(JSON.stringify({ success: 'Cron job addded' }), {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+  
+            } catch (error) {
+                return new Response(JSON.stringify({ error: 'Error adding cron job' }), {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
             }
-        });
+        case "stop":
+            try {
+                console.log("Attempting to stop cron job with name: ", name);
+                const tasks = cron.getTasks();
+                for (let [key, value] of tasks.entries()) {
+                    if (key == name) {
+                        value.stop();
+                        await prisma.cronJob.delete({
+                            where: {
+                                name: key,
+                            },
+                        });
+                    } else {
+                        return new Response(JSON.stringify({ error: 'Cron job not found' }), {
+                            status: 400,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                    }
+                }
+
+                return new Response(JSON.stringify({ success: 'Cron job stopped' }), {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            } catch (error) {
+                return new Response(JSON.stringify({ error: 'Error stopping cron job' }), {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+        default:
+            return new Response(JSON.stringify({ error: 'Invalid action' }), {
+                status: 400,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
     }
-
-    const task = cron.schedule('* * * * *', () =>  {
-        console.log('will execute every minute until stopped');
-    }, {
-        name: 'my-task'
-    });
-    
-
-    return new Response(JSON.stringify({ success: 'Cron job addded' }), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-};
+}
 
 
 export async function GET(req: Request) {
@@ -62,10 +166,21 @@ export async function GET(req: Request) {
             }
         });
     }
-    
-    const tasks = cron.getTasks();
 
-     return NextResponse.json(tasks.entries());
+    const existingJobs = await prisma.cronJob.findMany({
+        select: {
+            name: true,
+            schedule: true,
+            command: true,
+            lastOutput: true,
+        }
+    });
 
+    return new Response(JSON.stringify({ tasks: existingJobs }), {
+        status: 200,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 
 };

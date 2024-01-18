@@ -272,3 +272,11 @@ model Incident {
   hostId            Int
   createdAt         DateTime      @default(now())
 }
+
+model CronJob {
+  id            Int     @id @default(autoincrement())
+  name          String  @unique
+  schedule      String
+  command       String
+  lastOutput    String?
+}
