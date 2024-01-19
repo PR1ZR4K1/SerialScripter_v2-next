@@ -388,13 +388,13 @@ async function main() {
   ]
     
     const host1 = await createHost({
-        hostname: 'bobby',
-        ip: '192.168.1.21',
-        os: 'Linux',
-        version: 'Ubuntu 20.04',
+        hostname: 'bathtub',
+        ip: '192.168.60.167',
+        os: 'Windows',
+        version: 'Windows 7',
         cores: 4,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
-        password: 'MacCheese4Me!',
+        password: 'password123',
         memory: 8192,
         disks: host1Disks,
         status: 'UP',
@@ -409,11 +409,11 @@ async function main() {
     });
 
     const host2 = await createHost({
-        hostname: 'shmurda',
-        ip: '192.168.60.254',
+        hostname: 'aaron',
+        ip: '192.168.60.251',
         os: 'Windows',
         version: 'Windows 10 Pro',
-        password: 'MacCheese4Me!',
+        password: 'password1234',
         cores: 8,
         memory: 931712,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
@@ -428,6 +428,36 @@ async function main() {
         connections: host2Connections,
         shares: host2Shares,
         containers: host2Containers,
+    });
+
+    const host3 = await createHost({
+        hostname: 'eddeh',
+        ip: '192.168.60.161',
+        os: 'Linux',
+        version: 'Debian 10',
+        cores: 4,
+        cpu: 'I2',
+        memory: 8192,
+        password: 'password1234',
+        status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '00:1A:2B:3C:4D:5E',
+    });
+
+    const host4 = await createHost({
+        hostname: 'bingus',
+        ip: '192.168.60.222',
+        os: 'Linux',
+        version: 'Ubuntu 20.04',
+        cores: 4,
+        cpu: 'I9',
+        memory: 8192,
+        password: 'password123',
+        status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '00:1A:2B:3C:4D:5E',
     });
 
     // Additional hosts can be created in a similar way

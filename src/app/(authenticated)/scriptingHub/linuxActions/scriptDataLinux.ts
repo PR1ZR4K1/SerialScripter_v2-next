@@ -9,10 +9,10 @@ const rows = [
   },
   {
     id: 1,
-    scriptName: "user_list",
+    scriptName: "ssh_linux",
     category: "Network",
     risk: "Medium",
-    parameter: false,
+    parameter: true,
     description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
   },
   {

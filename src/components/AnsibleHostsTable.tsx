@@ -90,6 +90,24 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
 
   //   [setLinuxHosts, setWindowsHosts, os, linuxHosts, windowsHosts]);
 
+  let rows = [];
+
+  if (os.toLowerCase() === 'linux') {
+    rows = linuxHosts.map((host, index) => {
+      return {
+        ...host,
+        id: index,
+      };
+    });
+  } else {
+    rows = windowsHosts.map((host, index) => {
+      return {
+        ...host,
+        id: index,
+      };
+    });
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <Table 
@@ -116,7 +134,7 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
                 { column.key === 'os' ? <div className="flex justify-center"> {column.label} </div> : <div>{column.label} </div>}
             </TableColumn>}
         </TableHeader>
-        <TableBody emptyContent={"No hosts found"} loadingContent={'Loading...'} items={os === 'linux' ? linuxHosts : windowsHosts}>
+        <TableBody emptyContent={"No hosts found"} loadingContent={'Loading...'} items={rows}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => 
