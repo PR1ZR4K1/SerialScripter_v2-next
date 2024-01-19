@@ -56,7 +56,7 @@ export async function POST(req: Request) {
               data: {
                 key: apiKey,
                 type: KeyType.FIREWALL,
-                lifetime: 0,
+                lifetime: addHoursToCurrentTime(8),
               },
             });
 
