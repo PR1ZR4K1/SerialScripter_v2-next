@@ -157,12 +157,14 @@ export async function createHost(hostData: HostData) {
 
     if (hostData.connections && hostData.connections.length > 0) {
         // await createConnections(hostData.connections, createdHost.id);
+        
+        hostData.connections.map((connection) => {if (connection.remoteAddress === null) connection.remoteAddress = ''; return connection;});
 
         await upsertItem<ModifiedConnectionType, HostConnect>(
             hostData.connections.map(flattenProcesses),
             createHostConnect(createdHost.id),
             (connection, whereCondition) => prisma.connection.upsert({ where: whereCondition, create: connection as Prisma.ConnectionCreateInput, update: connection as Prisma.ConnectionUpdateInput }),
-            (connection) => ({ localAddress_remoteAddress_hostId: { localAddress: connection.localAddress, remoteAddress: connection.remoteAddress, hostId: createdHost.id } }) // where condition
+            (connection) => ({ localAddress_remoteAddress_hostId: { localAddress: connection.localAddress, remoteAddress: connection.remoteAddress || '', hostId: createdHost.id } }) // where condition
         );
     }
 

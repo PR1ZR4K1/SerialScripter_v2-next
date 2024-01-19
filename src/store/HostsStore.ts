@@ -99,6 +99,7 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         cpu: 'N/A', // Placeholder value
         ip: '0.0.0.0', // Default IP, indicating an invalid or non-existent IP
         status: 'UP', // Default status
+        password: null,
         gateway: null,
         dhcp: null,
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder

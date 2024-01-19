@@ -142,7 +142,6 @@ export async function POST(req: Request) {
             });
 
         }
-
     } else {
         await createLogEntry({email: 'chimera.gg', success: false, module: 'Chimera Inventory', message: `Invalid API key!` })
 

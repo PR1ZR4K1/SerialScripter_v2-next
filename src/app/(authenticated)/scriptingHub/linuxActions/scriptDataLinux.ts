@@ -10,10 +10,10 @@ const rows = [
   {
     id: 1,
     scriptName: "ssh_linux",
-    category: "Network",
-    risk: "Medium",
+    category: "SSH",
+    risk: "Low",
     parameter: true,
-    description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
+    description: "Adds or removes public key from remote host. Needs: ssh_public_key, ssh_state. Put public key in single quotes, ssh_state can be present or absent."
   },
   {
     id: 2,
