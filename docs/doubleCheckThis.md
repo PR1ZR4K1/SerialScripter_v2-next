@@ -18,3 +18,7 @@ map a nf tables key to a host for whenever a new key gets generated.
 
 make sure to create everyone's logins for serial scripter
 double check ansible playbook stuff and get back to Brett
+
+bozo make sure to have a way to create .env and .env.local files when doing the docker container creation or else the server will not start lol
+
+double check incident reports toast message to display the right message if host ip and hostname are not matched.

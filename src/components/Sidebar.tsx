@@ -20,7 +20,8 @@ import {
   PencilSquareIcon,
   ExclamationTriangleIcon,
   RectangleGroupIcon,
-  FlagIcon
+  FlagIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/solid";
 
 
@@ -60,7 +61,7 @@ export function SidebarWithLogo() {
           </Link>
         </button>
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='cron' href='/cron' className="flex items-center">
+          <Link as='/cron' href='/cron' className="flex items-center">
             <RectangleGroupIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Cron
@@ -68,7 +69,7 @@ export function SidebarWithLogo() {
           </Link>
         </button>
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='pubkeyAuth' href='/pubkeyAuth' className="flex items-center">
+          <Link as='/pubkeyAuth' href='/pubkeyAuth' className="flex items-center">
             <PiLockKeyOpenFill className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               PubKey Auth
@@ -76,7 +77,7 @@ export function SidebarWithLogo() {
           </Link>
         </button>
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='scriptingHub' href='/scriptingHub' className="flex items-center">
+          <Link as='/scriptingHub' href='/scriptingHub' className="flex items-center">
             <GiScythe className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Scripting Hub
@@ -85,7 +86,7 @@ export function SidebarWithLogo() {
         </button>
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='incidentReport' href='/incidentReport' className="flex items-center">
+          <Link as='/incidentReport' href='/incidentReport' className="flex items-center">
             <FlagIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Incident Report
@@ -94,10 +95,19 @@ export function SidebarWithLogo() {
         </button>
 
         <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
-          <Link as='serverLogs' href='/serverLogs' className="flex items-center">
+          <Link as='/serverLogs' href='/serverLogs' className="flex items-center">
             <PencilSquareIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
             <span className="ml-2 font-thin text-black dark:text-gray-200">
               Server Logs
+            </span>
+          </Link>
+        </button>
+
+        <button className="py-2 px-4 rounded-md hover:bg-blue-100 hover:dark:bg-purple-900 w-full text-left">
+          <Link as='settings' href='/settings' className="flex items-center">
+            <Cog6ToothIcon className="h-5 w-5 text-blue-600 dark:text-[#1D9FE4]" />
+            <span className="ml-2 font-thin text-black dark:text-gray-200">
+              Settings
             </span>
           </Link>
         </button>
@@ -129,7 +139,7 @@ export function SidebarWithLogo() {
           </ListItemPrefix>
           Settings
         </ListItem>
-        <Link as='a' href='/login'>
+        <Link as='/a' href='/login'>
           <ListItem>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />

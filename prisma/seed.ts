@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+
     const apiKey = process.env.API_KEY || '';
     const lifetime = parseInt(process.env.API_KEY_LIFETIME || '0');
 

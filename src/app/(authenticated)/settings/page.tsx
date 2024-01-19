@@ -1,40 +1,39 @@
 "use client"
-import CronForm from './CronForm';
 import { toast } from 'react-hot-toast';
-import { CronJob } from '@prisma/client';
+import { ApiKey } from '@prisma/client';
 import { formatCreatedAt } from '@/lib/formatTime';
 import DynamicTable from '@/components/DynamicTable';
 import React, { useEffect, useState } from 'react'
 import { Button, Typography } from '@material-tailwind/react';
+import ApiKeyForm from './apiKeyForm';
 
-export default function Cron() {
+export default function ApiKeys() {
   
   const [tableView, setTableView] = useState(true);
-  const [cronJobs, setCronJobs] = useState<CronJob[]>([]);
-  const [refreshCronList, setRefreshCronList] = useState(false);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [refreshCronList, setRefreshKeyList] = useState(false);
 
   useEffect(() => {
-    async function fetchCronJobs() {
+    async function fetchApiKeys() {
       try {
-        const response = await fetch("/api/v1/cronJob", { next: { revalidate: 10 }, cache: 'no-store' }); // Replace with your actual API endpoint
-  
-        const data: { tasks: CronJob[] } = await response.json();
+        const response = await fetch("/api/v1/add/apiKey", { next: { revalidate: 10 }, cache: 'no-store' }); // Replace with your actual API endpoint
+        const data: ApiKey[] = await response.json();
         
-        if (!data || !data.tasks) {
-          toast.error('Failed to retrieve cron jobs!');
+        if (!data) {
+          toast.error('Failed to retrieve apiKeys!');
           return;
         } 
         
 
         // New code to adjust the rows for DynamicTable
         // DynamicTable expects a deleteField function for each row and it has to be public key :(
-        const adjustedCronJobs = data.tasks.map((job) => ({
-            ...job,
-            publicKey: job.name,
+          const adjustedKeys = data.map((key) => ({
+            ...key,
+            publicKey: key.id,
         }));
 
 
-        setCronJobs(adjustedCronJobs);
+        setApiKeys(adjustedKeys);
         // Use hostInfo here
         console.log(data)
       } catch (error) {
@@ -43,32 +42,28 @@ export default function Cron() {
       }
     };
 
-    fetchCronJobs();
+    fetchApiKeys();
     setTableView(true);
-    setRefreshCronList(false);
+    setRefreshKeyList(false);
   
   }, [refreshCronList]);
 
-  const cronColumns = [
+  const keyColumns = [
     {
         key: 'id',
         label: 'ID',
     },
     {
-        key: 'name',
-        label: 'Name',
+        key: 'key',
+        label: 'Key',
     },
     {
-        key: 'command',
-        label: 'Command',
+        key: 'type',
+        label: 'Type',
     },
     {
-        key: 'schedule',
-        label: 'Schedule',
-    },
-    { 
-        key: 'lastOutput',
-        label: 'Command Output',
+        key: 'lifetime',
+        label: 'Lifetime',
     },
     { 
         key: 'deleteField',
@@ -78,13 +73,12 @@ export default function Cron() {
 
   
   const handleDeleteKey = async ({ publicKey }: { publicKey: string }) => {
-    toast.loading(`Removing cron job...`, { duration: 2000 });
-    console.log("We are doing stuff");
+    toast.loading(`Removing API key...`, { duration: 2000 });
 
-    const reqBody = JSON.stringify({ name: publicKey, action: 'stop' });
+    const reqBody = JSON.stringify({ id: publicKey, action: 'delete' });
     console.log(reqBody);
 
-    const result = await fetch("/api/v1/cronJob", {
+    const result = await fetch("/api/v1/add/apiKey", {
       method: "POST",
       body: reqBody,
       headers: {
@@ -95,26 +89,26 @@ export default function Cron() {
     const response = await result.json();
     
     if (response.error) {
-      toast.error(`Failed to remove cronjob!\n${response.error}`);
+      toast.error(`Failed to remove API key!\n${response.error}`);
     } else {
-      toast.success('Cron job removed successfully!');
+      toast.success('API Key removed successfully!');
       setTableView(true);
-      setRefreshCronList(true);
+      setRefreshKeyList(true);
     }
   };
 
   return ( 
       <section className='flex flex-col w-full h-screen items-center gap-y-16 '>
-          <h1 className='text-2xl font-bold mt-28'>Cron Jobs</h1>
+          <h1 className='text-2xl font-bold mt-28'>API Keys</h1>
           <div className='w-[90%] justify-center items-center h-[60%] flex flex-col gap-y-10'>
             {tableView ? (
                     <div className='h-7xl w-4/5'>
-                        <DynamicTable rows={cronJobs} columns={cronColumns} deleteField={handleDeleteKey}/>
+                        <DynamicTable rows={apiKeys} columns={keyColumns} deleteField={handleDeleteKey}/>
                     </div>
                 )
                 : 
                 (
-                    <CronForm setRefreshCronList={setRefreshCronList}/>              
+                    <ApiKeyForm setRefreshKeyList={setRefreshKeyList} />             
                 )
             }
             <Button

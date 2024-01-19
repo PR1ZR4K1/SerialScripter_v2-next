@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { Host } from "@prisma/client";
-import { AnsibleOutputType } from '@/store/ScriptingHubStore';
+import { AnsibleOutputType, PlaybookParametersType } from '@/store/ScriptingHubStore';
 
 
 interface Row {
@@ -13,153 +13,116 @@ interface Row {
 }
 
 interface DeployAnsibleTypes {
-    selectedHosts: Set<number>;
-    selectedPlaybooks: Set<number>;
-    rows: Row[];
-    hosts: Host[];
+    playbooksToDeploy: PlaybookParametersType[];
     os: OS;
 }
 
 type OS = 'linux' | 'windows'
 
-const postData = async (os: OS, ip: string, playbook: string) => {
+const postData = async (os: OS, ip: string, playbook: string, extra_vars?: string | '' ) => {
     try {
 
-        const result = await fetch(`/api/v1/ansibleDeploy/${os}`, {
+        const response = await fetch(`/api/v1/ansibleDeploy/${os}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ hostIp: ip, playbook: playbook })
+            body: JSON.stringify({ hostIp: ip, playbook: playbook, extra_vars: extra_vars })
         });
 
-        if (!result.ok) {
-            throw new Error(`Ensure playbook exists...`);
-        }
+        // if (!response.ok) {
+        //     return { error: 'Failed to deploy playbook!', output: data.output  };
+        // }
 
         // If you still want to do something with the response, you can
-        const data = await result.json();
+        const data = await response.json();
+
+        if (data.error) {
+            return { error: `Failed to deploy playbook!\n${data.error}`, output: data.output }
+        } else {
+            return {success: 'Successfully deployed playbook!', output: data.output}
+        }
         // For example, console.log it:
         // console.log(data.output);
 
         // return the stdout from the post request given that it is a success
-        return data.output
 
     } catch (error) {
 
-        if (error instanceof Error) {
-            console.error(`BRUHHHHHH: ${error.message}`);
-            throw error; // Re-throw the error
-        } else {
-            console.error('An unknown error occurred');
-            throw new Error('An unknown error occurred'); // Throw a new error
-        }
+        // return the stderr from the post request given that it is a failure
+        return {error: `Unknown error while deploying playbook\n${error}`}
     }
 };
 
-const getSelectedHost = (hosts: Host[], id: number) => {
-    // Iterate through the list of hosts and match the host with the id that has been 
-    // selected in the ansible hosts table
-    for (const host of hosts) {
-      if (host.id == id) {
-        return host.ip;
-      }
-    }
-
-    // Return an empty host object if the id does not exist within any of the host objects
-    return '0.0.0.0';
-};
-
-export const deployAnsiblePlaybooks = async ({selectedHosts, selectedPlaybooks, rows, hosts, os}: DeployAnsibleTypes) => {
+export const deployAnsiblePlaybooks = async ({playbooksToDeploy, os}: DeployAnsibleTypes) => {
 
     // set vals to evaluate later in the function
 
-    const selectedHostsSize: number = selectedHosts.size;
-    const selectedPlaybooksSize: number = selectedPlaybooks.size; 
-    const totalPlaybooks: number = rows.length;
-    const totalHosts: number = hosts.length;
-    const totalDeployments: number = selectedHostsSize * selectedPlaybooksSize
+    // const totalPlaybooks: number = rows.length;
+    // const totalHosts: number = hosts.length;
+    const totalDeployments: number = playbooksToDeploy.length;
     const deploymentOutput: AnsibleOutputType[] = [];
-    const deploymentPromises: Promise<any>[] = [];
 
+    let successCount = 0;
+    let failureCount = 0;
 
+    const deploymentPromises = playbooksToDeploy.flatMap(async (playbook) => {
 
-    // error check boy
-    if (selectedHostsSize === 0) {
-      toast.error('No hosts are currently selected!')
-      return
-    }
-    else if (selectedPlaybooksSize === 0)
-    {
-      toast.error('No playbooks are currently selected!')
-      return
-    }
+            if (totalDeployments <= 5) {
+                toast.loading(`Deploying ${playbook.playbook}.yml to: ${playbook.hostIp}`, { duration: 1500 });
+                try {
+                    const data = await postData(os, playbook.hostIp, playbook.playbook, playbook.extra_vars);
+                    
+                    // check if the data returned is an error
+                    if (data.error) {
+                        console.log(data)
+                        toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}\n${data.error}`);
+                        failureCount++;
+                        deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output || '' });
 
-
-    // iterate through the selected hosts and playbooks and deploy them
-    selectedHosts.forEach(host => {
-      selectedPlaybooks.forEach(playbook => {
-
-        
-        // get the ip of the selected host
-        const selectedHostIp: string = getSelectedHost(hosts, host)
-        const selectedPlaybook: string =  rows[playbook].scriptName
-
-        // make sure the ip exists within our host object
-        if (selectedHostIp === '0.0.0.0') {
-          toast.error('Selected host IP was not found!')
-          return
-        }
-        
-        // only show toasts for each deployment if total is less than 5
-        if (totalDeployments < 5 ) { 
-
-              // make a post request to ansible deploy endpoint for each playbook 
-              // add a loading state for toast to display back to the user
-
-                deploymentPromises.push(
-                    toast.promise(
-                        postData(os, selectedHostIp, selectedPlaybook), 
-                        {
-                            loading: `Deploying ${selectedPlaybook}.yml to: ${selectedHostIp}`,
-                            success: (data) => {
-                                deploymentOutput.push({ip: selectedHostIp, playbookName: `${selectedPlaybook}.yml`, output: data});
-                                return `Deployed ${selectedPlaybook} to: ${selectedHostIp}`;
-                            },
-                            error: (err) => `Failed to deploy ${selectedPlaybook} to: ${selectedHostIp} - ${err.message}`
-                        }
-                    )
-                );
-
-        }
-        else {
-
-
-            // For 5 or more deployments, use async/await and push promises to deploymentPromises array
-            deploymentPromises.push(
-                (async () => {
-                    try {
-                        const data = await postData(os, selectedHostIp, selectedPlaybook);
-                        deploymentOutput.push({
-                            ip: selectedHostIp,
-                            playbookName: `${selectedPlaybook}.yml`,
-                            output: data
-                        });
-                    } catch (error) {
-                        toast.error(`Failed to deploy ${selectedPlaybook} to: ${selectedHostIp}`);
+                    } else {
+                        toast.success(`Successfully deployed ${playbook.playbook} to: ${playbook.hostIp}`);
+                        deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
+                        successCount++;
                     }
-                })() // Immediately invoked async function
-            );
-        }     
-      })
-    })
 
-    // make one toast for entire deployment
-    if (totalDeployments >= 5) { 
-      toast.success(`Deploying ${selectedPlaybooksSize}/${totalPlaybooks} playbooks to ${selectedHostsSize}/${totalHosts} hosts.`)
+                } catch (error) {
+                    toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}`);
+                    failureCount++;
+                }
+            } else {
+                // For more than 5 deployments, push promises to deploymentPromises array
+                return postData(os, playbook.hostIp, playbook.playbook, playbook.extra_vars)
+                    .then(data => {
+                        if (data.error) {
+                            toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}`);
+                            failureCount++;
+                            deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output || '' });
+                        } else {
+                            deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
+                            successCount++;
+                        }
+
+                    })
+                    .catch(error => {
+                        toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}\n${error}`);
+                        failureCount++;
+                    });
+            }
+    });
+
+    // Wait for all the deployments to complete
+    await Promise.all(deploymentPromises.flat());
+
+    // Show consolidated message for more than 5 deployments
+    if (totalDeployments > 5) {
+        if (successCount > 0) {
+            toast.success(`Successfully deployed ${successCount} out of ${totalDeployments} deployments!`);
+        }
+        if (failureCount > 0) {
+            toast.error(`Failed to deploy ${failureCount} out of ${totalDeployments} deployments!`);
+        }
     }
-
-    await Promise.all(deploymentPromises);
 
     return deploymentOutput;
 

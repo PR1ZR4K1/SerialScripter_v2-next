@@ -1,28 +1,68 @@
 const rows = [
   {
     id: 0,
-    scriptName: "test",
-    category: "testing",
-    risk: "High",
-    parameter: false,
-    description: "testing the operation of ansible tings"
+    scriptName: "windows",
+    category: "windows",
+    risk: "Medium",
+    parameter: true,
+    description: "Attempts to add vm to Domain"
   },
   {
     id: 1,
-    scriptName: "user_list",
-    category: "Network",
-    risk: "Medium",
+    scriptName: "firewalls",
+    category: "windows",
+    risk: "Low",
     parameter: false,
-    description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
+    description: "displays firewall rules"
   },
   {
     id: 2,
-    scriptName: "file_stat",
-    category: "Network",
-    risk: "Medium",
-    parameter: true,
-    description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
+    scriptName: "software",
+    category: "windows",
+    risk: "Low",
+    parameter: false,
+    description: "displays downloaded software "
   },
+  {
+    id: 3,
+    scriptName: "winpeas",
+    category: "windows",
+    risk: "Medium",
+    parameter: false,
+    description: "Attempts to install and run WinPeas on machine."
+  },
+  {
+    id: 4,
+    scriptName: "fileIntegrityCheck",
+    category: "Enumeration",
+    risk: "Low",
+    parameter: true,
+    description: "Returns MD5 Hash of specified file, add path=C:/Use/Forward/Slashes.exe to -e parameter."
+  },
+  {
+    id: 5,
+    scriptName: "installSysmon",
+    category: "Software Install",
+    risk: "Low",
+    parameter: false,
+    description: "Installs sysmon64, doesn't work below win7/2008"
+  },
+  {
+    id: 6,
+    scriptName: "installedSoftwareWIN",
+    category: "Enumeration",
+    risk: "Low",
+    parameter: false,
+    description: "Lists installed shi"
+  },
+  {
+    id: 7,
+    scriptName: "listCommonDirWIN",
+    category: "Enumeration",
+    risk: "Low",
+    parameter: false,
+    description: "Lists contents of C Drive and every common directory in Users folder"
+  }
 ];
 
 const columns = [

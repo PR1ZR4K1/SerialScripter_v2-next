@@ -57,6 +57,7 @@ enum ShareType {
 enum KeyType {
     FIREWALL
     HOST
+    GENERAL
 }
 
 model User {
@@ -70,7 +71,7 @@ model ApiKey {
   id       Int     @id @default(autoincrement())
   key      String  @unique
   type     KeyType
-  lifetime Int?
+  lifetime Int
 }
 
 model ServerLog {
@@ -271,4 +272,12 @@ model Incident {
   host              Host?        @relation(fields: [hostId], references: [id])
   hostId            Int
   createdAt         DateTime      @default(now())
+}
+
+model CronJob {
+  id            Int     @id @default(autoincrement())
+  name          String  @unique
+  schedule      String
+  command       String
+  lastOutput    String?
 }

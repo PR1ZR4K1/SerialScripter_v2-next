@@ -3,23 +3,17 @@ import { exec } from 'child_process';
 import util from 'util';
 import { Host } from '@prisma/client';
 
-type OS = {
-    name: string;
-    version: string;
-};
-
 type newHost = {
     id: number;
     hostname: string;
     ip: string;
-    osId?: number;
+    os: string;
     status: 'UP' | 'DOWN';
     systemSpecId?: number | null;
     macAddress?: string | null;
     gateway?: string | null;
     dhcp?: boolean | null;
     createdAt: Date;
-    os?: OS;
 };
 
 
@@ -81,18 +75,13 @@ async function parseNmapOutput(scanOutput: string) {
 
             const osName = await getOS(ipAddress);
 
-            const os = {
-                name: osName,
-                version: '',
-            }
-
 
 
             hosts.push({
                 id: idCounter++,
                 hostname: hostname,
                 ip: ipAddress,
-                os: os,
+                os: osName,
                 status: status,
                 createdAt: new Date(),
             });

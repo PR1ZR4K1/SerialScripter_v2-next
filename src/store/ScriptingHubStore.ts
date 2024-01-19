@@ -16,8 +16,12 @@ export interface AnsibleOutputType {
 }
 
 export interface PlaybookParametersType {
-  id: number;
-  playbook: string;
+    id: number;
+    playbookId: number;
+    playbook: string;
+    hostname: string;
+    hostIp: string;
+    extra_vars: string;
 }
 
 interface HubState {
@@ -46,7 +50,7 @@ interface HubState {
     setSelectedKeysWindowsHosts: (keys: Set<number>) => void;
 
     ansibleOutput: AnsibleOutputType[];
-    addAnsibleOutput: (output: AnsibleOutputType[]) => void;
+    setAnsibleOutput: (output: AnsibleOutputType[]) => void;
 
     isAnsibleModalOpen: boolean;
     openAnsibleModal: () => void;
@@ -57,7 +61,7 @@ interface HubState {
     closeParameterModal: () => void;
 
     parameterizedPlaybooks: PlaybookParametersType[];
-    addParameterizedPlaybooks: (output: PlaybookParametersType[]) => void;
+    setParameterizedPlaybooks: (output: PlaybookParametersType[]) => void;
 
 }
 
@@ -113,7 +117,7 @@ export const useScriptingHubStore = create<HubState>((set) => ({
     setSelectedKeysWindowsHosts: (keys: Set<number>) => set({ selectedKeysWindowsHosts: keys }),
 
     ansibleOutput: [],
-    addAnsibleOutput: (output: AnsibleOutputType[]) => {
+    setAnsibleOutput: (output: AnsibleOutputType[]) => {
 
         // set is a function that gives the current state of an element and returns the new one
         set({
@@ -131,7 +135,7 @@ export const useScriptingHubStore = create<HubState>((set) => ({
     closeParameterModal: () => set({ isParameterModalOpen: false }),
 
     parameterizedPlaybooks: [],
-    addParameterizedPlaybooks: (parameterizedPlaybooks: PlaybookParametersType[]) => {
+    setParameterizedPlaybooks: (parameterizedPlaybooks: PlaybookParametersType[]) => {
 
         // set is a function that gives the current state of an element and returns the new one
         set({
