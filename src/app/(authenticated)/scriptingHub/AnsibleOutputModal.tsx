@@ -5,6 +5,9 @@ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button} from "
 import { useScriptingHubStore } from '@/store/ScriptingHubStore';
 import { Pagination } from '@nextui-org/react';
 import { useTheme } from "next-themes";
+import { Typography, Tooltip } from "@material-tailwind/react";
+import { useCopyToClipboard } from "usehooks-ts";
+import { CheckIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 
 
 export default function AnsibleOutputModal() {
@@ -18,6 +21,8 @@ export default function AnsibleOutputModal() {
   const { theme } = useTheme();
 
   const [page, setPage] = useState(1);
+  const [value, copy] = useCopyToClipboard();
+  const [copied, setCopied] = React.useState(false);
   // console.log(ansibleOutput)
   // length of list for pagination
   const pages = ansibleOutput.length;
@@ -41,6 +46,11 @@ export default function AnsibleOutputModal() {
 
 
   const jsonContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleAnsibleOutputModalClose = () => {
+    window.location.reload();
+    closeAnsibleModal();
+  }
 
 
   useEffect(() => {
@@ -74,7 +84,7 @@ export default function AnsibleOutputModal() {
         <Modal 
           size={'5xl'} 
           isOpen={isAnsibleModalOpen} 
-          onClose={closeAnsibleModal} 
+          onClose={handleAnsibleOutputModalClose} 
           scrollBehavior='inside'
           isDismissable={false}
         >
@@ -113,7 +123,25 @@ export default function AnsibleOutputModal() {
                   <div className='border w-11/12 dark:border-gray-200 border-gray-700' />
                     
                 </ModalHeader>
-                <ModalBody className='flex flex-col items-center justify-center mt-4'>
+                <ModalBody className='flex flex-col items-center justify-center mt-4 gap-y-4'>
+                  <div className='flex w-full justify-end pr-6 h-5'>
+                    <div 
+                      className=''
+                      onMouseLeave={() => setCopied(false)}
+                      onClick={() => {
+                        copy(`${ansibleOutput[page-1].output}`);
+                        setCopied(true);
+                      }}
+                      >
+                      <Tooltip content={copied ? "Copied" : "Copy"}>
+                        {copied ? (
+                          <CheckIcon className="h-4 w-4 text-white" />
+                        ) : (
+                          <DocumentDuplicateIcon className="h-4 w-4 text-white" />
+                        )}
+                      </Tooltip>
+                    </div>
+                  </div>
                   <div ref={jsonContainerRef} className='json-output max-h-96 max-w-4xl'></div>
                   {/* <p>
                     {ansibleOutput[page].output}

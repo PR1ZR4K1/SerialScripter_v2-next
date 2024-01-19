@@ -10,6 +10,7 @@ const execPromise = util.promisify(exec);
 
 export async function POST(req: Request) {
 
+    let userEmail = 'ansible-linux.gg';
     try {
         // Ensure the request is of type POST
         if (req.method !== 'POST') {
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
 
         // get clients session to generate logs with
         const session = await getServerSession(authOptions)
-        const userEmail = session?.user?.email || ''
+        userEmail = session?.user?.email || ''
                 
         // console.log('host ip', hostIp)
         // console.log('\nplaybook', playbook)
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
 
         if (stderr) {
             // console.log(stdout);
-            await createLogEntry({email: userEmail, success: false, module: 'Public Key Deployment', message: stderr })
+            createLogEntry({email: userEmail, success: false, module: 'Public Key Deployment', message: stderr })
 
             return new Response(JSON.stringify({ error: `Ansible Playbook Error\n${stderr}` }), {
                 status: 409,
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
         // Here, include the logic to handle the data,
         // like calling the backend service
 
-        await createLogEntry({email: userEmail, success: true, module: 'Public Key Deployment', message: '' })
+        createLogEntry({email: userEmail, success: true, module: 'Ansible Deployment', message: `Successfully deployed ${playbook} to ${hostIp}!` })
         
         // Sending back a successful response
         return new Response(JSON.stringify({ success: 'Playbook deployed successfully', output: stdout }), {
@@ -85,20 +86,35 @@ export async function POST(req: Request) {
             }
         });
 
-    } catch (error: unknown) {
+    } catch (error: any) {
     // Check if the error is an instance of Error
         // if (error instanceof Error) {
         // } else {
         //     // Handle cases where the error is not an Error instance
         // }
 
-        console.log('I broke really bad', error)
-        return new Response(JSON.stringify({ error: `Internal Server Error\n ${error}` }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        if (error?.stdout) {
+            const data = JSON.parse(error.stdout)
+            const logMessage = data.plays[0].tasks[0].hosts || 'Unknown error'
+
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: `Ansible Playbook Failed\n${JSON.stringify(logMessage)}` })
+
+            // console.log(error.stdout)
+            return new Response(JSON.stringify({ error: `Internal Server Error\n ${typeof error}`, output: error.stdout }), {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        } else {
+            return new Response(JSON.stringify({ error: `Internal Server Error\n ${typeof error}`, output: 'Unknown error' }), {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
     }
 }
 

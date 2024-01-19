@@ -13,6 +13,7 @@ import { PlaybookParametersType, useScriptingHubStore } from '@/store/ScriptingH
 export default function WindowsActions() {
   const [view, setView] = useState('scripts');
   const [playbooksToDeploy, setPlaybooksToDeploy] = useState<PlaybookParametersType[]>([]);
+  const [isFirstDeployment, setIsFirstDeployment] = useState(true);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
   const [selectedKeysWindowsHosts, selectedKeysWindowsPlaybooks, setAnsibleOutput, isParameterModalOpen, openAnsibleModal, openParameterModal, parameterizedPlaybooks, setParameterizedPlaybooks, windowsHosts, getWindowsHosts] = useScriptingHubStore((state) => [
@@ -31,10 +32,9 @@ export default function WindowsActions() {
   useEffect(() => {
 
     const proceedWithDeployment = async () => {
-      setPlaybooksToDeploy((prevPlaybooksToDeploy) => [...prevPlaybooksToDeploy, ...parameterizedPlaybooks]);
       const output = await deployAnsiblePlaybooks({ 
-        playbooksToDeploy: playbooksToDeploy,
-        os: 'linux' 
+        playbooksToDeploy: [...playbooksToDeploy, ...parameterizedPlaybooks],
+        os: 'windows' 
       });
 
       if (!output) {
@@ -49,8 +49,10 @@ export default function WindowsActions() {
       openAnsibleModal();
     }
 
-    if (!isParameterModalOpen && parameterizedPlaybooks.length > 0) {
+
+    if (!isParameterModalOpen && parameterizedPlaybooks.length > 0 && isFirstDeployment) {
       proceedWithDeployment();
+      setIsFirstDeployment(false);
     }
 
     if (isFirstRender) {
@@ -114,7 +116,6 @@ export default function WindowsActions() {
           setParameterizedPlaybooks(playbooksWithParameters);
           setPlaybooksToDeploy(playbooksWithNoParameters);
           openParameterModal();
-          return;
         } else {
           const output = await deployAnsiblePlaybooks({ 
               playbooksToDeploy: playbooksWithNoParameters,
