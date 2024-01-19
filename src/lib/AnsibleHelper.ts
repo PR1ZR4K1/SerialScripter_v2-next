@@ -30,36 +30,28 @@ const postData = async (os: OS, ip: string, playbook: string, extra_vars?: strin
             body: JSON.stringify({ hostIp: ip, playbook: playbook, extra_vars: extra_vars })
         });
 
-        if (!response.ok) {
-            return { error: 'Failed to deploy playbook!' };
-        }
+        // if (!response.ok) {
+        //     return { error: 'Failed to deploy playbook!', output: data.output  };
+        // }
 
         // If you still want to do something with the response, you can
         const data = await response.json();
+
+        if (data.error) {
+            return { error: `Failed to deploy playbook!\n${data.error}`, output: data.output }
+        } else {
+            return {success: 'Successfully deployed playbook!', output: data.output}
+        }
         // For example, console.log it:
         // console.log(data.output);
 
         // return the stdout from the post request given that it is a success
-        return {success: 'Successfully deployed playbook!', output: data.output}
 
     } catch (error) {
 
         // return the stderr from the post request given that it is a failure
         return {error: `Unknown error while deploying playbook\n${error}`}
     }
-};
-
-const getSelectedHost = (hosts: Host[], id: number) => {
-    // Iterate through the list of hosts and match the host with the id that has been 
-    // selected in the ansible hosts table
-    // for (const host of hosts) {
-    //   if (host.id == id) {
-        // return host.ip;
-    //   }
-    // }
-
-    return hosts[id].ip;
-
 };
 
 export const deployAnsiblePlaybooks = async ({playbooksToDeploy, os}: DeployAnsibleTypes) => {
@@ -83,14 +75,17 @@ export const deployAnsiblePlaybooks = async ({playbooksToDeploy, os}: DeployAnsi
                     
                     // check if the data returned is an error
                     if (data.error) {
+                        console.log(data)
                         toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}\n${data.error}`);
                         failureCount++;
-                        return;
+                        deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output || '' });
+
+                    } else {
+                        toast.success(`Successfully deployed ${playbook.playbook} to: ${playbook.hostIp}`);
+                        deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
+                        successCount++;
                     }
 
-                    toast.success(`Successfully deployed ${playbook.playbook} to: ${playbook.hostIp}`);
-                    deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
-                    successCount++;
                 } catch (error) {
                     toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}`);
                     failureCount++;
@@ -102,10 +97,12 @@ export const deployAnsiblePlaybooks = async ({playbooksToDeploy, os}: DeployAnsi
                         if (data.error) {
                             toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}`);
                             failureCount++;
-                            return;
+                            deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output || '' });
+                        } else {
+                            deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
+                            successCount++;
                         }
-                        deploymentOutput.push({ ip: playbook.hostIp, playbookName: `${playbook.playbook}.yml`, output: data.output });
-                        successCount++;
+
                     })
                     .catch(error => {
                         toast.error(`Failed to deploy ${playbook.playbook} to: ${playbook.hostIp}\n${error}`);

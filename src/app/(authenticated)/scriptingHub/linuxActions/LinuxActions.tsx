@@ -32,9 +32,9 @@ export default function LinuxActions() {
   useEffect(() => {
 
     const proceedWithDeployment = async () => {
-      setPlaybooksToDeploy((prevPlaybooksToDeploy) => [...prevPlaybooksToDeploy, ...parameterizedPlaybooks]);
+      // setPlaybooksToDeploy((prevPlaybooksToDeploy) => [...prevPlaybooksToDeploy, ...parameterizedPlaybooks]);
       const output = await deployAnsiblePlaybooks({ 
-        playbooksToDeploy: playbooksToDeploy,
+        playbooksToDeploy: [...playbooksToDeploy, ...parameterizedPlaybooks],
         os: 'linux' 
       });
 
@@ -113,7 +113,7 @@ export default function LinuxActions() {
 
         // playbooks need parameters
 
-        console.log(playbooksWithParameters)
+        // console.log(playbooksWithParameters)
         if (playbooksWithParameters.length > 0) {
           // open modal to get parameter
           setParameterizedPlaybooks(playbooksWithParameters);

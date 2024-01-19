@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createHost } from '@/lib/prismaHelper';
 import { Container } from '@prisma/client';
+import { createLogEntry } from '@/lib/ServerLogHelper';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/AuthOptions';
 
 async function decrementLifetime(key: string) {
     try {
@@ -113,12 +116,36 @@ export async function POST(req: Request) {
             // If you want to update the host.containers array itself
             host.containers = updatedContainers;
         }
-        createHost(host);
+        try {
+            await createHost(host);
+            decrementLifetime(apiKey);
+            await createLogEntry({email: 'chimera.gg', success: true, module: 'Chimera Inventory', message: `${host.hostname} at ${host.hostIp} successfully updated!` })
 
-        decrementLifetime(apiKey);
-        return NextResponse.json({ message: "Valid API Key" });
+            return new Response(JSON.stringify({ success: 'New host updated in db!' }), {
+                // return new Response(JSON.stringify({ success: 'Playbook deployed successfully' }), {
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+            });
+            
+        } catch (error) {
+            console.log(error)
+            await createLogEntry({email: 'chimera.gg', success: false, module: 'Chimera Inventory', message: `${host.hostname} at ${host.hostIp} failed to update!\n${error}` })
+
+            return new Response(JSON.stringify({ success: 'Failed to add host to db!' }), {
+                // return new Response(JSON.stringify({ success: 'Playbook deployed successfully' }), {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+            });
+
+        }
 
     } else {
+        await createLogEntry({email: 'chimera.gg', success: false, module: 'Chimera Inventory', message: `Invalid API key!` })
+
         // console.log("API Key is dead");
         return new Response(JSON.stringify({ error: 'Invalid API Key' }), {
             status: 405,

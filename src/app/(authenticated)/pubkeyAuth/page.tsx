@@ -123,7 +123,7 @@ export default function Page() {
     } else {
       toast.success('Public key removed from db successfully!');
       await updateKeys({ publicKey: publicKey, os: 'linux', sshState: 'absent' });
-      // await updateKeys({ publicKey: publicKey, os: 'windows', sshState: 'absent' });
+      await updateKeys({ publicKey: publicKey, os: 'windows', sshState: 'absent' });
       setTableView(true);
       setRefreshKeyList(true);
     }
@@ -150,7 +150,7 @@ export default function Page() {
       
       await updateKeys({ publicKey: keyValue, os: 'linux', sshState: 'present' });
       
-      // await updateKeys({ publicKey: keyValue, os: 'windows', sshState: 'present'});  
+      await updateKeys({ publicKey: keyValue, os: 'windows', sshState: 'present'});  
       
       setTableView(true);
       setRefreshKeyList(true);

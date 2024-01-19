@@ -4,10 +4,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma'; 
 
 export async function createLogEntry({email, success, module, message}: Prisma.ServerLogCreateInput) {
-    if (!email || !success || !module || !message) {
-        return;
-    }
-
+    
     try {
         await prisma.serverLog.create({
             data: {
@@ -17,14 +14,14 @@ export async function createLogEntry({email, success, module, message}: Prisma.S
                 message,
             },
         });
-        return;
+        console.log('tried to add server log!')
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.message) {
-                return error.message;
+                console.log(error.message);
             }
         } else {
-            return error;
+            console.log(error);
         }
     }
 }
