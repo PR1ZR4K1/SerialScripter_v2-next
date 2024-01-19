@@ -57,7 +57,7 @@ enum ShareType {
 enum KeyType {
     FIREWALL
     HOST
-    CRON
+    GENERAL
 }
 
 model User {
@@ -71,7 +71,7 @@ model ApiKey {
   id       Int     @id @default(autoincrement())
   key      String  @unique
   type     KeyType
-  lifetime Int?
+  lifetime Int
 }
 
 model ServerLog {

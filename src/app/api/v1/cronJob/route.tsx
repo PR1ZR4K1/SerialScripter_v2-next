@@ -144,22 +144,12 @@ export async function POST(req: Request) {
                 });
             } catch (error) {
                 console.log(error);
-
-                if (error.code === "P2025") {
-                    return new Response(JSON.stringify({ error: 'Cron job does not exist' }), {
-                        status: 500,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                } else {
-                    return new Response(JSON.stringify({ error: 'Error stopping cron job' }), {
-                        status: 500,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                }
+                return new Response(JSON.stringify({ error: 'Error stopping cron job' }), {
+                    status: 500,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
             }
         default:
             return new Response(JSON.stringify({ error: 'Invalid action' }), {

@@ -33,6 +33,7 @@
     "eslint-config-next": "13.4.19",
     "framer-motion": "^10.16.4",
     "fs": "0.0.1-security",
+    "generate-api-key": "^1.0.2",
     "json-formatter-js": "^2.3.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.312.0",
