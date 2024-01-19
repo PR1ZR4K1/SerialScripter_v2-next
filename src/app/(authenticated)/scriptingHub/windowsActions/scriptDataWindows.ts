@@ -9,7 +9,7 @@ const rows = [
   },
   {
     id: 1,
-    scriptName: "user_list",
+    scriptName: "software",
     category: "Network",
     risk: "Medium",
     parameter: false,

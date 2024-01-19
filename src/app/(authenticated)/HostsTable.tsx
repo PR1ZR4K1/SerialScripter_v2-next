@@ -395,7 +395,7 @@ export function HostsTable() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button className={`dark:bg-[#2B3242] hover:bg-[#27272A]`} onClick={() => {setRefetchCounter()}}>
+                        <Button className={`dark:bg-[#2B3242] hover:bg-[#27272A] dark:hover:bg-[#27272A]`} onClick={() => {setRefetchCounter()}}>
                             Revalidate
                         </Button>
                         <Button className={`dark:bg-[#2B3242] ${scanning || updatingDB ? '' : 'dark:hover:bg-[#27272A]'}`} onClick={handleScan} disabled={scanning || updatingDB}>
