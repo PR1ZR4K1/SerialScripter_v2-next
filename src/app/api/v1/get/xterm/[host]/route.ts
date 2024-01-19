@@ -9,8 +9,8 @@ function spawnGotty(username: string, host: string, port: number, serialIp: stri
             '--timeout', '10',
             '-p', port.toString(),
             '-w', '-r',
-            'ssh', `${username}@${host}`
-            //'ssh', `cm03@192.168.1.160`
+            //'ssh', `${username}@${host}`
+            'ssh', `cm03@192.168.1.160`
         ], {
             detached: true,
             stdio: ['ignore', 'pipe', 'pipe'], // 'pipe' for stdout and stderr
@@ -87,6 +87,7 @@ export async function GET(
     { params }: { params: { host: string } }
 ) {
     const serialIp = req.headers.get('X-Forwarded-For') || '127.0.0.1'
+    console.log("serialIp", serialIp);
 
     const searchParams = req.nextUrl.searchParams;
     const os = searchParams.get('os');

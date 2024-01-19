@@ -96,6 +96,7 @@ export async function POST(req: Request) {
     if (alive) {
         // get host object
         const host = await req.json();
+        console.log(host);
 
         if (host.containers) {
             const updatedContainers = host.containers.map((container: ExtendedContainer) => {
