@@ -105,7 +105,6 @@ export const useHostsStore = create<HostsStoreTypes>((set) => ({
         macAddress: null, // Assuming macAddress can be null or you might use a placeholder
         createdAt: new Date(0), // Represents the Unix Epoch (January 1, 1970)
         networkServices: [],
-        password: null,
         // Include any other missing fields with their default or placeholder values
     },
     setHost: (host: Host) => set({ host: host }),
