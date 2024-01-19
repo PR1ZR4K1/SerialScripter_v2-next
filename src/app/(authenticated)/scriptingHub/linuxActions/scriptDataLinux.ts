@@ -1,11 +1,11 @@
 const rows = [
   {
     id: 0,
-    scriptName: "test",
-    category: "testing",
-    risk: "High",
-    parameter: false,
-    description: "testing the operation of ansible tings"
+    scriptName: "backup",
+    category: "backups",
+    risk: "low",
+    parameter: true,
+    description: "Makes a compressed backup of the specified directory and put it into the /opt/memento directory"
   },
   {
     id: 1,
@@ -17,11 +17,51 @@ const rows = [
   },
   {
     id: 2,
-    scriptName: "file_stat",
-    category: "Network",
-    risk: "Medium",
+    scriptName: "Docker Install",
+    category: "Startup",
+    risk: "High",
+    parameter: false,
+    description: "Checks for distribution of systems and installs docker"
+  },
+  {
+    id: 3,
+    scriptName: "Checksum",
+    category: "Utility",
+    risk: "Low",
     parameter: true,
-    description: "Locks down RDP access to specific IP ranges and enforces secure connection methods."
+    description: "Runs SHA256 algorithm to gather checksum of specified file or directory and outputs to standard output"
+  },
+  {
+    id: 4,
+    scriptName: "Linpeas",
+    category: "Utility",
+    risk: "High",
+    parameter: false,
+    description: "Downloads and runs Linpeas on Remote hosts and outputs results to Standard Out"
+  },
+  {
+    id: 5,
+    scriptName: "Nftables with Docker Compose",
+    category: "Startup",
+    risk: "High",
+    parameter: false,
+    description: "Downloads and uses Nifty Firewall Tool's offical docker compose file and starts it on remote hosts"
+  },
+  {
+    id: 6,
+    scriptName: "Restore from Backup",
+    category: "Utility",
+    risk: "Low",
+    parameter: true,
+    description: "Attempts to restore from Backup created by Backup playbook"
+  },
+  {
+    id: 7,
+    scriptName: "Start Niftyfirewall Tool Basi",
+    category: "Startup",
+    risk: "High",
+    parameter: false,
+    description: "Attempts Start Nifty Firewall Tool using strictly Ansible (Use only if compose failed)"
   },
 ];
 

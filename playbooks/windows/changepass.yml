@@ -1,0 +1,21 @@
+---
+- name: Change password for all Active Directory users
+  hosts: all
+  gather_facts: no
+  vars:
+    excluded_users: "krbtgt"  # LIST OF USERNAMES IN COMMA SEPARATED LIST TO EXCLUDE (KRBTGT, HUNTEE, FRIYAY, etc  )
+
+  tasks:
+    - name: Get list of all AD users
+      win_shell: Get-ADUser -Filter * | ForEach-Object { $_.SamAccountName }
+      register: users # Store AD users in users variable
+
+    - name: Change password for each user
+      # CHANGE Password123! TO BE THE DESIRED PASSWORD!
+      win_shell: |
+        $excludedUsers = "{{ excluded_users }}".Split(',')
+        foreach ($user in "{{ users.stdout_lines }}") {
+          if ($excludedUsers -notcontains $user) {
+            Set-ADAccountPassword -Identity $user -Reset -NewPassword (ConvertTo-SecureString -AsPlainText "Password123!" -Force)
+          }
+        }

@@ -1,0 +1,51 @@
+---
+- name: Backup playbook
+  hosts: all
+  gather_facts: yes
+
+  vars:
+    source_directory: "/path/to/your/source/directory"
+    backup_directory: "/opt/memento"
+
+  tasks:
+    - name: Ensure the backup directory exists
+      ansible.builtin.file:
+        path: "{{ backup_directory }}"
+        state: directory
+        mode: '0755'
+
+    - name: Extract the name of the source directory
+      set_fact:
+        source_dir_name: "{{ source_directory | basename }}"
+
+    - name: Generate a timestamp
+      set_fact:
+        timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+
+    - name: Construct the backup file name
+      set_fact:
+        backup_name: "{{ source_dir_name }}-{{ timestamp }}.tar.gz"
+
+    - name: Create a compressed backup of the source directory
+      ansible.builtin.command: tar -czf /tmp/{{ backup_name }} -C {{ source_directory }} .
+      register: tar_result
+      failed_when: tar_result.rc != 0
+
+    - name: Show tar command output and errors
+      debug:
+        msg: |
+          Command: {{ tar_result.cmd }}
+          Stdout: {{ tar_result.stdout }}
+          Stderr: {{ tar_result.stderr }}
+          Return Code: {{ tar_result.rc }}
+
+    - name: Move the backup to the backup directory
+      ansible.builtin.copy:
+        src: "/tmp/{{ backup_name }}"
+        dest: "{{ backup_directory }}/{{ backup_name }}"
+        remote_src: yes
+
+    - name: Clean up temporary backup file
+      ansible.builtin.file:
+        path: "/tmp/{{ backup_name }}"
+        state: absent

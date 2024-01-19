@@ -1,0 +1,38 @@
+---
+- name: Restore playbook
+  hosts: all
+  gather_facts: no 
+
+  vars:
+    backup_directory: "/opt/memento"
+    restore_directory: "/path/to/your/restore/directory" 
+    source_name: "{{ source_name }}" #replace with the name of the source you want to restore
+
+  tasks:
+    - name: Find the newest backup for a specific source
+      ansible.builtin.find:
+        paths: "{{ backup_directory }}"
+        patterns: '{{ source_name }}-*.tar.gz'
+        recurse: no
+      register: backups
+
+    - name: Set the path of the newest backup file
+      set_fact:
+        newest_backup: "{{ backups.files | sort(attribute='mtime', reverse=true) | first }}"
+
+    - name: Ensure the restore directory exists
+      ansible.builtin.file:
+        path: "{{ restore_directory }}"
+        state: directory
+        mode: '0755'
+
+    - name: Extract the newest backup in the restore directory
+      ansible.builtin.unarchive:
+        src: "{{ newest_backup.path }}"
+        dest: "{{ restore_directory }}"
+        remote_src: yes
+        extra_opts: [--strip-components=1] 
+
+    - name: Show the restored file details
+      debug:
+        msg: "Restored backup {{ newest_backup.path }} to {{ restore_directory }}"

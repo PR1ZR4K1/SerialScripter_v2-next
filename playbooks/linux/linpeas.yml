@@ -1,0 +1,23 @@
+---
+- name: Execute LinPEAS on remote hosts
+  hosts: all
+  tasks:
+    - name: Create a directory for LinPEAS
+      file:
+        path: "/tmp/linpeas"
+        state: directory
+        mode: '0755'
+
+    - name: Download LinPEAS
+      get_url:
+        url: "https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh"
+        dest: "/tmp/linpeas/linpeas.sh"
+        mode: '0755'
+
+    - name: Execute LinPEAS and display the output
+      command: "sh /tmp/linpeas/linpeas.sh"
+      register: linpeas_output
+
+    - name: Show LinPEAS output
+      debug:
+        msg: "{{ linpeas_output.stdout_lines }}"

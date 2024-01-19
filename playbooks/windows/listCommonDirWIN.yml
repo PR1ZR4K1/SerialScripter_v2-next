@@ -1,0 +1,52 @@
+---
+- name: List Contents of Common Directories on Windows
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Get user dirs.
+      win_shell: Get-ChildItem -Path C:/Users -Directory | Select-Object -ExpandProperty FullName
+      #PS command lists the full path of every user directory.
+      register: user_dirs
+
+    - name: Find contents of specified directories no recurse
+      win_find:
+        paths:
+          - "C:/"
+          #Can add more directories here as needed
+        recurse: no
+        file_type: file
+        hidden: true
+      register: dir_contents_noR
+
+
+    - name: Find contents of specified directories
+      win_find:
+        paths:
+          - "{{ item }}"
+          - "C:/Windows/Temp"
+          #Here you can add more common dirs to search through. This playbook will list the attributes mentioned in the json_query func.
+        recurse: yes
+        file_type: file
+        hidden: true
+      with_items: "{{ user_dirs.stdout_lines }}" 
+      #Running the loop using the user paths defined by the previous task.
+      register: directory_contentsR
+
+    - name: Filter relevant info Recursive
+      set_fact:
+        Rfiltered_output: "{{ directory_contentsR.results | json_query('[].files[].[filename, creationtime, owner, path, size]') }}"
+        #Takes the raw messy output and cleans it up
+
+    - name: Filter relevant info nonRecursive
+      set_fact:
+        noRfiltered_output: "{{ dir_contents_noR | json_query('files[].[filename, creationtime, owner, path, size]') }}"
+        #Takes the raw messy output and cleans it up
+
+    - name: Display Filtered output Non-Recursive Directories
+      debug:
+        var: noRfiltered_output
+        
+    - name: Display Filtered output Recursive Directories
+      debug:
+        var: Rfiltered_output

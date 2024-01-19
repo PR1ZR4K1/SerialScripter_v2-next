@@ -1,15 +1,13 @@
----
-- name: List Installed Software
+- name: Get Installed Software on Windows
   hosts: all
-  gather_facts: false
-  tasks:
-    - name: PS command to list installed software
-      win_shell: Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*, HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -ne $null } | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | ConvertTo-Json
-      #This Powershell oneliner checks two registry locations for both 64-bit and 32-bit installed software, then filters out any values returned as "null".
-      #Returns to JSON.
-      register: installed
+  gather_facts: true
 
-    - name: Return to JSON
+  tasks:
+    - name: Get Installed Software
+      win_shell: |
+        Get-WmiObject -Class Win32_Product | Select-Object Name, Version
+      register: installed_software
+
+    - name: Display Installed Software
       debug:
-        msg: "{{ installed.stdout }}"
-        #Prints the JSON output to stdout.
+        var: installed_software.stdout_lines

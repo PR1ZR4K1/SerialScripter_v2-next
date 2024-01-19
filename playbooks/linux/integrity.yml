@@ -1,0 +1,17 @@
+---
+- name: Calculate checksum of a file or directory
+  hosts: all
+  vars:
+    checksum_algorithm: "sha256"
+  tasks:
+    - name: Calculate checksum
+      command: >
+        find {{ target_path }} -type f -exec {{ checksum_algorithm }}sum {} +
+      register: checksum_output
+      changed_when: false
+
+    - name: Display checksum
+      debug:
+        msg: "{{ checksum_output.stdout_lines }}"
+
+# Run with -e "target_path=/path/to/target"

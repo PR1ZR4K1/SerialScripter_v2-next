@@ -1,0 +1,15 @@
+---
+- name: Turn off Network Level Authentication for RDP
+  hosts: all
+  gather_facts: true
+
+  tasks:
+
+    - name: Powashell babee
+      win_shell: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name UserAuthentication -Value 0
+      register: output
+
+    - name: return this bitch
+      debug:
+        var: output 
+

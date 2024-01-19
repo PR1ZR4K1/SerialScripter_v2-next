@@ -1,0 +1,17 @@
+---
+- name: Return MD5 hash of specified file
+  hosts: all
+  gather_facts: false
+
+#To specify file, add path=C:/Use/Forward/Slashes.exe to -e parameter.
+
+  tasks:
+    - name: Gimme dat MD5
+      win_shell: |
+        $filePath = "{{ path }}"
+        Get-FileHash -Path $filePath -Algorithm MD5 | Select-Object Hash | ConvertTo-Json
+      register: md5hash
+
+    - name: Return
+      debug:
+        var: md5hash.stdout_lines

@@ -1,0 +1,14 @@
+- name: Print firewall rules
+  hosts: all
+  gather_facts: false
+
+
+  tasks:
+    - name: print firewallrules
+      win_shell: GetNetFireWallRule
+      register: firewall_rules
+
+    - name: Display firewallRules
+      debug:
+        var: firewall_rules.stdout_lines
+

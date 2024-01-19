@@ -1,0 +1,50 @@
+- name: Install Docker
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Check if Docker is already installed
+      command: docker --version
+      register: docker_installed
+      ignore_errors: true
+
+    - name: Check if pip3 is already installed
+      command: pip3 --version
+      register: pip3_installed
+      ignore_errors: true
+
+    - name: Install required packages for Debian/Ubuntu
+      apt:
+        name:
+          - python3-pip
+        state: present
+      when: ansible_facts['os_family'] == "Debian" and docker_installed is failed
+
+    - name: Install required packages for RedHat/CentOS
+      yum:
+        name:
+          - python3-pip
+        state: present
+      when: ansible_facts['os_family'] == "RedHat" and docker_installed is failed
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
+        executable: pip3
+      when: pip3_installed is failed
+
+    - name: Download Docker installer script
+      get_url:
+        url: https://get.docker.com/
+        dest: /tmp/install-docker.sh
+      when: docker_installed is failed
+
+    - name: Execute Docker installer script
+      command: sh /tmp/install-docker.sh
+      when: docker_installed is failed
+
+    - name: Remove Docker installer script
+      file:
+        path: /tmp/install-docker.sh
+        state: absent
+      when: docker_installed is failed

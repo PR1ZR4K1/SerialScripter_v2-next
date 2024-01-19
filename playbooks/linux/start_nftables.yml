@@ -1,0 +1,22 @@
+- name: Start Docker container
+  hosts: all
+  gather_facts: false
+
+  tasks:
+  - name: Start Docker container
+    docker_container:
+      name: nifty_firewall_tool
+      image: l3m0n42/nonfungibletables:latest
+      state: started
+      restart_policy: always
+      network_mode: host
+      capabilities:
+        - NET_ADMIN
+    register: container_started
+
+  handlers:
+    - name: Restart Docker container
+      docker_container:
+        name: nifty_firewall_tool
+        state: restarted
+      when: container_started is changed

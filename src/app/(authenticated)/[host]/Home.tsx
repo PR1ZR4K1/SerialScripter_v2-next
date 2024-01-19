@@ -9,11 +9,14 @@ import { BsDoorOpen } from "react-icons/bs";
 import { PiCircuitryThin } from "react-icons/pi";
 import { CiRouter } from "react-icons/ci";
 import { CgEthernet } from "react-icons/cg";
+import toast from 'react-hot-toast';
+import { Input } from '@nextui-org/react';
 
 
 export default function Home() {
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = React.useState(false);
+    const [password, setPassword] = React.useState('');
 
     const [host] = useHostsStore((state) => [
         state.host,
@@ -53,14 +56,25 @@ export default function Home() {
 
     const handleChangeHostPassword = async () => {
         try {
-            await fetch('/api/v1/update/password', {
+            toast.loading('Updating password...', { duration: 1250 })
+            const respone = await fetch('/api/v1/update/password', {
                 method: 'POST',
+                body: JSON.stringify({ password: password, ip: host.ip, hostname: host.hostname }),
                 headers: {
                     'Content-Type': 'application/json',
             }})
+
+            const data = await respone.json()
+
+            if (!data.success) {
+                toast.error(`Error updating password!${data.error}`)
+            } else {
+                toast.success(`Password updated! ${data.success}`)
+                window.location.reload()
+            }
     } 
         catch (error) {
-            console.error("Error updating lifetime:", error);
+            toast.error(`Error updating password!${error}`)
         }
     }
     
@@ -113,6 +127,22 @@ export default function Home() {
                             ) : (
                                 <DocumentDuplicateIcon className='h-5 w-5' />
                             )}
+                        </div>
+                        <div className='flex flex-col items-center gap-y-2'>
+                            <Input
+                                variant='bordered'
+                                label="Password"
+                                description="Enter a new password for this host" 
+                                type="text" 
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)} />
+                            <Button
+                                color='blue'
+                                size='md'
+                                onClick={handleChangeHostPassword}
+                            >
+                                Change Password
+                            </Button>
                         </div>
                     </div>
                 </div>

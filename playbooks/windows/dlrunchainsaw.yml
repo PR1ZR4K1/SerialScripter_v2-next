@@ -1,0 +1,74 @@
+---
+- name: Install chainsaw & its dependencies, run it with JSON output
+  hosts: all  
+  gather_facts: no
+
+  tasks:
+    - name: Get Current Username
+      win_whoami:
+      register: current_user
+
+    - name: Display Current Username
+      debug:
+        var: current_user.account.account_name # access th ecurrent username via current_user.account.account_name
+
+    - name: Create directory for Chainsaw goodies
+      ansible.windows.win_file:
+        path: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+        state: directory
+
+    - name: Download rules.zip file from our Github
+      ansible.windows.win_get_url:
+        url: https://github.com/CSUSB-CISO/csusb-ccdc/raw/main/ansible-playbooks/chainsaw/rules.zip
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+    
+    - name: Unzip rules.zip file
+      ansible.builtin.win_unzip:
+        src: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\rules.zip
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+        delete_archive: yes
+        
+    - name: Download sigma.zip file from our Github
+      ansible.windows.win_get_url:
+        url: https://github.com/CSUSB-CISO/csusb-ccdc/raw/main/ansible-playbooks/chainsaw/sigma.zip
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+
+    - name: Unzip sigma.zip file
+      ansible.builtin.win_unzip:
+        src: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\sigma.zip
+        dest: C:\Users\{{current_user.account.account_name}}\\Desktop\\chainsaw
+        delete_archive: yes
+
+    - name: Download sigma event logs mapping file from our Github
+      ansible.windows.win_get_url:
+        url: https://raw.githubusercontent.com/CSUSB-CISO/csusb-ccdc/main/ansible-playbooks/chainsaw/sigma-event-logs-all.yml
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+
+    - name: Download chainsaw executable from our Github
+      ansible.windows.win_get_url:
+        url: https://github.com/CSUSB-CISO/csusb-ccdc/raw/main/ansible-playbooks/chainsaw/chainsaw.exe
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw
+
+    - name: Download vscode fix from our Github # May want to implement a flow to install 64-bit or 32-bit depending on system architecture
+      ansible.windows.win_get_url:
+        url: https://github.com/CSUSB-CISO/csusb-ccdc/raw/main/ansible-playbooks/chainsaw/VC_redist.x64.exe
+        dest: C:\Users\{{current_user.account.account_name}}\Desktop\
+
+
+          #- name: Run vscode fix quietly
+          #ansible.builtin.win_shell: |
+          #C:\Users\{{current_user.account.account_name}}\Desktop\VC_redist.x64.exe
+        
+    - name: Run visual studio fix for chainsaw quietly
+      ansible.builtin.win_shell: |
+        C:\Users\{{current_user.account.account_name}}\Desktop\VC_redist.x64.exe /quiet # Running this fix quietly may not work since it may be required that we restart the machine. So if chainsaw doesn't seem to be running correctly, this should be the 1st place we look (:
+        
+    - name: Run chainsaw with flags & output in JSON
+      ansible.builtin.win_shell: |
+        C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\chainsaw.exe hunt -r C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\rules\ C:\Windows\System32\winevt\Logs -s C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\sigma\rules --mapping C:\Users\{{current_user.account.account_name}}\Desktop\chainsaw\sigma-event-logs-all.yml --json
+      register: chainsaw_output
+
+
+    - name: Show chainsaw output
+      debug:
+        var: chainsaw_output

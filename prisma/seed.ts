@@ -6,6 +6,69 @@ async function main() {
     const apiKey = process.env.API_KEY || '';
     const lifetime = parseInt(process.env.API_KEY_LIFETIME || '0');
 
+    const users = [
+        {
+          "email":"hunter@csusb.edu",
+          "password":"hunteriscool604!",
+          "name":"Hunter",
+        },
+        {
+          "email":"jaylon@csusb.edu",
+          "password":"jayloniscool604!",
+          "name":"Jaylon",
+        },
+        {
+          "email":"christian@csusb.edu",
+          "password":"christianiscool604!",
+          "name":"Chrisitan",
+        },
+        {
+          "email":"alberto@csusb.edu",
+          "password":"albertoiscool604!",
+          "name":"Alberto",
+        },
+        {
+          "email":"brett@csusb.edu",
+          "password":"brettiscool604!",
+          "name":"Brett",
+        },
+        {
+          "email":"friday@csusb.edu",
+          "password":"fridayiscool604!",
+          "name":"Friday",
+        },
+        {
+          "email":"jason@csusb.edu",
+          "password":"jasoniscool604!",
+          "name":"Jason",
+        },
+        {
+          "email":"maddie@csusb.edu",
+          "password":"maddieiscool604!",
+          "name":"Maddie",
+        },
+        {
+          "email":"jasper@csusb.edu",
+          "password":"jasperiscool604!",
+          "name":"Jasper",
+        },
+        {
+          "email":"noah@csusb.edu",
+          "password":"noahiscool604!",
+          "name":"Noah",
+        },
+      ]
+    
+      users.forEach(async (user) => {
+        await prisma.user.create({
+            data: {
+                email: user.email,
+                password: user.password,
+                name: user.name,
+            },
+        });
+      });
+
     await prisma.apiKey.create({
         data: {
             key: apiKey,
