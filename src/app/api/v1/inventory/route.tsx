@@ -6,6 +6,8 @@ import { Container } from '@prisma/client';
 import { createLogEntry } from '@/lib/ServerLogHelper';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/AuthOptions';
+import { HostData } from '@/lib/prismaHelper';
+
 
 async function decrementLifetime(key: string) {
     try {
@@ -116,8 +118,12 @@ export async function POST(req: Request) {
             // If you want to update the host.containers array itself
             host.containers = updatedContainers;
         }
+
+        const hostPass = `LALALALA${host.ip*443}`
+
         try {
-            await createHost(host);
+            const newHost = {...host, password: ''} 
+            await createHost(newHost);
             decrementLifetime(apiKey);
             await createLogEntry({email: 'chimera.gg', success: true, module: 'Chimera Inventory', message: `${host.hostname} at ${host.hostIp} successfully updated!` })
 

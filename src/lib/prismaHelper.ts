@@ -63,7 +63,7 @@ export type ExtendedContainerType = Prisma.ContainerCreateManyHostInput & {
 };
 
 
-interface HostData {
+export interface HostData {
     hostname: string;
     ip: string;
     os: string;
@@ -141,7 +141,7 @@ export async function createHost(hostData: HostData) {
             hostData.users,
             createHostConnect(createdHost.id),
             (user, whereCondition) => prisma.userAccount.upsert({ where: whereCondition, create: user as Prisma.UserAccountCreateInput, update: user as Prisma.UserAccountUpdateInput }),
-            (user) => ({ name_hostId: { name: user.name, hostId: createdHost.id } }) // where condition
+            (user) => ({ name_uid_hostId: { name: user.name, uid: user.uid, hostId: createdHost.id } }) // where condition
         );
     }
 
@@ -158,7 +158,7 @@ export async function createHost(hostData: HostData) {
     if (hostData.connections && hostData.connections.length > 0) {
         // await createConnections(hostData.connections, createdHost.id);
         
-        hostData.connections.map((connection) => {if (connection.remoteAddress === null) connection.remoteAddress = ''; return connection;});
+        hostData.connections.map((connection) => {if (connection.remoteAddress === null) connection.remoteAddress = ''; if (connection.state === null) connection.state = 'closed'; return connection;});
 
         await upsertItem<ModifiedConnectionType, HostConnect>(
             hostData.connections.map(flattenProcesses),

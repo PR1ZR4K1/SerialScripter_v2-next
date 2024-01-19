@@ -164,8 +164,8 @@ model Connection {
   localAddress        String
   remoteAddress       String
   pid                 Int?
-  protocol            String
-  state               PortStatus 
+  protocol            String?
+  state               PortStatus? 
   hostId              Int
   host                Host?  @relation(fields: [hostId], references: [id])
 
@@ -236,7 +236,7 @@ model UserAccount {
   host      Host?    @relation(fields: [hostId], references: [id])
   hostId    Int
 
-  @@unique([ name, hostId])
+  @@unique([ name, uid, hostId])
 }
 
 model Share {

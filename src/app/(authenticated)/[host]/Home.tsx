@@ -46,6 +46,19 @@ export default function Home() {
     } catch (error) {
         console.log('dont know what to do w this', error)
     }
+
+    const handleChangeHostPassword = async () => {
+        try {
+            await fetch('/api/v1/update/password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+            }})
+    } 
+        catch (error) {
+            console.error("Error updating lifetime:", error);
+        }
+    }
     
   return (
     <div className='flex w-[95%] h-[90%] items-start gap-x-6'>
