@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Xterm from './Xterm';
 import { useHostsStore } from '@/store/HostsStore';
 import { getHostInfo } from '@/lib/getHostInfo';
 import { Host as PrismaHost, NetworkService, UserAccount } from "@prisma/client";
@@ -56,7 +57,7 @@ export default function HostViews({hostname}: {hostname: string}) {
     } else if (view === 'users'){
         content = <Users />
     } else if (view === 'xterm') {
-        content = <div>My Dashboard: {hostname}</div>;
+        content = <Xterm />
     } else if (view === 'disks') {
         content = <Disks />
     } else if (view === 'connections') {

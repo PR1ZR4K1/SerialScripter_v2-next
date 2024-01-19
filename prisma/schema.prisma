@@ -57,6 +57,7 @@ enum ShareType {
 enum KeyType {
     FIREWALL
     HOST
+    CRON
 }
 
 model User {
@@ -271,4 +272,12 @@ model Incident {
   host              Host?        @relation(fields: [hostId], references: [id])
   hostId            Int
   createdAt         DateTime      @default(now())
+}
+
+model CronJob {
+  id            Int     @id @default(autoincrement())
+  name          String  @unique
+  schedule      String
+  command       String
+  lastOutput    String?
 }
