@@ -9,7 +9,7 @@ import DynamicTable from '@/components/DynamicTable';
 
 export type TableIncidentType = Omit<Incident, 'createdAt' | 'tags'> & { createdAt: string, tags: string }; 
 
-export default function Cron() {
+export default function IncidentReport() {
   
   const [tableView, setTableView] = useState(true);
   const [incidents, setIncidents] = useState<TableIncidentType[]>([]);

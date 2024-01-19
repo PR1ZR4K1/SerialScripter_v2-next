@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { PrismaClient, Prisma } from '@prisma/client';
 export const dynamic = "force-dynamic"
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -53,6 +54,15 @@ export async function POST(req: Request) {
 
                 if (existingJobs) {
                     return new Response(JSON.stringify({ error: 'Cron job with that name already exists' }), {
+                        status: 400,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+
+                if (!cron.validate(schedule)) {
+                    return new Response(JSON.stringify({ error: 'Invalid cron schedule' }), {
                         status: 400,
                         headers: {
                             'Content-Type': 'application/json'
@@ -116,18 +126,13 @@ export async function POST(req: Request) {
                 for (let [key, value] of tasks.entries()) {
                     if (key == name) {
                         value.stop();
+                        console.log("Job sucesfully stopped");
                         await prisma.cronJob.delete({
                             where: {
                                 name: key,
                             },
                         });
-                    } else {
-                        return new Response(JSON.stringify({ error: 'Cron job not found' }), {
-                            status: 400,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
+                        break;
                     }
                 }
 
@@ -138,12 +143,23 @@ export async function POST(req: Request) {
                     }
                 });
             } catch (error) {
-                return new Response(JSON.stringify({ error: 'Error stopping cron job' }), {
-                    status: 500,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                console.log(error);
+
+                if (error.code === "P2025") {
+                    return new Response(JSON.stringify({ error: 'Cron job does not exist' }), {
+                        status: 500,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } else {
+                    return new Response(JSON.stringify({ error: 'Error stopping cron job' }), {
+                        status: 500,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
             }
         default:
             return new Response(JSON.stringify({ error: 'Invalid action' }), {
@@ -169,6 +185,7 @@ export async function GET(req: Request) {
 
     const existingJobs = await prisma.cronJob.findMany({
         select: {
+            id: true,
             name: true,
             schedule: true,
             command: true,
