@@ -20,7 +20,7 @@ export default function LoginWidget() {
       {/* Stylized text **/}
       <div className="text-center mb-4">
         <p className="text-3xl font-extrabold text-black">Login </p>
-        <p className="text-sm font-bold text-gray-600">to Cyberwarden</p>
+        <p className="text-sm font-bold text-gray-600">to Serial Scripter</p>
       </div>
       <form action={login} className="space-y-6">
         <div>
