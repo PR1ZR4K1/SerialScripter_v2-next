@@ -4,7 +4,7 @@
 
   tasks:
     - name: Add the provided SSH public key to authorized keys
-      ansible.builtin.authorized_key:
+      ansible.posix.authorized_key:
         user: root
         state: "{{ ssh_state }}"
         key: "{{ ssh_public_key }}" 

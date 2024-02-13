@@ -87,7 +87,7 @@ export default function Page() {
       for (const host of hosts) {
         const result = await fetch(`/api/v1/ansibleDeploy/${os}`, {
           method: "POST",
-          body: JSON.stringify({ hostIp: host.ip, playbook: `ssh_${os}`, extra_vars: `ansible_password=${host.password} ssh_state=${sshState} ssh_public_key='${publicKey}'` }),
+          body: JSON.stringify({ hostIp: host.ip, playbook: `ssh_${os}`, extra_vars: `ssh_state=${sshState} ssh_public_key='${publicKey}'` }),
           headers: {
             "Content-Type": "application/json",
           },
