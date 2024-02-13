@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  nonfungibletables:
+    image:  l3m0n42/nonfungibletables
+    container_name: nonfungibletables
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - nft:/KeyboardKowboys/Rules/
+    environment:
+      - API_KEY=${API_KEY}
+
+volumes:
+  nft:
+    name: nft

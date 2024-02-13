@@ -1,0 +1,24 @@
+- name: Manage Nifty Firewall Tool deployment with Docker Compose
+  hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Copy Compose File
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: "/root/docker-compose.yml"
+        mode: '0755'
+      become: yes  # This task may require superuser privilege if you're copying to a protected location like /root
+
+    - name: Set API_KEY in host environment
+      ansible.builtin.shell: |
+        export API_KEY="{{ API_KEY }}"
+      become: yes  # This task may require superuser privilege
+      args:
+        executable: /bin/bash
+
+    - name: Run Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "/root/"
+        state: restarted
+        pull: always

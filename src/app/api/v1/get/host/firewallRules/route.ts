@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { Agent, setGlobalDispatcher } from 'undici'
+import { createLogEntry } from '@/lib/ServerLogHelper';
+import { authOptions } from '@/app/api/auth/[...nextauth]/AuthOptions';
+import { getServerSession } from "next-auth/next"
+
 
 export const revalidate = 10;
 
@@ -21,6 +25,8 @@ export async function POST(req: Request) {
         });
     }
     
+    let userEmail = 'firewall.gg';
+    
     try {
         const { hostId , hostIp }: {hostId: number, hostIp: string} = await req.json();
 
@@ -32,6 +38,9 @@ export async function POST(req: Request) {
                 }
             });
         }
+        
+        const session = await getServerSession(authOptions)
+        userEmail = session?.user?.email || ''
 
         const firewallKey = await prisma.apiKey.findUnique({
             where: {
@@ -59,15 +68,7 @@ export async function POST(req: Request) {
           
         setGlobalDispatcher(agent)
 
-        // const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
-        //     method: 'GET',
-        //     headers: {
-        //         'API-Token': firewallKey.key,
-        //         'Content-Type': 'application/json'
-        //     },
-        // });
-
-        const result = await fetch(`https://192.168.1.194:8000/here/are/my/rules/sire`, {
+        const result = await fetch(`https://${hostIp}:8000/here/are/my/rules/sire`, {
             method: 'GET',
             headers: {
                 'API-Token': firewallKey.key,
@@ -75,7 +76,16 @@ export async function POST(req: Request) {
             },
         });
 
+        // const result = await fetch(`https://192.168.1.194:8000/here/are/my/rules/sire`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'API-Token': firewallKey.key,
+        //         'Content-Type': 'application/json'
+        //     },
+        // });
+
         if (!result.ok) {
+
             return new Response(JSON.stringify({ error: 'Failed to connect to remote host container!' }), {
                 status: 500,
                 headers: {

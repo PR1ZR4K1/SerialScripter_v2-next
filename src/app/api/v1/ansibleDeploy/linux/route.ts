@@ -107,6 +107,7 @@ export async function POST(req: Request) {
                 }
             });
         } else {
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: `Ansible Playbook Failed\n${error}` })
             return new Response(JSON.stringify({ error: `Internal Server Error\n ${typeof error}`, output: 'Unknown error' }), {
                 status: 500,
                 headers: {
