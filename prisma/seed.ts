@@ -388,13 +388,13 @@ async function main() {
   ]
     
     const host1 = await createHost({
-        hostname: 'bobby',
-        ip: '192.168.1.21',
+        hostname: 'bingus',
+        ip: '192.168.60.222',
         os: 'Linux',
         version: 'Ubuntu 20.04',
         cores: 4,
         cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
-        password: 'MacCheese4Me!',
+        password: 'password123',
         memory: 8192,
         disks: host1Disks,
         status: 'UP',
