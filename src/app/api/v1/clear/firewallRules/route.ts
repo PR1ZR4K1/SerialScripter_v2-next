@@ -41,9 +41,9 @@ export async function POST(req: Request) {
         userEmail = session?.user?.email || ''
 
         // get the firewall key from the database
-        const firewallKey = await prisma.apiKey.findUnique({
+        const firewallKey = await prisma.apiKey.findFirst({
             where: {
-                key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
+                type: 'FIREWALL',
             },
             select: {
                 key: true,
@@ -142,7 +142,7 @@ export async function POST(req: Request) {
         const networkError = error as NodeJS.ErrnoException;
 
         if (networkError.message) {
-            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to clear rules on remote host: ${error.message}`})
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to clear rules on remote host: ${networkError.message}`})
 
             return new Response(JSON.stringify({ error: `Failed to clear firewall rules!\n${networkError.message}` }), {
                 status: 500,

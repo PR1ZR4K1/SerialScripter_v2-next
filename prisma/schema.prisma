@@ -70,7 +70,7 @@ model User {
 model ApiKey {
   id       Int     @id @default(autoincrement())
   key      String  @unique
-  type     KeyType
+  type     KeyType 
   lifetime Int
 }
 

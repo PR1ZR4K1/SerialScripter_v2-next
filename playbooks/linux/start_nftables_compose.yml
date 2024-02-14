@@ -2,6 +2,8 @@
   hosts: all
   vars:
     ansible_python_interpreter: /usr/bin/python3
+  environment:
+    API_KEY: "{{ API_KEY }}"
   tasks:
     - name: Copy Compose File
       ansible.builtin.copy:
@@ -10,15 +12,22 @@
         mode: '0755'
       become: yes  # This task may require superuser privilege if you're copying to a protected location like /root
 
-    - name: Set API_KEY in host environment
-      ansible.builtin.shell: |
-        export API_KEY="{{ API_KEY }}"
-      become: yes  # This task may require superuser privilege
-      args:
-        executable: /bin/bash
+    # - name: Set API_KEY in host environment
+    #   # ansible.builtin.shell: |
+    #     # export API_KEY="{{ API_KEY }}"
+    #   become: yes  # This task may require superuser privilege
+    #   args:
+    #     executable: /bin/bash
 
     - name: Run Docker Compose
       community.docker.docker_compose_v2:
         project_src: "/root/"
-        state: restarted
-        pull: always
+        state: present
+        pull: missing
+
+    # - name: Remove API_KEY from /etc/environment
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/environment
+    #     regexp: '^API_KEY=.*'
+    #     state: absent
+    #   become: yes  # This task may require superuser privilege

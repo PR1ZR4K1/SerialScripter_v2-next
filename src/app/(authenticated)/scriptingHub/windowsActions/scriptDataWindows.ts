@@ -62,6 +62,14 @@ const rows = [
     risk: "Low",
     parameter: false,
     description: "Lists contents of C Drive and every common directory in Users folder"
+  },
+  {
+    id: 8,
+    scriptName: "dlrunchainsaw",
+    category: "Enumeration",
+    risk: "Low",
+    parameter: false,
+    description: "Install and run chainsaw on machine"
   }
 ];
 

@@ -1,13 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { KeyType } from "@prisma/client";
 import { generateApiKey } from  'generate-api-key';
+import { addHoursToCurrentTime } from '@/lib/apikeyHelper';
 
 
 
-function addHoursToCurrentTime(hours: number) {
-  const secondsPerHour = 3600;
-  return Math.floor((Date.now() / 1000) + (hours * secondsPerHour));
-}
 
 
 

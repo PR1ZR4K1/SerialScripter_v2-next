@@ -42,9 +42,9 @@ export async function POST(req: Request) {
         const session = await getServerSession(authOptions)
         userEmail = session?.user?.email || ''
 
-        const firewallKey = await prisma.apiKey.findUnique({
+        const firewallKey = await prisma.apiKey.findFirst({
             where: {
-                key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
+                type: 'FIREWALL',
             },
             select: {
                 key: true,
@@ -86,6 +86,7 @@ export async function POST(req: Request) {
 
         if (!result.ok) {
 
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Connecting to ${hostIp} failed!`})
             return new Response(JSON.stringify({ error: 'Failed to connect to remote host container!' }), {
                 status: 500,
                 headers: {
@@ -145,7 +146,9 @@ export async function POST(req: Request) {
             } catch (error) {
 
                 if (error instanceof Prisma.PrismaClientKnownRequestError) {
+
                     if (error.message) {
+                        createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to fetch firewall rules!\n${error.message}`})
                         return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error.message}` }), {
                             status: 500,
                             headers: {
@@ -154,6 +157,7 @@ export async function POST(req: Request) {
                         });
                     }
                 }
+                createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to fetch firewall rules!\n${error}`})
                 return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error}` }), {
                     status: 500,
                     headers: {
@@ -183,6 +187,7 @@ export async function POST(req: Request) {
 
         if (networkError.message) {
 
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to fetch firewall rules!\n${networkError.message}`})
             return new Response(JSON.stringify({ error: `Failed to get firewall rules!\n${networkError.message}` }), {
                 status: 500,
                 headers: {
@@ -190,6 +195,8 @@ export async function POST(req: Request) {
                 }
             });
         } else {
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to fetch firewall rules!\n${error}`})
+
             return new Response(JSON.stringify({ error: `Failed to get firewall rules! ${error}` }), {
                 status: 500,
                 headers: {
