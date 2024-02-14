@@ -42,6 +42,8 @@ RUN apk --no-cache add ansible sshpass openssh
 
 RUN ansible-galaxy collection install community.docker --force
 
+RUN mkdir /opt/memento
+
 # Copy built node modules and build directories from the builder stage
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next

@@ -66,10 +66,26 @@ const rows = [
   {
     id: 8,
     scriptName: "dlrunchainsaw",
-    category: "Enumeration",
-    risk: "Low",
+    category: "windows",
+    risk: "Medium",
     parameter: false,
-    description: "Install and run chainsaw on machine"
+    description: "Attempts to download chainsaw & its dependencies & run it. Outputs in JSON"
+  },
+  {
+    id: 9,
+    scriptName: "changepass",
+    category: "windows",
+    risk: "Medium",
+    parameter: true,
+    description: "Attemps to change the password of all AD users to the same password. Parameter Usage: newPassword=password"
+  },
+  {
+    id: 10,
+    scriptName: "smbupgrade",
+    category: "windows",
+    risk: "low",
+    parameter: false,
+    description: "Attempts to upgrade the version of SMB"
   }
 ];
 

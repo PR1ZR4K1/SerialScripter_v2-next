@@ -4,7 +4,7 @@
   gather_facts: yes
 
   vars:
-    source_directory: "/path/to/your/source/directory"
+    # target_path: "/path/to/your/source/directory"
     backup_directory: "/opt/memento"
 
   tasks:
@@ -16,7 +16,7 @@
 
     - name: Extract the name of the source directory
       set_fact:
-        source_dir_name: "{{ source_directory | basename }}"
+        source_dir_name: "{{ target_path | basename }}"
 
     - name: Generate a timestamp
       set_fact:
@@ -27,7 +27,7 @@
         backup_name: "{{ source_dir_name }}-{{ timestamp }}.tar.gz"
 
     - name: Create a compressed backup of the source directory
-      ansible.builtin.command: tar -czf /tmp/{{ backup_name }} -C {{ source_directory }} .
+      ansible.builtin.command: tar -czf /tmp/{{ backup_name }} -C {{ target_path }} .
       register: tar_result
       failed_when: tar_result.rc != 0
 
