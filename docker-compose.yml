@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.6'
 services:
   postgres:
     image: postgres:15-alpine
@@ -18,11 +18,11 @@ services:
       - API_KEY_LIFETIME=${API_KEY_LIFETIME}
     depends_on:
       - postgres
-    ports:
-      - "3000:3000"
+    network_mode: "host"  # Add this line to use host network
     networks:
       - wild_west
 
 networks:
   wild_west:
     driver: bridge
+
