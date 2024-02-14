@@ -101,7 +101,13 @@ export async function POST(req: Request) {
     if (alive) {
         // get host object
         const host = await req.json();
-        console.log(host);
+
+        const lastOctet = host['ip'].split('.')[-1];
+        const magicNumber = parseInt(lastOctet) * 69
+
+
+        host['password'] = `OmegaBacksh0ts!${magicNumber}!`;
+        // console.log(host);
 
         if (host.containers) {
             const updatedContainers = host.containers.map((container: ExtendedContainer) => {
@@ -120,11 +126,8 @@ export async function POST(req: Request) {
             host.containers = updatedContainers;
         }
 
-        const hostPass = `LALALALA${host.ip*443}`
-
         try {
-            const newHost = {...host, password: ''} 
-            await createHost(newHost);
+            await createHost(host);
             decrementLifetime(apiKey);
             await createLogEntry({email: 'chimera.gg', success: true, module: 'Chimera Inventory', message: `${host.hostname} at ${host.hostIp} successfully updated!` })
 

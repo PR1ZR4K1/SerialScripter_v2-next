@@ -6,10 +6,12 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: test
+    # network_mode: "host"
+    
     ports:
-      - "5432:5432"
-    networks:
-      - wild_west
+      - "127.0.0.1:5432:5432"
+    # networks:
+    #   - wild_west
 
   serial:
     image: serial    
@@ -18,11 +20,16 @@ services:
       - API_KEY_LIFETIME=${API_KEY_LIFETIME}
     depends_on:
       - postgres
-    network_mode: "host"  # Add this line to use host network
-    networks:
-      - wild_west
+    network_mode: "host"
+    
+    # network_mode: "host"  # Add this line to use host network
+    # networks:
+    #   - wild_east
+    #   - wild_west
 
-networks:
-  wild_west:
-    driver: bridge
+# networks:
+#   wild_west:
+#     driver: bridge
+#   wild_east:
+#     driver: host
 

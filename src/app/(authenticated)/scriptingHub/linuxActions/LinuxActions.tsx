@@ -71,7 +71,7 @@ export default function LinuxActions() {
       const hasParameter: boolean = rows[playbookId].parameter;
 
       if (hasParameter) {
-        console.log('linux keys', selectedKeysLinuxHosts)
+        // console.log('linux keys', selectedKeysLinuxHosts)
         selectedKeysLinuxHosts.forEach((hostId, index) => {
           playbooksWithParameters.push(
             { 

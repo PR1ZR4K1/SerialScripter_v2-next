@@ -86,7 +86,7 @@ export async function GET(
     { params }: { params: { host: string } }
 ) {
     const serialIp = req.headers.get('X-Forwarded-For') || '127.0.0.1'
-    console.log("serialIp", serialIp);
+    // console.log("serialIp", serialIp);
 
     const searchParams = req.nextUrl.searchParams;
     const os = searchParams.get('os');
