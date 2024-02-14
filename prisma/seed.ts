@@ -1,9 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { generateApiKey } from  'generate-api-key';
-import { addHoursToCurrentTime } from '../src/lib/apikeyHelper';
-import { hash } from 'bcrypt';
-
-
 
 const prisma = new PrismaClient();
 
@@ -14,55 +9,55 @@ async function main() {
     const users = [
         {
           "email":"hunter@csusb.edu",
-          "password":"$2b$12$eOiAxyCmxsfHstz43CQRou2Wxww9XOVgmH0Z35v/3pZrc7uYiU3pW",
+          "password":"hunteriscool604!",
           "name":"Hunter",
         },
         {
           "email":"jaylon@csusb.edu",
-          "password":"$2b$12$tukI444NtRCEY4PL1tdlqehO2IVOaNo.SWGNHKdpgf8WdIupqiN7e",
+          "password":"jayloniscool604!",
           "name":"Jaylon",
         },
         {
           "email":"christian@csusb.edu",
-          "password":"$2b$12$csBttbAzeO8ibWFUzsW0VOgKIUXL2e.mEQP4tXlcV0ZAIDtSZTDIe",
+          "password":"christianiscool604!",
           "name":"Chrisitan",
         },
         {
           "email":"alberto@csusb.edu",
-          "password":"$2b$12$9DEENHG7PVgIcLFas9qGguxifwOdsG8V9ZmPWmc/w3nooTUSDpTqu",
+          "password":"albertoiscool604!",
           "name":"Alberto",
         },
         {
           "email":"brett@csusb.edu",
-          "password":"$2b$12$A/4IzfKbhPk8cXrkCV7Ru.B0dq4MdtDtKnVBNzmge77MRUnqvL64K",
+          "password":"brettiscool604!",
           "name":"Brett",
         },
         {
           "email":"friday@csusb.edu",
-          "password":"$2b$12$93W09RDNHESV3MlFMJxzPunUeE0viKTMqbwZCaXGyVuY/.JDYIilq",
+          "password":"fridayiscool604!",
           "name":"Friday",
         },
         {
           "email":"jason@csusb.edu",
-          "password":"$2b$12$M55oeOelF4F4fbB/7bS6A.qAD9E4RZhNzqJcA5hwAzmSYe94O6ZLK",
+          "password":"jasoniscool604!",
           "name":"Jason",
         },
         {
           "email":"maddie@csusb.edu",
-          "password":"$2b$12$LheTPe/pynHutfBIZuhBhOaCZzUd3SkmIslb0Fcwxwp0REtXIEzTm",
+          "password":"maddieiscool604!",
           "name":"Maddie",
         },
         {
           "email":"jasper@csusb.edu",
-          "password":"$2b$12$d.JhcGZhCPrK/SzIl7olHOlG8umwcZbM.2ptkKn38uzCkzmc41uW.",
+          "password":"jasperiscool604!",
           "name":"Jasper",
         },
         {
           "email":"noah@csusb.edu",
-          "password":"$2b$12$GRaAwxgFWG4KAsx1lPiWVemw/Ve1VAYIKID8F63ZH5g7g2WOgmODa",
+          "password":"noahiscool604!",
           "name":"Noah",
         },
-      ];
+      ]
     
       users.forEach(async (user) => {
         await prisma.user.create({
@@ -84,9 +79,9 @@ async function main() {
 
     await prisma.apiKey.create({
         data: {
-            key: generateApiKey({ method: 'string', length: 32}) as string,
+            key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
             type: 'FIREWALL',
-            lifetime: addHoursToCurrentTime(8),
+            lifetime: 10,
         },
     });
 
