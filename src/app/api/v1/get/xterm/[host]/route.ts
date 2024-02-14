@@ -9,8 +9,7 @@ function spawnGotty(username: string, host: string, port: number, serialIp: stri
             '--timeout', '10',
             '-p', port.toString(),
             '-w', '-r',
-            //'ssh', `${username}@${host}`
-            'ssh', `cm03@192.168.1.160`
+            'ssh', `${username}@${host}`
         ], {
             detached: true,
             stdio: ['ignore', 'pipe', 'pipe'], // 'pipe' for stdout and stderr
