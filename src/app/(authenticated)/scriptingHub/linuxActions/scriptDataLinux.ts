@@ -2,10 +2,10 @@ const rows = [
   {
     id: 0,
     scriptName: "backup",
-    category: "backups",
+    category: "Backups",
     risk: "low",
     parameter: true,
-    description: "Makes a compressed backup of the specified directory and put it into the /opt/memento directory"
+    description: "Makes a compressed backup of the specified directory and put it into the /opt/memento directory. Parameter Usage: target_path=/tmp"
   },
   {
     id: 1,
@@ -24,16 +24,8 @@ const rows = [
     description: "Checks for distribution of systems and installs docker"
   },
   {
-    id: 3,
-    scriptName: "Checksum",
-    category: "Utility",
-    risk: "Low",
-    parameter: true,
-    description: "Runs SHA256 algorithm to gather checksum of specified file or directory and outputs to standard output"
-  },
-  {
     id: 4,
-    scriptName: "Linpeas",
+    scriptName: "linpeas",
     category: "Utility",
     risk: "High",
     parameter: false,
@@ -45,7 +37,7 @@ const rows = [
     category: "Startup",
     risk: "High",
     parameter: true,
-    description: "Downloads and uses Nifty Firewall Tool's offical docker compose file and starts it on remote hosts"
+    description: "Downloads and uses Nifty Firewall Tool's offical docker compose file and starts it on remote hosts. Parameter Usage: API_KEY=1234"
   },
   {
     id: 6,
@@ -53,7 +45,7 @@ const rows = [
     category: "Utility",
     risk: "Low",
     parameter: true,
-    description: "Attempts to restore from Backup created by Backup playbook"
+    description: "Attempts to restore from Backup created by Backup playbook. Parameter Usage: target_path=/tmp/"
   },
   {
     id: 7,
@@ -62,6 +54,14 @@ const rows = [
     risk: "High",
     parameter: true,
     description: "Attempts Start Nifty Firewall Tool using strictly Ansible (Use only if compose failed)"
+  },
+  {
+    id: 8,
+    scriptName: "integrity",
+    category: "Backups",
+    risk: "Low",
+    parameter: true,
+    description: "Checks file hash of specified target_path and returns it. Parameter Usage: target_path=/tmp/test.txt"
   },
 ];
 

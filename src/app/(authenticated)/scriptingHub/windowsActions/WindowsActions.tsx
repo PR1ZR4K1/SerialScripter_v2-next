@@ -141,7 +141,7 @@ export default function WindowsActions() {
     }
 };
 
-  console.log('selectedKeysWindowsPlaybooks:', selectedKeysWindowsPlaybooks)
+  // console.log('selectedKeysWindowsPlaybooks:', selectedKeysWindowsPlaybooks)
 
   return (
     view === 'scripts' ? (

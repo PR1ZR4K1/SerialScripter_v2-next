@@ -5,7 +5,7 @@
 
   vars:
     backup_directory: "/opt/memento"
-    restore_directory: "/path/to/your/restore/directory" 
+    # target_path: "/path/to/your/restore/directory" 
     source_name: "{{ source_name }}" #replace with the name of the source you want to restore
 
   tasks:
@@ -22,17 +22,17 @@
 
     - name: Ensure the restore directory exists
       ansible.builtin.file:
-        path: "{{ restore_directory }}"
+        path: "{{ target_path }}"
         state: directory
         mode: '0755'
 
     - name: Extract the newest backup in the restore directory
       ansible.builtin.unarchive:
         src: "{{ newest_backup.path }}"
-        dest: "{{ restore_directory }}"
+        dest: "{{ target_path }}"
         remote_src: yes
         extra_opts: [--strip-components=1] 
 
     - name: Show the restored file details
       debug:
-        msg: "Restored backup {{ newest_backup.path }} to {{ restore_directory }}"
+        msg: "Restored backup {{ newest_backup.path }} to {{ target_path }}"

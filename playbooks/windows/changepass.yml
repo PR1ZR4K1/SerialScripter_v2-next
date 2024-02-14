@@ -16,6 +16,6 @@
         $excludedUsers = "{{ excluded_users }}".Split(',')
         foreach ($user in "{{ users.stdout_lines }}") {
           if ($excludedUsers -notcontains $user) {
-            Set-ADAccountPassword -Identity $user -Reset -NewPassword (ConvertTo-SecureString -AsPlainText "Password123!" -Force)
+            Set-ADAccountPassword -Identity $user -Reset -NewPassword (ConvertTo-SecureString -AsPlainText {{ newPassword }} -Force)
           }
         }

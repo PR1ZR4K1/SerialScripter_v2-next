@@ -6,8 +6,7 @@ WORKDIR /app
 
 # Install build dependencies (Alpine uses apk)
 # Note: build dependencies can be removed after building
-RUN apk --no-cache add --virtual builds-deps build-base python3 sshpass ansible
-
+RUN apk --no-cache add --virtual builds-deps build-base 
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -39,9 +38,11 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-RUN apk --no-cache add ansible
+RUN apk --no-cache add ansible sshpass openssh
 
-RUN ansible-galaxy collection install community.docker
+RUN ansible-galaxy collection install community.docker --force
+
+RUN mkdir /opt/memento
 
 # Copy built node modules and build directories from the builder stage
 COPY --from=builder /app/node_modules ./node_modules
@@ -54,6 +55,7 @@ COPY --from=builder /app/.env ./
 COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/playbooks ./playbooks
 COPY --from=builder /app/gotty ./
+COPY --from=builder /app/ansible.cfg ./
 
 # Set environment to production
 ENV NODE_ENV=production
@@ -62,4 +64,6 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Start the application
-CMD ["/bin/sh", "-c", "while ! nc -z postgres 5432; do sleep 1; done; npx prisma db push && npx prisma db seed && npm start"]
+# CMD ["/bin/sh", "-c", "while ! nc -z 127.0.0.1 5432; do sleep 1; done; npx prisma db push && npx prisma db seed && npm start"]
+
+CMD ["/bin/sh", "-c", "sleep 5; npx prisma db push && npx prisma db seed && npm start"]
