@@ -18,3 +18,5 @@ npx prisma migrate dev
 
 # Seed the database with data
 npx prisma db seed
+
+npm run dev

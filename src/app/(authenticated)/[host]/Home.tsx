@@ -2,7 +2,7 @@ import { useHostsStore } from '@/store/HostsStore'
 import Image from 'next/image';
 import React from 'react'
 import { Typography, Button } from '@material-tailwind/react';
-import { CpuChipIcon, CheckIcon, DocumentDuplicateIcon, CircleStackIcon, WifiIcon, UserIcon, Cog6ToothIcon, } from '@heroicons/react/24/outline';
+import { CpuChipIcon, CheckIcon, DocumentDuplicateIcon, CircleStackIcon, WifiIcon, UserIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { useCopyToClipboard } from "usehooks-ts";
 import { LuMemoryStick } from "react-icons/lu";
 import { BsDoorOpen } from "react-icons/bs";

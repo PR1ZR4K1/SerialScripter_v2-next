@@ -15,7 +15,7 @@
     register: container_started
 
   handlers:
-    - name: Restart Docker container
+    - name: Restart Docker containera
       docker_container:
         name: nifty_firewall_tool
         state: restarted

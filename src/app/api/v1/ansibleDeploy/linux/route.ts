@@ -47,6 +47,7 @@ export async function POST(req: Request) {
         })
 
         if (!data) {
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: 'Host password not found in database' })
             return new Response(JSON.stringify({ error: `Host password not found in database` }), {
                 status: 408,
                 headers: {
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
 
         if (stderr) {
             // console.log(stdout);
-            createLogEntry({email: userEmail, success: false, module: 'Public Key Deployment', message: stderr })
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: stderr })
 
             return new Response(JSON.stringify({ error: `Ansible Playbook Error\n${stderr}` }), {
                 status: 409,
@@ -107,6 +108,7 @@ export async function POST(req: Request) {
                 }
             });
         } else {
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: `Ansible Playbook Failed\n${error}` })
             return new Response(JSON.stringify({ error: `Internal Server Error\n ${typeof error}`, output: 'Unknown error' }), {
                 status: 500,
                 headers: {

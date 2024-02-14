@@ -17,7 +17,7 @@ const rows = [
   },
   {
     id: 2,
-    scriptName: "Docker Install",
+    scriptName: "install_docker",
     category: "Startup",
     risk: "High",
     parameter: false,
@@ -41,15 +41,15 @@ const rows = [
   },
   {
     id: 5,
-    scriptName: "Nftables with Docker Compose",
+    scriptName: "start_nftables_compose",
     category: "Startup",
     risk: "High",
-    parameter: false,
+    parameter: true,
     description: "Downloads and uses Nifty Firewall Tool's offical docker compose file and starts it on remote hosts"
   },
   {
     id: 6,
-    scriptName: "Restore from Backup",
+    scriptName: "restore_from_backup",
     category: "Utility",
     risk: "Low",
     parameter: true,
@@ -57,10 +57,10 @@ const rows = [
   },
   {
     id: 7,
-    scriptName: "Start Niftyfirewall Tool Basi",
+    scriptName: "start_nftables",
     category: "Startup",
     risk: "High",
-    parameter: false,
+    parameter: true,
     description: "Attempts Start Nifty Firewall Tool using strictly Ansible (Use only if compose failed)"
   },
 ];

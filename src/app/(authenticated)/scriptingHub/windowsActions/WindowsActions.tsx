@@ -59,8 +59,9 @@ export default function WindowsActions() {
       getWindowsHosts();
       setIsFirstRender(false);
     }
-  }, [getWindowsHosts, isFirstRender, isParameterModalOpen, windowsHosts, openAnsibleModal, parameterizedPlaybooks.length, selectedKeysWindowsHosts, selectedKeysWindowsPlaybooks, setAnsibleOutput, parameterizedPlaybooks, playbooksToDeploy])
+  }, [getWindowsHosts, isFirstRender, isParameterModalOpen, windowsHosts, openAnsibleModal, parameterizedPlaybooks.length, selectedKeysWindowsHosts, selectedKeysWindowsPlaybooks, setAnsibleOutput, parameterizedPlaybooks, playbooksToDeploy, isFirstDeployment])
 
+  // console.log(windowsHosts)
 
   // get list of playbooks that need to take user input for parameters
   const getParameterizedPlaybooks = () => {
@@ -139,6 +140,8 @@ export default function WindowsActions() {
         // Handle any errors here
     }
 };
+
+  console.log('selectedKeysWindowsPlaybooks:', selectedKeysWindowsPlaybooks)
 
   return (
     view === 'scripts' ? (

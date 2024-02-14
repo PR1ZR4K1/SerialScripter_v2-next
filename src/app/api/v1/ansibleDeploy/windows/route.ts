@@ -47,6 +47,8 @@ export async function POST(req: Request) {
         })
 
         if (!data) {
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: 'Host password not found in database' })
+
             return new Response(JSON.stringify({ error: `Host password not found in database` }), {
                 status: 408,
                 headers: {
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
         const {stdout, stderr} = await executePlaybook(hostIp, playbook, password, extra_vars || '');
 
         if (stderr) {
-            createLogEntry({email: userEmail, success: false, module: 'Public Key Deployment', message: stderr })
+            createLogEntry({email: userEmail, success: false, module: 'Ansible Deployment', message: stderr })
 
             // console.log(stdout);
             return new Response(JSON.stringify({ error: `Ansible Playbook Error\n${stderr}` }), {
@@ -119,7 +121,7 @@ export async function POST(req: Request) {
 async function executePlaybook(hostIP: string, playbook: string, password: string, extra_vars: string = '') {
     // Execute the playbook
     // const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, /app/playbooks/linux/${playbook}.yml -e "ansible_user=root ansible_shell_type=sh ansible_connection=ssh ${extra_vars}"`);
-    const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, ./playbooks/windows/${playbook}.yml -e "ansible_user=root ansible_shell_type=sh ansible_connection=ssh ansible_password=${password} ${extra_vars}"`);
+    const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, ./playbooks/windows/${playbook}.yml -e "ansible_user=Administrator ansible_shell_type=powershell ansible_connection=ssh ansible_password=${password} ${extra_vars}"`);
     // const { stdout, stderr } = await execPromise(`pwd`);
     // console.log('stdout:', stdout);
     // console.log('stderr:', stderr);

@@ -1,7 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { Agent, setGlobalDispatcher } from 'undici'
-
+import { createLogEntry } from '@/lib/ServerLogHelper';
+import { authOptions } from '@/app/api/auth/[...nextauth]/AuthOptions';
+import { getServerSession } from "next-auth/next"
 
 export const revalidate = 10;
 
@@ -24,6 +26,8 @@ export async function POST(req: Request) {
         });
     }
 
+    let userEmail = 'firewall.gg';
+
     try {
         const { hostId, hostIp, rules }: { hostId: number, hostIp: string, rules: RuleType[] } = await req.json();
         
@@ -37,10 +41,12 @@ export async function POST(req: Request) {
             });
         }
 
+        const session = await getServerSession(authOptions)
+        userEmail = session?.user?.email || ''
         // get the firewall key from the database
-        const firewallKey = await prisma.apiKey.findUnique({
+        const firewallKey = await prisma.apiKey.findFirst({
             where: {
-                key: '440e585a2a08a4e5b2bef11d3469e6538491cfaec0d3f9a139d8db022e59a03bfd6095f25f876eae7a8689574c2e2687fb4b5c892e238f677b9af81785404703',
+                type: 'FIREWALL',
             },
             select: {
                 key: true,
@@ -79,16 +85,7 @@ export async function POST(req: Request) {
             }
         });
 
-        // const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'API-Token': firewallKey.key,
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(formattedRules)
-        // });
-
-        const result = await fetch(`https://192.168.1.194:8000/hippity/hoppity/your/packets/are/my/property`, {
+        const result = await fetch(`https://${hostIp}:8000/hippity/hoppity/your/packets/are/my/property`, {
             method: 'PUT',
             headers: {
                 'API-Token': firewallKey.key,
@@ -97,8 +94,19 @@ export async function POST(req: Request) {
             body: JSON.stringify(formattedRules)
         });
 
+        // const result = await fetch(`https://192.168.1.194:8000/hippity/hoppity/your/packets/are/my/property`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         'API-Token': firewallKey.key,
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(formattedRules)
+        // });
+
         // make sure the request was successful
         if (!result.ok) {
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to update rules on remote host!\n${result}`})
+
             return new Response(JSON.stringify({ error: 'Failed to update rules on remote host!' }), {
                 status: 500,
                 headers: {
@@ -140,6 +148,8 @@ export async function POST(req: Request) {
 
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.message) {
+                    createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to add firewall rules!\n${error.message}`})
+
                     return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error.message}` }), {
                         status: 500,
                         headers: {
@@ -148,6 +158,8 @@ export async function POST(req: Request) {
                     });
                 }
             }
+
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to add firewall rules!\n${error}`})
             return new Response(JSON.stringify({ error: `Failed to add firewall rules! ${error}` }), {
                 status: 500,
                 headers: {
@@ -155,6 +167,8 @@ export async function POST(req: Request) {
                 }
             });
         }
+
+        createLogEntry({email: userEmail, success: true, module: 'Firewall Rules', message: `Successfully changes rules on ${hostIp}!`})
 
         return new Response(JSON.stringify({ msg: 'Successfully changed rules on remote host' }), {
             status: 200,
@@ -166,14 +180,16 @@ export async function POST(req: Request) {
         const networkError = error as NodeJS.ErrnoException;
 
         if (networkError.message) {
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to update firewall rules!\n${networkError.message}`})
 
-            return new Response(JSON.stringify({ error: `Failed to get firewall rules!\n${networkError.message}` }), {
+            return new Response(JSON.stringify({ error: `Failed to update firewall rules!\n${networkError.message}` }), {
                 status: 500,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
         } else {
+            createLogEntry({email: userEmail, success: false, module: 'Firewall Rules', message: `Failed to update firewall rules!\n${error}`})
             return new Response(JSON.stringify({ error: `Failed to get firewall rules! ${error}` }), {
                 status: 500,
                 headers: {

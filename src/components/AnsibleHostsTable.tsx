@@ -108,6 +108,8 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
     });
   }
 
+  // console.log(selectedKeysWindowsHosts)
+  // console.log(windowsHosts)
   return (
     <div className="flex flex-col gap-3">
       <Table 
