@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   const windowsHosts = await prisma.host.findMany({
     where: {
-        os: 'Windows'
+        os: 'windows'
     },
   });
 
