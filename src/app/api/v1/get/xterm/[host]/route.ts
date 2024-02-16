@@ -91,9 +91,9 @@ export async function GET(
     const searchParams = req.nextUrl.searchParams;
     const os = searchParams.get('os');
 
-    console.log("os", os);
+    // console.log("os", os);
 
-    const username = os === 'Linux' ? 'root' : 'Administrator';
+    const username = os?.toLowerCase() === 'linux' ? 'root' : 'Administrator';
     const port = await findRandomOpenPort();
 
     // https://localhost:33/eg/.ere/192.168.220.1?os=windows
