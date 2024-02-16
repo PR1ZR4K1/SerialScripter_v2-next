@@ -53,26 +53,114 @@ async function main() {
           "name":"Maddie",
         },
         {
-          "email":"jasper@csusb.edu",
-          "password":"$2b$12$d.JhcGZhCPrK/SzIl7olHOlG8umwcZbM.2ptkKn38uzCkzmc41uW.",
-          "name":"Jasper",
+            "shareType": "sMB",
+            "networkPath": "/var/smb4"
         },
         {
-          "email":"noah@csusb.edu",
-          "password":"$2b$12$GRaAwxgFWG4KAsx1lPiWVemw/Ve1VAYIKID8F63ZH5g7g2WOgmODa",
-          "name":"Noah",
+            "shareType": "nFS",
+            "networkPath": "/var/nfs5"
         },
-      ];
+        {
+            "shareType": "sMB",
+            "networkPath": "/var/smb5"
+        }
+    ];
+
+    const host2Containers: ExtendedContainerType[] = [
+    {
+      "containerId": "65680f10810410642c109dd26fd37cfe06da9d26ad7c20fda5eecce689d5e371",
+      "name": "/stoic_darwin",
+      "containerNetworks": [
+        {
+          "networkName": "host",
+          "ip": "10.10.69.420",
+          "gateway": "0.0.0.0",
+          "macAddress": "lalalaal"
+        }
+      ],
+      "portBindings": ['12', '22'],
+      "containerVolumes": [
+        {
+          "hostPath": "/var/lib/docker/volumes/test/_data",
+          "containerPath": "/home/root",
+          "mode": "z",
+          "volumeName": "test",
+          "rw": true,
+          "vType": "volume"
+        }
+      ],
+      "status": "running",
+      "cmd": "/bin/bash"
+    }
+  ]
     
-      users.forEach(async (user) => {
-        await prisma.user.create({
-            data: {
-                email: user.email,
-                password: user.password,
-                name: user.name,
-            },
-        });
-      });
+    const host1 = await createHost({
+        hostname: 'bingus',
+        ip: '192.168.60.222',
+        os: 'Linux',
+        version: 'Ubuntu 20.04',
+        cores: 4,
+        cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        password: 'password123',
+        memory: 8192,
+        disks: host1Disks,
+        status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '00:1A:2B:3C:4D:5E',
+        ports: host1NetworkServices,
+        services: host1SystemServices,
+        users: host1UserAccounts,
+        connections: host1Connections,
+        shares: host1Shares, 
+    });
+
+    const host2 = await createHost({
+        hostname: 'bathtub',
+        ip: '192.168.60.167',
+        os: 'windows',
+        version: 'Windows 10 Pro',
+        password: 'password123',
+        cores: 8,
+        memory: 931712,
+        cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        disks: host2Disks,
+        status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '56:78:9A:BC:DE:F0',
+        ports: host2NetworkServices,
+        services: host2SystemServices,
+        users: host2UserAccounts,
+        connections: host2Connections,
+        shares: host2Shares,
+        containers: host2Containers,
+    });
+
+    // Additional hosts can be created in a similar way
+    // await prisma.apiKey.create({
+    //     data: {
+    //         key: process.env.API_KEY,
+    //         type: 'HOST',
+    //         lifetime: 10,
+    //     },
+    // });
+
+    const host3 = await createHost({
+        hostname: 'aaron',
+        ip: '192.168.60.251',
+        os: 'windows',
+        version: 'Windows 10 Pro',
+        password: 'Password123!',
+        cores: 8,
+        memory: 931712,
+        cpu: '13th Gen Intel(R) Core(TM) i9-13900HX',
+        disks: host2Disks,
+        status: 'UP',
+        gateway: '192.168.60.1',
+        dhcp: true,
+        macAddress: '56:78:9A:BC:DE:F0',
+    });
 
     await prisma.apiKey.create({
         data: {

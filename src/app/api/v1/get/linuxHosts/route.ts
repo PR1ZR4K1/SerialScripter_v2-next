@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   const linuxHosts = await prisma.host.findMany({
     where: {
-        os: 'Linux'
+        os: 'linux'
     },
   });
 

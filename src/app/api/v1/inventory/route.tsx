@@ -102,7 +102,7 @@ export async function POST(req: Request) {
         // get host object
         const host = await req.json();
 
-        const lastOctet = host['ip'].split('.')[-1];
+        const lastOctet = host['ip'].split('.')[3];
         const magicNumber = parseInt(lastOctet) * 69
 
 

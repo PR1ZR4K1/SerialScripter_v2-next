@@ -93,7 +93,7 @@ export default function Home() {
                 </div>
 
                     <div className='font-bold text-center'>
-                        {host.version || 'N/A'}
+                        {host.hostname || 'N/A'}
                     </div>
                     <div className='flex flex-col justify-evenly text-sm h-full font-medium'>
 

@@ -91,7 +91,7 @@ export async function createHost(hostData: HostData) {
     const host = {
         hostname: hostData.hostname,
         ip: hostData.ip,
-        os: hostData.os,
+        os: hostData.os.toLowerCase(),
         cpu: hostData.cpu,
         cores: hostData.cores,
         memory: hostData.memory,
