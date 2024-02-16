@@ -14,7 +14,7 @@ services:
     #   - wild_west
 
   serial:
-    image: serial    
+    image: m00nl1g7/serial    
     environment:
       - API_KEY=${API_KEY}
       - API_KEY_LIFETIME=${API_KEY_LIFETIME}
