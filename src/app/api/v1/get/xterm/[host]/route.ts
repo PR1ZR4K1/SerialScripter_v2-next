@@ -19,6 +19,7 @@ function spawnGotty(username: string, host: string, port: number, serialIp: stri
 
         let output = '';
         gotty.stderr.on('data', (data) => {
+            console.log("Received data from GoTTY:", data.toString()); // Temporarily log data for debugging
             output += data.toString();
             // Process or check the output here if needed
             // If the URL or necessary data is found in the output, you can resolve the promise
@@ -70,8 +71,12 @@ function findRandomOpenPort(): Promise<number> {
 
 function getUrl(input: string, host: string): string | null {
     const lines = input.split('\n'); // Split the input into lines
+    console.log('Lines:\n', lines)
+    console.log(`Input: ${input}\nHost: ${host}`)
     for (const line of lines) {
         if (line.includes("URL") && !line.includes("127.0.0.1") && !line.includes("::1") && line.includes(host.split(":")[0])) {
+
+            console.log('Found the Line:', line);
             // Check if the line contains 'URL', is not localhost, and contains the host
             return line.split("URL:")[1].trim(); // Return the URL if it's valid
         }
