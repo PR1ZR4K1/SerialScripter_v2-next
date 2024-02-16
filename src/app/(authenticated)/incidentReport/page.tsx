@@ -98,10 +98,10 @@ export default function IncidentReport() {
         const contentDisposition = response.headers.get('Content-Disposition');
         let filename = 'download';
         if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (filenameMatch && filenameMatch.length > 1) {
-            filename = filenameMatch[1];
-        }
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (filenameMatch && filenameMatch.length > 1) {
+              filename = filenameMatch[1];
+          }
         }
 
         // Create a blob from the response data

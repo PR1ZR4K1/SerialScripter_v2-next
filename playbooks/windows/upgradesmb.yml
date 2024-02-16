@@ -1,0 +1,14 @@
+---
+- name: Upgrade SMB version
+  hosts: windows_hosts
+  gather_facts: no
+  tasks:
+    - name: Disable SMBv1
+      win_shell: Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force
+
+    - name: Enable SMBv2
+      win_shell: Set-SmbServerConfiguration -EnableSMB2Protocol $true -Force
+
+    # Probably not necessary to enable v3 
+    - name: Enable SMBv3
+      win_shell: Set-SmbServerConfiguration -EnableSMB2Protocol $true -Force
