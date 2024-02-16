@@ -14,6 +14,9 @@ COPY package*.json ./
 # Copy ansible playbooks from the host to builder
 COPY playbooks ./playbooks
 
+# Copy storage from the host to builder
+COPY storage ./storage
+
 # Install dependencies, including Prisma
 RUN npm install
 
