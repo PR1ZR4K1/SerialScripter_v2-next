@@ -24,7 +24,7 @@ const rows = [
     description: "Checks for distribution of systems and installs docker"
   },
   {
-    id: 4,
+    id: 3,
     scriptName: "linpeas",
     category: "Utility",
     risk: "High",
@@ -32,7 +32,7 @@ const rows = [
     description: "Downloads and runs Linpeas on Remote hosts and outputs results to Standard Out"
   },
   {
-    id: 5,
+    id: 4,
     scriptName: "start_nftables_compose",
     category: "Startup",
     risk: "High",
@@ -40,7 +40,7 @@ const rows = [
     description: "Downloads and uses Nifty Firewall Tool's offical docker compose file and starts it on remote hosts. Parameter Usage: API_KEY=1234"
   },
   {
-    id: 6,
+    id: 5,
     scriptName: "restore_from_backup",
     category: "Utility",
     risk: "Low",
@@ -48,7 +48,7 @@ const rows = [
     description: "Attempts to restore from Backup created by Backup playbook. Parameter Usage: target_path=/tmp/"
   },
   {
-    id: 7,
+    id: 6,
     scriptName: "start_nftables",
     category: "Startup",
     risk: "High",
@@ -56,7 +56,7 @@ const rows = [
     description: "Attempts Start Nifty Firewall Tool using strictly Ansible (Use only if compose failed)"
   },
   {
-    id: 8,
+    id: 7,
     scriptName: "integrity",
     category: "Backups",
     risk: "Low",

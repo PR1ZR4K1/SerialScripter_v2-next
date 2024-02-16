@@ -66,11 +66,10 @@ export default function AnsiblePlaybooksTable({columns, rows, os}: ScriptingHubT
     state.setSelectedKeysWindowsPlaybooks,
   ])
 
-
   return (
     <div className="flex flex-col gap-3">
       <Table 
-        disallowEmptySelection
+        // disallowEmptySelection
         selectedKeys={os.toLowerCase() === 'linux' ? selectedKeysLinuxPlaybooks : selectedKeysWindowsPlaybooks}
         onSelectionChange={os.toLowerCase() === 'linux' ? setSelectedKeysLinuxPlaybooks as any : setSelectedKeysWindowsPlaybooks as any}
         aria-label="Selection behavior table example with dynamic content"

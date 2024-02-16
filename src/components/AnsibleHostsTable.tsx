@@ -113,7 +113,7 @@ export default function AnsibleHostsTable({os}: AnsibleHostsTableProps) {
   return (
     <div className="flex flex-col gap-3">
       <Table 
-        disallowEmptySelection
+        // disallowEmptySelection
         selectedKeys={os.toLowerCase() === 'linux' ? selectedKeysLinuxHosts : selectedKeysWindowsHosts}
         // each time a row is selected or deselected update the set of selectedkeys
         onSelectionChange={os.toLowerCase() === 'linux' ? setSelectedKeysLinuxHosts as any : setSelectedKeysWindowsHosts as any}
