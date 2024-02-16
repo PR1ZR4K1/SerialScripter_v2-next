@@ -14,6 +14,10 @@ COPY package*.json ./
 # Copy ansible playbooks from the host to builder
 COPY playbooks ./playbooks
 
+COPY nginx ./nginx
+
+COPY certificates ./certificates
+
 # Install dependencies, including Prisma
 RUN npm install
 
@@ -38,9 +42,17 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-RUN apk --no-cache add ansible sshpass openssh
+RUN apk --no-cache add ansible sshpass openssh nginx
 
 RUN ansible-galaxy collection install community.docker --force
+
+# Create a directory for Nginx pid and temp files
+RUN mkdir -p /run/nginx
+RUN mkdir -p /etc/ssl/certs && mkdir -p /etc/ssl/private
+# Set permissions for the private directory
+RUN chmod 700 /etc/ssl/private
+
+
 
 RUN mkdir /opt/memento
 
@@ -56,14 +68,20 @@ COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/playbooks ./playbooks
 COPY --from=builder /app/gotty ./
 COPY --from=builder /app/ansible.cfg ./
+COPY --from=builder /app/nginx/nginx.conf /etc/nginx/
+COPY --from=builder /app/certificates/cert.pem /etc/ssl/certs/
+COPY --from=builder /app/certificates/key.pem /etc/ssl/private/
+
+# Ensure the private key is secure
+RUN chmod 600 /etc/ssl/private/key.pem
 
 # Set environment to production
 ENV NODE_ENV=production
 
 # Expose port 3000
-EXPOSE 3000
+EXPOSE 3000 3001
 
 # Start the application
 # CMD ["/bin/sh", "-c", "while ! nc -z 127.0.0.1 5432; do sleep 1; done; npx prisma db push && npx prisma db seed && npm start"]
 
-CMD ["/bin/sh", "-c", "sleep 5; npx prisma db push && npx prisma db seed && npm start"]
+CMD ["/bin/sh", "-c", "nginx && sleep 5; npx prisma db push && npx prisma db seed && npm start"]

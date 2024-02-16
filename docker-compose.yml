@@ -14,13 +14,14 @@ services:
     #   - wild_west
 
   serial:
-    image: m00nl1g7/serial    
+    # image: m00nl1g7/serial    
+    image: serial    
     environment:
       - API_KEY=${API_KEY}
       - API_KEY_LIFETIME=${API_KEY_LIFETIME}
     depends_on:
       - postgres
-    network_mode: "host"
+    network_mode: host
     
     # network_mode: "host"  # Add this line to use host network
     # networks:
