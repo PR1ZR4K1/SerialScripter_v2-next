@@ -412,7 +412,7 @@ async function main() {
     const host2 = await createHost({
         hostname: 'bathtub',
         ip: '192.168.60.167',
-        os: 'Windows',
+        os: 'windows',
         version: 'Windows 10 Pro',
         password: 'password123',
         cores: 8,
@@ -443,7 +443,7 @@ async function main() {
     const host3 = await createHost({
         hostname: 'aaron',
         ip: '192.168.60.251',
-        os: 'Windows',
+        os: 'windows',
         version: 'Windows 10 Pro',
         password: 'Password123!',
         cores: 8,
