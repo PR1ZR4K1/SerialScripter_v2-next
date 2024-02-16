@@ -1,6 +1,6 @@
 const rows = [
   {
-    id: 0,
+    // id: 0,
     scriptName: "windows",
     category: "windows",
     risk: "Medium",
@@ -8,7 +8,7 @@ const rows = [
     description: "Attempts to add vm to Domain"
   },
   {
-    id: 1,
+    // id: 1,
     scriptName: "firewalls",
     category: "windows",
     risk: "Low",
@@ -16,7 +16,7 @@ const rows = [
     description: "displays firewall rules"
   },
   {
-    id: 2,
+    // id: 2,
     scriptName: "software",
     category: "windows",
     risk: "Low",
@@ -24,7 +24,7 @@ const rows = [
     description: "displays downloaded software "
   },
   {
-    id: 3,
+    // id: 3,
     scriptName: "winpeas",
     category: "windows",
     risk: "Medium",
@@ -32,7 +32,7 @@ const rows = [
     description: "Attempts to install and run WinPeas on machine."
   },
   {
-    id: 4,
+    // id: 4,
     scriptName: "fileIntegrityCheck",
     category: "Enumeration",
     risk: "Low",
@@ -40,7 +40,7 @@ const rows = [
     description: "Returns MD5 Hash of specified file, add path=C:/Use/Forward/Slashes.exe to -e parameter."
   },
   {
-    id: 5,
+    // id: 5,
     scriptName: "installSysmon",
     category: "Software Install",
     risk: "Low",
@@ -48,7 +48,7 @@ const rows = [
     description: "Installs sysmon64, doesn't work below win7/2008"
   },
   {
-    id: 6,
+    // id: 6,
     scriptName: "installedSoftwareWIN",
     category: "Enumeration",
     risk: "Low",
@@ -56,7 +56,7 @@ const rows = [
     description: "Lists installed shi"
   },
   {
-    id: 7,
+    // id: 7,
     scriptName: "listCommonDirWIN",
     category: "Enumeration",
     risk: "Low",
@@ -64,7 +64,7 @@ const rows = [
     description: "Lists contents of C Drive and every common directory in Users folder"
   },
   {
-    id: 8,
+    // id: 8,
     scriptName: "dlrunchainsaw",
     category: "windows",
     risk: "Medium",
@@ -72,7 +72,7 @@ const rows = [
     description: "Attempts to download chainsaw & its dependencies & run it. Outputs in JSON"
   },
   {
-    id: 9,
+    // id: 9,
     scriptName: "changepass",
     category: "windows",
     risk: "Medium",
@@ -80,7 +80,7 @@ const rows = [
     description: "Attemps to change the password of all AD users to the same password. Parameter Usage: newPassword=password"
   },
   {
-    id: 10,
+    // id: 10,
     scriptName: "smbupgrade",
     category: "windows",
     risk: "low",

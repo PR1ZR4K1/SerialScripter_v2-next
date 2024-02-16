@@ -50,7 +50,7 @@ export default function LinuxActions() {
       openAnsibleModal();
     }
 
-    if (!isParameterModalOpen && parameterizedPlaybooks.length > 0 && isFirstDeployment && hasParameter(parameterizedPlaybooks)) {
+    if (!isParameterModalOpen && parameterizedPlaybooks.length > 0 && isFirstDeployment) {
       proceedWithDeployment();
       setIsFirstDeployment(false);
     }
@@ -61,17 +61,17 @@ export default function LinuxActions() {
     }
   }, [getLinuxHosts, isFirstRender, isParameterModalOpen, linuxHosts, isFirstDeployment, openAnsibleModal, parameterizedPlaybooks.length, selectedKeysLinuxHosts, selectedKeysLinuxPlaybooks, setAnsibleOutput, parameterizedPlaybooks, playbooksToDeploy])
 
-  const hasParameter = (parameterizedPlaybooks: PlaybookParametersType[]): boolean => {
+  // const hasParameter = (parameterizedPlaybooks: PlaybookParametersType[]): boolean => {
 
-    let parameter = false
-    parameterizedPlaybooks.forEach(playbook => {
-      if (playbook.extra_vars !== '') {
-        parameter = true
-      }
-    });
+  //   let parameter = false
+  //   parameterizedPlaybooks.forEach(playbook => {
+  //     if (playbook.extra_vars !== '') {
+  //       parameter = true
+  //     }
+  //   });
 
-    return parameter
-  }
+  //   return parameter
+  // }
 
   // get list of playbooks that need to take user input for parameters
   const getParameterizedPlaybooks = () => {

@@ -10,11 +10,18 @@ type Column = {
 };
 
 type Row = {
-    id: number;
     scriptName: string;
     category: string;
     risk: string;
     description: string
+}
+
+type NewRow = {
+  id: number
+  scriptName: string;
+  category: string;
+  risk: string;
+  description: string
 }
 
 type ScriptingHubTableProps = {
@@ -64,7 +71,16 @@ export default function AnsiblePlaybooksTable({columns, rows, os}: ScriptingHubT
     state.setSelectedKeysLinuxPlaybooks,
     state.selectedKeysWindowsPlaybooks,
     state.setSelectedKeysWindowsPlaybooks,
-  ])
+  ]);
+
+  let newRows: NewRow[] = []
+
+  for (let i = 0; i < rows.length; i++)
+  {
+    const newRow = {...rows[i], id: i}
+    newRows.push(newRow)
+  }
+
 
   return (
     <div className="flex flex-col gap-3">
@@ -91,7 +107,7 @@ export default function AnsiblePlaybooksTable({columns, rows, os}: ScriptingHubT
                 {column.key === 'description' || column.key === 'risk' ? <div className="flex justify-center"> {column.label} </div> : <div>{column.label} </div>}
             </TableColumn>}
         </TableHeader>
-        <TableBody items={rows}>
+        <TableBody items={newRows}>
           {(item) => (
             <TableRow key={item.id}> 
               {(columnKey) => 
