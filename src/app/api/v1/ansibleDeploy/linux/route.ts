@@ -122,7 +122,7 @@ export async function POST(req: Request) {
 
 async function executePlaybook(hostIP: string, playbook: string, password: string, extra_vars: string = '') {
     // Execute the playbook
-    // const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, /app/playbooks/linux/${playbook}.yml -e "ansible_user=root ansible_shell_type=sh ansible_connection=ssh ${extra_vars}"`);
+    // const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, /app/playbooks/linux/${playbook}.yml -e "ansible_user=root ansi ble_shell_type=sh ansible_connection=ssh ${extra_vars}"`);
     const { stdout, stderr } = await execPromise(`ansible-playbook -i ${hostIP}, ./playbooks/linux/${playbook}.yml -e "ansible_user=root ansible_shell_type=sh ansible_connection=ssh ansible_password=${password} ${extra_vars}"`);
     // const { stdout, stderr } = await execPromise(`pwd`);
     // console.log('stdout:', stdout);
