@@ -10,8 +10,8 @@ services:
     
     ports:
       - "127.0.0.1:5432:5432"
-    # networks:
-    #   - wild_west
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   serial:
     # image: m00nl1g7/serial    
@@ -22,15 +22,8 @@ services:
     depends_on:
       - postgres
     network_mode: host
+
+volumes:
+  postgres_data:
+    driver: local
     
-    # network_mode: "host"  # Add this line to use host network
-    # networks:
-    #   - wild_east
-    #   - wild_west
-
-# networks:
-#   wild_west:
-#     driver: bridge
-#   wild_east:
-#     driver: host
-

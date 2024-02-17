@@ -16,8 +16,10 @@ import {
     getKeyValue,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { ArrowDownTrayIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, PencilSquareIcon, TrashIcon, CheckIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { openFirewallModalTypes } from "../app/(authenticated)/[host]/Firewall";
+import { Tooltip } from "@material-tailwind/react";
+import { useCopyToClipboard } from "usehooks-ts";
 
 
 type Row = {
@@ -80,6 +82,9 @@ export default function HostTable({rows, colorMap, columns, editField, deleteFie
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
       direction: "ascending",
   });
+
+  const [value, copy] = useCopyToClipboard();
+  const [copied, setCopied] = React.useState(false);
 
   const filteredItems = React.useMemo(() => {
     let filteredRows = [...rows];
@@ -183,7 +188,24 @@ export default function HostTable({rows, colorMap, columns, editField, deleteFie
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
+                  <div 
+                      className=''
+                      onMouseLeave={() => setCopied(false)}
+                      onClick={() => {
+                        copy(JSON.stringify(rows, null, 2));
+                        setCopied(true);
+                      }}
+                      >
+                      <Tooltip content={copied ? "Copied" : "Copy"}>
+                        {copied ? (
+                          <CheckIcon className="h-4 w-4 text-white" />
+                        ) : (
+                          <DocumentDuplicateIcon className="h-4 w-4 text-white" />
+                        )}
+                      </Tooltip>
+                    </div>
                 </div>
+
                 <div className="flex justify-between items-center">
                     <span className="text-default-400 text-small">Total {rows.length} rows</span>
                     <label className="flex color-black items-center text-default-400 text-small">
