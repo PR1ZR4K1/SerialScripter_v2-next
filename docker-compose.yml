@@ -4,18 +4,18 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password123
+      POSTGRES_PASSWORD: 12323787fd87df87df87df873445fff  
       POSTGRES_DB: test
     # network_mode: "host"
     
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:52492:5432"
     # networks:
     #   - wild_west
 
   serial:
-    # image: m00nl1g7/serial    
-    image: serial    
+    image: m00nl1g7/serial    
+      #image: serial    
     environment:
       - API_KEY=${API_KEY}
       - API_KEY_LIFETIME=${API_KEY_LIFETIME}

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "next start -p 8967",
     "lint": "next lint"
   },
   "prisma": {
@@ -38,7 +38,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.312.0",
     "multer": "^1.4.5-lts.1",
-    "next": "^14.0.4",
+    "next": "14.0.1",
     "next-auth": "^4.24.4",
     "next-themes": "^0.2.1",
     "node-cron": "^3.0.3",

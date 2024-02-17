@@ -70,9 +70,9 @@ RUN chmod 600 /etc/ssl/private/key.pem
 ENV NODE_ENV=production
 
 # Expose port 3000
-EXPOSE 3000 3001
+EXPOSE 8967
 
 # Start the application
 # CMD ["/bin/sh", "-c", "while ! nc -z 127.0.0.1 5432; do sleep 1; done; npx prisma db push && npx prisma db seed && npm start"]
 
-CMD ["/bin/sh", "-c", "nginx && sleep 5; npx prisma db push && npx prisma db seed && npm start"]
+CMD ["/bin/sh", "-c", "sleep 5; npx prisma db push && npx prisma db seed && npm start"]
