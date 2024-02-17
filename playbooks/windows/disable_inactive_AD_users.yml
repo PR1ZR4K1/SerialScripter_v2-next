@@ -1,0 +1,17 @@
+- name: Disable inactive AD users
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Disable inactive AD users
+      win_shell: |
+        Import-Module ActiveDirectory
+        $users = Get-ADUser -Filter *
+        foreach ($user in $users) {
+          $lastLogonTimeStamp = Get-ADUser -Identity $user.SamAccountName -Properties LastLogonTimestamp | Select-Object -ExpandProperty LastLogonTimestamp
+          if ($lastLogonTimestamp.Length -eq 0) {
+            if ($user.SamAccountName -ne "Administrator") {
+              Disable-ADAccount -Identity $user.SamAccountName
+              write-output "Disabling $user.SamAccountName"
+            }
+          }
+        }

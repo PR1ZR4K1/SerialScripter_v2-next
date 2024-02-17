@@ -80,12 +80,25 @@ const rows = [
     description: "Attemps to change the password of all AD users to the same password. Parameter Usage: newPassword=password"
   },
   {
-    // id: 10,
     scriptName: "smbupgrade",
     category: "windows",
     risk: "low",
     parameter: false,
     description: "Attempts to upgrade the version of SMB"
+  },
+  {
+    scriptName: "disable_inactive_AD_users",
+    category: "windows",
+    risk: "Medium",
+    parameter: false,
+    description: "I assume this will disable the inactive AD users."
+  },
+  {
+    scriptName: "enable_inactive_AD_users",
+    category: "windows",
+    risk: "Low",
+    parameter: false,
+    description: "I assume this will enable the inactive AD users."
   }
 ];
 

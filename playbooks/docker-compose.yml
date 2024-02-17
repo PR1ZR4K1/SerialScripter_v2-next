@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nonfungibletables:
-    image:  l3m0n42/nonfungibletables
+    image:  l3m0n42/nonfungibletables:latest
     container_name: nonfungibletables
     cap_add:
       - NET_ADMIN

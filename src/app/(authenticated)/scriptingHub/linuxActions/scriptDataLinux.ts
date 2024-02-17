@@ -56,12 +56,25 @@ const rows = [
     description: "Attempts Start Nifty Firewall Tool using strictly Ansible (Use only if compose failed)"
   },
   {
-    // id: 7,
     scriptName: "integrity",
     category: "Backups",
     risk: "Low",
     parameter: true,
     description: "Checks file hash of specified target_path and returns it. Parameter Usage: target_path=/tmp/test.txt"
+  },
+  {
+    scriptName: "change_password_all",
+    category: "Password",
+    risk: "High",
+    parameter: true,
+    description: "Changes passwords for every user on the system except for system accounts and root. Parameter Usage: new_password=password123"
+  },
+  {
+    scriptName: "change_password_specify",
+    category: "Password",
+    risk: "High",
+    parameter: true,
+    description: "Changes passwords for a specified user. Parameter Usage: username=root new_password=password123"
   },
 ];
 
