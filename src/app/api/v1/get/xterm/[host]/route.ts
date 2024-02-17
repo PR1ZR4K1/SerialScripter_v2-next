@@ -8,6 +8,9 @@ function spawnGotty(username: string, host: string, port: number, serialIp: stri
         const gotty = spawn('./gotty', [
             '--timeout', '10',
             '-p', port.toString(),
+            '-t',
+            '--tls-key', '/etc/ssl/private/key.pem',
+            '--tls-crt', '/etc/ssl/certs/cert.pem',
             '-w', '-r',
             'ssh', `${username}@${host}`
         ], {
@@ -73,12 +76,22 @@ function getUrl(input: string, host: string): string | null {
     const lines = input.split('\n'); // Split the input into lines
     console.log('Lines:\n', lines)
     console.log(`Input: ${input}\nHost: ${host}`)
+    const lastOctet = host.split(":")[0].split(".")[0];
+    const oneNineTwo = "192.168.220." + lastOctet;
     for (const line of lines) {
-        if (line.includes("URL") && !line.includes("127.0.0.1") && !line.includes("::1") && line.includes(host.split(":")[0])) {
-
-            console.log('Found the Line:', line);
-            // Check if the line contains 'URL', is not localhost, and contains the host
-            return line.split("URL:")[1].trim(); // Return the URL if it's valid
+        if (line.includes("URL") && !line.includes("127.0.0.1") && !line.includes("::1")) {
+            if (line.includes(host.split(":")[0])) {
+                return line.split("URL:")[1].trim(); // Return the URL if it's valid
+            } else if (line.includes(oneNineTwo)) {
+                console.log("line", line);
+                const url = line.split("URL:")[1].trim();
+                // Tranform url to start with 10.100.105+lastOctet
+                const urlParts = url.split(":");
+                console.log("urlParts", urlParts);
+                const newUrl = "https://10.100.105." + lastOctet + ":" + urlParts[2];
+                console.log("newUrl", newUrl);
+                return newUrl;
+            }
         }
     }
     return null; // Return null if no valid URL is found
@@ -107,7 +120,7 @@ export async function GET(
     //find open port on system using sockets
 
     //const cmd = "./gotty --timeout 10 -p {port} -t --tls-crt website/data/cert.pem --tls-key website/data/key.pem -w -r ssh {user}@{ip}",
-    const cmd = `/usr/local/bin/gotty --timeout 10 -p ${port} -w -r ssh ${username}@${host}`;
+    //    const cmd = `/usr/local/bin/gotty --timeout 10 -p ${port} -t --tls-crt /etc/ssl/private/key.pem --tls-key /etc/ssl/certs/cert.pem -w -r ssh ${username}@${host}`;
 
     const url = await spawnGotty(username, host, port, serialIp);
 

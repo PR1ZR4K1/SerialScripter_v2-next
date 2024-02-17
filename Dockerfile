@@ -11,13 +11,6 @@ RUN apk --no-cache add --virtual builds-deps build-base
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Copy ansible playbooks from the host to builder
-COPY playbooks ./playbooks
-
-COPY nginx ./nginx
-
-COPY certificates ./certificates
-
 # Install dependencies, including Prisma
 RUN npm install
 
@@ -51,8 +44,6 @@ RUN mkdir -p /run/nginx
 RUN mkdir -p /etc/ssl/certs && mkdir -p /etc/ssl/private
 # Set permissions for the private directory
 RUN chmod 700 /etc/ssl/private
-
-
 
 RUN mkdir /opt/memento
 
