@@ -390,7 +390,7 @@ async function main() {
     
     const host1 = await createHost({
         hostname: 'bingus',
-        ip: '192.168.221.10',
+        ip: '192.168.60.222',
         os: 'Linux',
         version: 'Ubuntu 20.04',
         cores: 4,
