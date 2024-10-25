@@ -146,7 +146,10 @@ export default function ServerLogsTable({serverLogs}: ServerLogsTableType) {
         const filterFieldOptions = [
             { key: "email", name: "Email" },
             { key: "module", name: "Module" },
-            { key: "message", name: "Message" },
+            { key: "attribute", name: "Attribute" },
+            { key: "value", name: "Value" },
+            { key: "type", name: "Type" },
+            { key: "description", name: "Description" },
         ];
         
         return (
@@ -200,7 +203,7 @@ export default function ServerLogsTable({serverLogs}: ServerLogsTableType) {
                     </div>
                 </div>
             );
-      }, [filterValue, onClear, onRowsPerPageChange, onSearchChange, serverLogs.length, filterField]);
+      }, [filterValue, onClear, onRowsPerPageChange, onSearchChange, serverLogs.length, filterField, selectedFilterField]);
 
     
     const bottomContent = React.useMemo(() => {
