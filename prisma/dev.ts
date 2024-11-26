@@ -450,8 +450,8 @@ async function main() {
         data: {
             email: 'test',
             success: true,
-            module: 'ur mom',
-            message: 'gay',
+            module: 'testing',
+            message: 'oh hey looks like the logs work',
         },
     });
 
